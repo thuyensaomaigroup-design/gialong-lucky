@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   
-  <!-- Firebase SDK (Compat version for single-file zero build) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -55,7 +55,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center p-3 relative overflow-x-hidden select-none">
 
-  <!-- BACKGROUND DECORATION -->
   <div class="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#ffd700_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
   <!-- TOP BAR -->
@@ -80,10 +79,9 @@
     </div>
   </header>
 
-  <!-- MAIN INTERACTION AREA -->
+  <!-- MAIN -->
   <main class="w-full max-w-md flex-1 flex flex-col items-center justify-center my-4 z-10">
 
-    <!-- USER NAME & CLOUD STATUS BADGE -->
     <div class="w-full mb-3 flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 border border-amber-900/60 backdrop-blur-sm">
       <div class="flex items-center gap-2 truncate">
         <span class="text-amber-400 text-sm">⚔️ Đại hiệp:</span>
@@ -95,21 +93,18 @@
       </div>
     </div>
 
-    <!-- LOCK / UNLOCK STATUS NOTICE -->
     <div id="status-lock-banner" class="w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-red-950/90 border border-red-700/80 text-red-200 text-xs font-semibold flex items-center justify-center gap-2 shadow">
       <span class="animate-pulse">🔒</span> <span id="status-lock-text">BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC</span>
     </div>
 
-    <!-- REMAINING PRIZES CLOUD COUNTER -->
     <div class="w-full text-center text-[11px] text-amber-300/80 mb-1">
       Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 20 phần thưởng
     </div>
 
-    <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
+    <!-- CHEST -->
     <div class="relative w-64 h-64 flex items-center justify-center my-2">
       <div id="chest-auras" class="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-red-600/20 blur-2xl opacity-60"></div>
 
-      <!-- SVG CHEST -->
       <div id="chest-container" class="relative z-10 w-52 h-52 transition-transform duration-300 cursor-pointer" onclick="handleChestClick()">
         <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-2xl">
           <defs>
@@ -153,7 +148,6 @@
         </svg>
       </div>
 
-      <!-- Opening Countdown Badge -->
       <div id="countdown-overlay" class="hidden absolute z-20 inset-0 flex flex-col items-center justify-center bg-black/60 rounded-full backdrop-blur-[2px]">
         <div id="countdown-number" class="text-5xl font-black font-kiemhiep text-yellow-300 drop-shadow-[0_0_15px_#ffd700]">8</div>
         <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">VẬN CÔNG PHÁ ẤN</div>
@@ -171,7 +165,6 @@
       </div>
     </div>
 
-    <!-- MAIN ACTION BUTTON -->
     <div class="w-full px-2">
       <button id="btn-open-chest" onclick="triggerOpenChest()" disabled class="w-full py-4 rounded-2xl bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-kiemhiep font-extrabold text-lg tracking-wider uppercase transition-all duration-300 shadow-lg cursor-not-allowed flex items-center justify-center gap-2">
         <span>🔒</span> <span>CHỜ LỆNH BTC</span>
@@ -184,14 +177,13 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="w-full max-w-md text-center py-2 text-[10px] text-amber-500/50 border-t border-amber-900/40">
     Hệ thống quay thưởng bảo rương • Bang Hội Gia Long 2026
   </footer>
 
   <!-- ================= MODALS ================= -->
 
-  <!-- MODAL: RESULT POPUP -->
+  <!-- RESULT POPUP -->
   <div id="modal-result" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-sm rounded-3xl bg-wood border-2 border-yellow-500/90 p-5 text-center relative shadow-[0_0_50px_rgba(255,215,0,0.4)] animate-scaleUp">
       <div class="text-3xl mb-1">🎉 🎊 🎉</div>
@@ -224,7 +216,7 @@
     </div>
   </div>
 
-  <!-- MODAL: PIN INPUT (ADMIN) -->
+  <!-- PIN INPUT -->
   <div id="modal-pin" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-xs rounded-2xl bg-wood border border-yellow-600/70 p-5 text-center shadow-2xl">
       <h3 class="text-sm font-bold text-amber-300 font-kiemhiep uppercase mb-2">Quyền Hạn Ban Tổ Chức</h3>
@@ -242,7 +234,7 @@
     </div>
   </div>
 
-  <!-- MODAL: LEADERBOARD / VINH DANH -->
+  <!-- LEADERBOARD -->
   <div id="modal-leaderboard" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 hidden">
     <div class="w-full max-w-md max-h-[85vh] rounded-3xl bg-wood border-2 border-yellow-600/80 p-4 flex flex-col shadow-2xl">
       <div class="flex justify-between items-center border-b border-amber-900/60 pb-2 mb-3">
@@ -255,9 +247,7 @@
 
       <div class="text-[11px] text-amber-400/80 mb-2 italic">Huynh đệ đã khai mở bảo rương (cập nhật trực tiếp):</div>
 
-      <div id="leaderboard-list" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar text-xs">
-        <!-- Render via JS -->
-      </div>
+      <div id="leaderboard-list" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar text-xs"></div>
 
       <div class="mt-3 pt-2 border-t border-amber-900/50 flex justify-between items-center text-xs">
         <span class="text-amber-300/80">Tổng số người đã trúng: <b id="lb-total-count" class="text-yellow-300">0</b>/20</span>
@@ -266,7 +256,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ADMIN DASHBOARD (BTC) -->
+  <!-- ADMIN DASHBOARD -->
   <div id="modal-admin" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 hidden">
     <div class="w-full max-w-lg max-h-[92vh] rounded-3xl bg-wood border-2 border-yellow-500/90 p-4 sm:p-5 flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.9)]">
       
@@ -282,7 +272,23 @@
 
       <div class="flex-1 overflow-y-auto space-y-4 pr-1.5 custom-scrollbar text-xs">
         
-        <!-- SECTION 1: REMOTE REALTIME CONTROLS -->
+        <!-- ONLINE PRESENCE -->
+        <div class="p-3 rounded-2xl bg-black/50 border border-emerald-700/60 shadow">
+          <div class="flex justify-between items-center mb-1.5">
+            <h4 class="font-bold text-emerald-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>👥</span> QUÂN SỐ ĐANG VÀO TIỆC (REALTIME)
+            </h4>
+            <span class="text-xs font-bold text-yellow-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/60" id="admin-online-badge">0 / 20</span>
+          </div>
+          <p class="text-[10px] text-emerald-200/70 mb-2">
+            Danh sách thiết bị anh em đang quét mã QR có mặt trong bàn tiệc:
+          </p>
+          <div id="admin-online-users-list" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto custom-scrollbar p-1 rounded-xl bg-black/40 border border-emerald-900/50">
+            <span class="text-[10px] text-stone-400 italic">Đang tải danh sách trực tuyến...</span>
+          </div>
+        </div>
+
+        <!-- REMOTE CONTROLS -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <h4 class="font-bold text-amber-300 mb-2 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
             <span>⚡</span> ĐIỀU KHIỂN ĐỒNG LOẠT (TẤT CẢ 20 ĐIỆN THOẠI)
@@ -310,7 +316,7 @@
           </div>
         </div>
 
-        <!-- SECTION 2: QR CODE -->
+        <!-- QR CODE -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
             <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
@@ -325,7 +331,7 @@
           </p>
         </div>
 
-        <!-- SECTION 3: REWARD LIST & TAG ASSIGNMENT -->
+        <!-- PRIZES CONFIG -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
             <div>
@@ -342,9 +348,7 @@
             Bạn có thể đổi tên, chọn Tag và số lượng cho từng món quà. Khi sửa sẽ tự lưu và đồng bộ:
           </p>
 
-          <div id="admin-prizes-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1 mb-3">
-            <!-- Render via JS -->
-          </div>
+          <div id="admin-prizes-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1 mb-3"></div>
 
           <!-- FORM THÊM QUÀ MỚI -->
           <div class="p-2 rounded-xl bg-amber-950/40 border border-amber-900/80 flex flex-col gap-1.5">
@@ -366,7 +370,7 @@
           </div>
         </div>
 
-        <!-- SECTION 4: TROLL QUOTES BY TAG -->
+        <!-- TROLL QUOTES -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
             <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
@@ -384,9 +388,7 @@
             </select>
           </div>
 
-          <div id="admin-quotes-list" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1 mb-2">
-            <!-- Render via JS -->
-          </div>
+          <div id="admin-quotes-list" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1 mb-2"></div>
 
           <div class="flex gap-1.5">
             <input type="text" id="new-quote-text" placeholder="Thêm câu troll mới cho tag này..." class="flex-1 px-2.5 py-1.5 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs">
@@ -396,7 +398,7 @@
           </div>
         </div>
 
-        <!-- SECTION 5: SYSTEM RESET & TEST -->
+        <!-- SYSTEM RESET -->
         <div class="p-3 rounded-2xl bg-red-950/40 border border-red-800/80">
           <h4 class="font-bold text-rose-300 mb-1 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
             <span>⚠️</span> ĐIỀU KHIỂN & ĐẶT LẠI DỮ LIỆU
@@ -428,7 +430,7 @@
     </div>
   </div>
 
-  <!-- MODAL: QR CODE ENLARGED -->
+  <!-- QR MODAL -->
   <div id="modal-qr" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-xs rounded-3xl bg-wood border-2 border-yellow-500 p-5 text-center shadow-2xl">
       <h3 class="font-kiemhiep font-bold text-amber-300 text-base mb-1">MÃ QUÉT VÀO BÀN TIỆC</h3>
@@ -450,13 +452,11 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <!-- ================= SCRIPT ================= -->
   <script>
-    /* ================= CẤU HÌNH BAN TỔ CHỨC ================= */
     const PIN_ADMIN = "1010";
 
-    /* CẤU HÌNH FIREBASE REALTIME DATABASE 
-       (Điền thông tin Firebase Project của bạn vào đây để đồng bộ 20 máy) */
+    /* CẤU HÌNH FIREBASE REALTIME DATABASE */
     const firebaseConfig = {
       apiKey: "AIzaSyD-qz9Ze4_-Rz2Rzc5sz5XpB1CHyBgDLo0",
       authDomain: "gialong-lucky.firebaseapp.com",
@@ -469,8 +469,12 @@
 
     let isFirebaseReady = false;
     let db = null;
+    let deviceId = localStorage.getItem("gialong_device_id_v1");
+    if (!deviceId) {
+      deviceId = "dev_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now().toString(36);
+      localStorage.setItem("gialong_device_id_v1", deviceId);
+    }
 
-    // Kho 20 quà mặc định
     const DEFAULT_PRIZES = [
       { id: "p1", name: "1.000.000 VNĐ (Tiền Mặt)", tag: "tag_dacbiet", score: 100, qty: 1 },
       { id: "p2", name: "500.000 VNĐ (Tiền Mặt)", tag: "tag_nhat", score: 90, qty: 1 },
@@ -527,7 +531,6 @@
       ]
     };
 
-    // KEYS
     const KEY_USER = "gialong_user_v1";
     const KEY_DEVICE_OPENED = "gialong_device_opened_v1";
     const KEY_DEVICE_PRIZE = "gialong_device_prize_v1";
@@ -539,10 +542,10 @@
       hasOpened: localStorage.getItem(KEY_DEVICE_OPENED) === "true",
       prizes: JSON.parse(JSON.stringify(DEFAULT_PRIZES)),
       quotes: JSON.parse(JSON.stringify(DEFAULT_QUOTES)),
-      winners: []
+      winners: [],
+      onlineUsers: {}
     };
 
-    // INIT
     window.addEventListener('DOMContentLoaded', () => {
       initFirebase();
       renderUI();
@@ -551,7 +554,6 @@
       }
     });
 
-    /* ================= FIREBASE REALTIME HUB ================= */
     function initFirebase() {
       const indicator = document.getElementById('cloud-indicator');
       if (firebaseConfig.apiKey !== "YOUR_API_KEY" && firebaseConfig.databaseURL !== "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com") {
@@ -564,7 +566,20 @@
           indicator.innerText = "🟢 Cloud Realtime";
           indicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500 text-emerald-300";
 
-          // Lắng nghe trạng thái khóa/mở từ BTC
+          const userPresenceRef = db.ref('room/online_users/' + deviceId);
+          userPresenceRef.set({
+            name: state.userName,
+            online: true,
+            lastSeen: Date.now()
+          });
+          userPresenceRef.onDisconnect().remove();
+
+          db.ref('room/online_users').on('value', (snap) => {
+            const users = snap.val() || {};
+            state.onlineUsers = users;
+            renderOnlineUsers();
+          });
+
           db.ref('room/status').on('value', (snap) => {
             const data = snap.val();
             if (data) {
@@ -574,7 +589,6 @@
             }
           });
 
-          // Lắng nghe kho quà còn lại trên Cloud
           db.ref('room/prizes').on('value', (snap) => {
             const list = snap.val();
             if (list) {
@@ -584,7 +598,6 @@
             }
           });
 
-          // Lắng nghe Bảng Vinh Danh Realtime
           db.ref('room/winners').on('value', (snap) => {
             const winnersData = snap.val();
             if (winnersData) {
@@ -606,18 +619,42 @@
       }
     }
 
+    function renderOnlineUsers() {
+      const listEl = document.getElementById('admin-online-users-list');
+      const badgeEl = document.getElementById('admin-online-badge');
+      if (!listEl) return;
+
+      const userKeys = Object.keys(state.onlineUsers || {});
+      const count = userKeys.length;
+      if (badgeEl) badgeEl.innerText = count + " / 20";
+
+      if (count === 0) {
+        listEl.innerHTML = '<span class="text-[10px] text-stone-400 italic">Chưa có ai vào bàn tiệc.</span>';
+        return;
+      }
+
+      listEl.innerHTML = '';
+      userKeys.forEach(k => {
+        const u = state.onlineUsers[k];
+        const chip = document.createElement('div');
+        chip.className = "flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-600/70 text-[10px] text-emerald-200 font-medium";
+        chip.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> <span>${u.name || 'Đại hiệp'}</span>`;
+        listEl.appendChild(chip);
+      });
+    }
+
     function updatePrizeCounters() {
       let count = 0;
       state.prizes.forEach(p => count += (p.qty !== undefined ? p.qty : 1));
       document.getElementById('remaining-count').innerText = count;
-      document.getElementById('admin-pool-summary').innerText = "Còn: " + count + " phần";
+      const poolSum = document.getElementById('admin-pool-summary');
+      if (poolSum) poolSum.innerText = "Còn: " + count + " phần";
     }
 
     function updateLeaderboardCounter() {
       document.getElementById('lb-total-count').innerText = state.winners.length;
     }
 
-    /* ================= UI RENDERING ================= */
     function renderUI() {
       document.getElementById('display-user-name').innerText = state.userName;
 
@@ -657,6 +694,10 @@
         state.userName = name.trim();
         localStorage.setItem(KEY_USER, state.userName);
         document.getElementById('display-user-name').innerText = state.userName;
+
+        if (isFirebaseReady && db) {
+          db.ref('room/online_users/' + deviceId).update({ name: state.userName });
+        }
       }
     }
 
@@ -685,7 +726,6 @@
       }
     }
 
-    /* ================= SEQUENCE MỞ RƯƠNG & TRỪ QUÀ CLOUD ================= */
     let openingInterval = null;
     function triggerOpenChest() {
       if (state.hasOpened) {
@@ -743,11 +783,9 @@
       progressWrapper.classList.add('hidden');
       countdownOverlay.classList.add('hidden');
 
-      // BỐC VÀ TRỪ QUÀ TRÊN CLOUD TRANSACTION (ĐẢM BẢO KHÔNG TRÙNG)
       if (isFirebaseReady && db) {
         claimPrizeFromCloud();
       } else {
-        // Fallback local
         claimPrizeLocal();
       }
     }
@@ -756,10 +794,9 @@
       const prizesRef = db.ref('room/prizes');
       prizesRef.transaction((currentPrizes) => {
         if (!currentPrizes || currentPrizes.length === 0) {
-          return currentPrizes; // Hết quà
+          return currentPrizes;
         }
 
-        // Tạo pool từ các quà còn qty > 0
         let availablePool = [];
         currentPrizes.forEach((p, idx) => {
           const qty = p.qty !== undefined ? p.qty : 1;
@@ -770,10 +807,8 @@
 
         if (availablePool.length === 0) return currentPrizes;
 
-        // Chọn ngẫu nhiên 1 index
         const randomChoice = availablePool[Math.floor(Math.random() * availablePool.length)];
         
-        // Trừ số lượng món quà đó
         currentPrizes[randomChoice].qty = (currentPrizes[randomChoice].qty || 1) - 1;
         if (currentPrizes[randomChoice].qty <= 0) {
           currentPrizes.splice(randomChoice, 1);
@@ -782,17 +817,14 @@
         return currentPrizes;
       }, (error, committed, snapshot) => {
         if (error || !committed) {
-          alert("Kho báu đang có người bốc cùng lúc, hệ thống đang tự thử lại...");
           claimPrizeLocal();
         } else {
-          // Bốc thành công: Lấy món quà đã bốc được và lưu Winner lên Cloud
-          const pickedPrize = pickQuoteAndRegister();
+          pickQuoteAndRegister();
         }
       });
     }
 
     function pickQuoteAndRegister() {
-      // Bốc 1 món từ danh sách local hiện có
       let pool = [];
       state.prizes.forEach(p => {
         const qty = p.qty !== undefined ? p.qty : 1;
@@ -814,7 +846,6 @@
         time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
       };
 
-      // Đẩy lên Firebase Realtime Winners
       if (isFirebaseReady && db) {
         db.ref('room/winners').push(record);
       }
@@ -870,7 +901,6 @@
       } catch(e) {}
     }
 
-    /* ================= BAN TỔ CHỨC (ADMIN) ================= */
     function openPinModal() {
       document.getElementById('input-admin-pin').value = '';
       document.getElementById('modal-pin').classList.remove('hidden');
@@ -894,6 +924,7 @@
     function openAdminModal() {
       renderAdminPrizes();
       renderAdminQuotes();
+      renderOnlineUsers();
       document.getElementById('modal-admin').classList.remove('hidden');
     }
     function closeAdminModal() {
@@ -901,7 +932,6 @@
       renderUI();
     }
 
-    // ĐIỀU KHIỂN KHÓA/MỞ ĐỒNG LOẠT LÊN CLOUD
     function adminSetLock(lockStatus) {
       state.isLocked = lockStatus;
       if (isFirebaseReady && db) {
@@ -1105,7 +1135,6 @@
       }
     }
 
-    /* ================= BẢNG VINH DANH ================= */
     function openLeaderboard() {
       renderLeaderboard();
       document.getElementById('modal-leaderboard').classList.remove('hidden');
@@ -1148,7 +1177,6 @@
       });
     }
 
-    /* ================= MÃ QR QUÉT ĐƯỢC 100% BẰNG ZALO/CAMERA ================= */
     function openQrModal() {
       const currentUrl = window.location.href;
       document.getElementById('custom-qr-url').value = currentUrl;
