@@ -105,7 +105,7 @@
 
     <!-- REMAINING PRIZES CLOUD COUNTER -->
     <div class="w-full text-center text-[11px] text-amber-300/80 mb-1">
-      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 20 phần thưởng
+      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 10 phần thưởng
     </div>
 
     <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
@@ -159,14 +159,14 @@
       <!-- Opening Countdown Badge -->
       <div id="countdown-overlay" class="hidden absolute z-20 inset-0 flex flex-col items-center justify-center bg-black/60 rounded-full backdrop-blur-[2px]">
         <div id="countdown-number" class="text-5xl font-black font-kiemhiep text-yellow-300 drop-shadow-[0_0_15px_#ffd700]">8</div>
-        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">VẬN CÔNG PHÁ ẤN</div>
+        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">ĐANG ĐỤC KÉT GIA LONG</div>
       </div>
     </div>
 
     <!-- PROGRESS BAR -->
     <div id="progress-wrapper" class="w-full px-4 mb-4 hidden">
       <div class="flex justify-between items-center text-xs font-bold text-amber-300 mb-1">
-        <span id="progress-status-text">ĐANG TRUYỀN CHÂN KHÍ...</span>
+        <span id="progress-status-text">Đang rặn quà từ Bình Bú....</span>
         <span id="progress-percentage">0%</span>
       </div>
       <div class="w-full h-3.5 bg-black/80 rounded-full p-0.5 border border-amber-600/80 shadow-inner overflow-hidden">
@@ -206,7 +206,7 @@
       </div>
 
       <div class="flex justify-between items-center text-[11px] text-amber-300/80 mb-2 px-1">
-        <span>Danh mục 20 phần thưởng đang chờ khai mở:</span>
+        <span>Danh mục 10 phần thưởng đang chờ khai mở:</span>
         <span class="font-bold text-yellow-300">Còn lại: <b id="public-prize-remaining" class="text-emerald-400">20</b></span>
       </div>
 
@@ -398,7 +398,7 @@
               <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Còn: 20 phần</span>
             </div>
             <button onclick="adminResetDefaultPrizes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
-              Khôi phục 20 quà chuẩn
+              Khôi phục 10 quà chuẩn
             </button>
           </div>
           <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">
@@ -417,9 +417,12 @@
               <select id="new-prize-tag" class="col-span-4 px-1 py-1.5 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs font-semibold">
                 <option value="tag_dacbiet">Tag: Đặc Biệt</option>
                 <option value="tag_nhat">Tag: Giải Nhất</option>
-                <option value="tag_nhi_ba">Tag: Nhì / Ba</option>
-                <option value="tag_khuyenkhich">Tag: Khuyến Khích</option>
-                <option value="tag_kyniem">Tag: Kỷ Niệm</option>
+                <option value="tag_nhi">Tag: Giải Nhì</option>
+                <option value="tag_ba">Tag: Giải Ba</option>
+                <option value="tag_ingame">Tag: Giải Ingame</option>
+                <option value="tag_tienmat">Tag: Giải Tiền Mặt</option>
+                <option value="tag_khuyenkhich">Tag: Giải Khuyến Khích</option>
+                <option value="tag_kyniem">Tag: Kỷ Niệm Đen Đủi</option>
               </select>
               <input type="number" id="new-prize-qty" value="1" min="1" max="50" class="col-span-2 px-1 py-1.5 text-center rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs">
             </div>
@@ -439,10 +442,13 @@
 
           <div class="mb-2">
             <select id="admin-quote-tag-select" onchange="renderAdminQuotes()" class="w-full px-2 py-1.5 rounded-xl bg-black/70 border border-amber-600 text-yellow-200 text-xs font-bold">
-              <option value="tag_dacbiet">Tag: Giải Đặc Biệt (Tiền Mặt 1 Triệu)</option>
-              <option value="tag_nhat">Tag: Giải Nhất (500k & 100k Xu)</option>
-              <option value="tag_nhi_ba">Tag: Giải Nhì & Ba (50k & 30k Xu)</option>
+              <option value="tag_dacbiet">Tag: Giải Đặc Biệt (100K Xu Sever)</option>
+              <option value="tag_nhat">Tag: Giải Nhất (50K Xu Sever)</option>
+              <option value="tag_nhi">Tag: Giải Nhì (30k Xu Sever)</option>
+              <option value="tag_ba">Tag: Giải Ba (10k Xu 2 Giải)</option>
               <option value="tag_khuyenkhich">Tag: Giải Khuyến Khích (10k Xu)</option>
+              <option value="tag_tienmat">Tag: Giải Tiền Mặt (500k & 1000K)</option>
+              <option value="tag_ingame">Tag: Giải InGame (Vật phẩm trong game)</option>
               <option value="tag_kyniem">Tag: Quà Kỷ Niệm / An Ủi Offline</option>
             </select>
           </div>
