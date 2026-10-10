@@ -105,7 +105,7 @@
 
     <!-- REMAINING PRIZES CLOUD COUNTER -->
     <div class="w-full text-center text-[11px] text-amber-300/80 mb-1">
-      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 10 phần thưởng
+      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 15 phần thưởng
     </div>
 
     <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
@@ -159,7 +159,7 @@
       <!-- Opening Countdown Badge -->
       <div id="countdown-overlay" class="hidden absolute z-20 inset-0 flex flex-col items-center justify-center bg-black/60 rounded-full backdrop-blur-[2px]">
         <div id="countdown-number" class="text-5xl font-black font-kiemhiep text-yellow-300 drop-shadow-[0_0_15px_#ffd700]">8</div>
-        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">ĐANG ĐỤC KÉT GIA LONG</div>
+        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">ĐANG ĐỤC KÉT BẢO RƯƠNG GIA LONG</div>
       </div>
     </div>
 
@@ -182,7 +182,7 @@
     </div>
 
     <div class="mt-3 text-center text-xs text-amber-300/70 italic px-4">
-      "Nhân phẩm tại tâm - Giải thưởng tại vận - Cơ cấu tại AD Bình"
+      "Nhân phẩm tại tâm - Giải lớn thì may - Xui quá chửi lol Bình Bú"
     </div>
 
   </main>
@@ -206,7 +206,7 @@
       </div>
 
       <div class="flex justify-between items-center text-[11px] text-amber-300/80 mb-2 px-1">
-        <span>Danh mục 10 phần thưởng đang chờ khai mở:</span>
+        <span>Danh mục 15 phần thưởng đang chờ khai mở:</span>
         <span class="font-bold text-yellow-300">Còn lại: <b id="public-prize-remaining" class="text-emerald-400">20</b></span>
       </div>
 
@@ -398,7 +398,7 @@
               <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Còn: 20 phần</span>
             </div>
             <button onclick="adminResetDefaultPrizes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
-              Khôi phục 10 quà chuẩn
+              Khôi phục 20 quà chuẩn
             </button>
           </div>
           <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">
@@ -442,14 +442,14 @@
 
           <div class="mb-2">
             <select id="admin-quote-tag-select" onchange="renderAdminQuotes()" class="w-full px-2 py-1.5 rounded-xl bg-black/70 border border-amber-600 text-yellow-200 text-xs font-bold">
-              <option value="tag_dacbiet">Tag: Giải Đặc Biệt (100K Xu Sever)</option>
-              <option value="tag_nhat">Tag: Giải Nhất (50K Xu Sever)</option>
-              <option value="tag_nhi">Tag: Giải Nhì (30k Xu Sever)</option>
-              <option value="tag_ba">Tag: Giải Ba (10k Xu 2 Giải)</option>
-              <option value="tag_khuyenkhich">Tag: Giải Khuyến Khích (10k Xu)</option>
-              <option value="tag_tienmat">Tag: Giải Tiền Mặt (500k & 1000K)</option>
-              <option value="tag_ingame">Tag: Giải InGame (Vật phẩm trong game)</option>
-              <option value="tag_kyniem">Tag: Quà Kỷ Niệm / An Ủi Offline</option>
+              <option value="tag_dacbiet">Tag: Đặc Biệt</option>
+              <option value="tag_nhat">Tag: Giải Nhất</option>
+              <option value="tag_nhi">Tag: Giải Nhì</option>
+              <option value="tag_ba">Tag: Giải Ba</option>
+              <option value="tag_ingame">Tag: Giải Ingame</option>
+              <option value="tag_tienmat">Tag: Giải Tiền Mặt</option>
+              <option value="tag_khuyenkhich">Tag: Giải Khuyến Khích</option>
+              <option value="tag_kyniem">Tag: Kỷ Niệm Đen Đủi</option>
             </select>
           </div>
 
@@ -561,11 +561,6 @@
       { id: "p13", name: "Quà Lưu Niệm Bang Gia Long 06", tag: "tag_kyniem", score: 20, qty: 1 },
       { id: "p14", name: "Quà Lưu Niệm Bang Gia Long 07", tag: "tag_kyniem", score: 20, qty: 1 },
       { id: "p15", name: "Quà Lưu Niệm Bang Gia Long 08", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p16", name: "Quà Lưu Niệm Bang Gia Long 09", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p17", name: "Quà Lưu Niệm Bang Gia Long 10", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p18", name: "Quà Lưu Niệm Bang Gia Long 11", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p19", name: "Quà Lưu Niệm Bang Gia Long 12", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p20", name: "Quà Lưu Niệm Bang Gia Long 13", tag: "tag_kyniem", score: 20, qty: 1 },
     ];
 
     const DEFAULT_QUOTES = {
@@ -581,23 +576,36 @@
         "Khí vận ngút trời! Anh em đứng dạt ra kẻo hào quang tiền mặt chói mù mắt bây giờ!",
         "Tiền đầy túi thì bia đầy ly! Đại hiệp trúng giải to xin mời tiên phong cạn đáy!"
       ],
-      tag_nhi_ba: [
-        "Đẳng cấp là mãi mãi, phong độ là nhất thời, xin chúc mừng đại hiệp húp trọn xu dưỡng lão!",
-        "Được mấy chục nghìn xu lát nữa vô game đập đồ xịt cũng về tay giáo chủ Bình hết!",
-        "Tự nhiên thấy mình đẹp trai hẳn ra, giải ba giải nhì cũng đủ tiền trả tiền gửi xe và vài ly bia!",
-        "Cao thủ không bằng tranh thủ, ẵm trọn xu bang hội, xin mời tự giác phạt 1 ly!"
+      tag_nhi: [
+        "Giải Nhì sáng chói! Suýt nữa chạm tay vào vương miện nhưng thôi có còn hơn không!",
+        "Đẳng cấp là mãi mãi, phong độ là nhất thời, xin chúc mừng đại hiệp húp trọn Giải Nhì!",
+        "Về nhì trong vinh quang! Đề nghị đại hiệp tự giác đứng dậy phạt 1 ly giao lưu!"
+      ],
+      tag_ba: [
+        "Hạng Ba danh trấn giang hồ, đủ tiền trả tiền gửi xe và làm vài ly bia tưng bừng!",
+        "Cao thủ không bằng tranh thủ, ẵm trọn Giải Ba, anh em bàn tiệc chúc mừng nâng ly!",
+        "Vẫn có quà mang về là nhân phẩm tốt rồi, đừng để AD Bình dụ solo kèo là được!"
+      ],
+      tag_ingame: [
+        "Quà Ingame xịn sò! Lát vô game đập đồ xịt khéo lại cúng trả về tay giáo chủ Bình hết!",
+        "Xu và vật phẩm đầy kho! Tối nay anh em Gia Long chuẩn bị quẩy nát Tống Kim!",
+        "Nhận quà Ingame uy tín, nạp chân khí xong nhớ kéo anh em đi phụ bản nhé đại hiệp!"
+      ],
+      tag_tienmat: [
+        "Tiền tươi thóc thật! Cầm tiền mặt rung rinh thế này tối nay ai dám đọ độ đẹp trai!",
+        "Alo vợ à? Tối nay anh thông đêm nhé! Tiền mặt cầm tay tự tin dấn thân vào tăng 2!",
+        "Bốc trúng tiền mặt là hồng phúc ngàn năm, trích ngay 50k góp quỹ bia tăng 2 nào!"
       ],
       tag_khuyenkhich: [
-        "Giải khuyến khích là hồng phúc ngàn năm, đừng buồn kẻo AD Bình cười vào mặt!",
-        "Tài năng có thừa mà thần may mắn bận đi nhậu bàn khác rồi. Mời làm 1 ly tăng nội lực!",
-        "Vô bao nhiêu rồi cũng cúng lại cho AD Bình hút sạch, bất ngờ gì tầm này!",
-        "Bàn tay vàng trong làng bốc xịt! Không nói nhiều, phạt 1 ly 100% lấy lại sinh lực!"
+        "Giải khuyến khích là lộc rơi lộc vãi, đừng buồn kẻo AD Bình cười vào mặt!",
+        "Tài năng có thừa mà thần may mắn bận đi nhậu bàn bên. Mời làm 1 ly tăng nội lực!",
+        "Bàn tay vàng trong làng giải an ủi! Không nói nhiều, phạt 1 ly 100% lấy lại sinh lực!"
       ],
       tag_kyniem: [
         "Không làm mà đòi có ăn thì chỉ có ăn... quả lừa của AD Bình thôi!",
         "Đen thôi đỏ quên đi! Huynh đệ đã dính bùa lú của môn phái 'Hút Máu Giáo' do Bình sáng lập!",
         "Kiếp nạn thứ 82! Đi ăn tiệc tốn tiền xăng nhận về phần quà kỷ niệm nặng trĩu nỗi đau!",
-        "Nhân phẩm rớt đáy, tự giác cạn ly! Bia này không phải để phạt, mà là để giải hạn nội công!"
+        "Kỷ niệm đen đủi, nhân phẩm rớt đáy! Tự giác cạn 1 ly để giải hạn giải xui!"
       ]
     };
 
@@ -1109,16 +1117,19 @@
       document.getElementById('result-troll-quote').innerText = '"' + record.quote + '"';
 
       const tierBadge = document.getElementById('result-tier-badge');
-      if (record.tag === 'tag_dacbiet') {
-        tierBadge.innerText = "⭐ GIẢI ĐẶC BIỆT HOÀNG KIM ⭐";
-        tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-gradient-to-r from-yellow-300 to-amber-500 text-red-950 shadow-md";
-      } else if (record.tag === 'tag_nhat') {
-        tierBadge.innerText = "🔥 GIẢI NHẤT DANH TRẤN 🔥";
-        tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-amber-500 text-red-950";
-      } else {
-        tierBadge.innerText = "🎁 PHẦN QUÀ GIAO LƯU";
-        tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-stone-700 text-yellow-200";
-      }
+      const badgeConfig = {
+        tag_dacbiet: { text: "⭐ GIẢI ĐẶC BIỆT HOÀNG KIM ⭐", class: "bg-gradient-to-r from-yellow-300 to-amber-500 text-red-950 shadow-md font-black" },
+        tag_nhat: { text: "🔥 GIẢI NHẤT DANH TRẤN 🔥", class: "bg-gradient-to-r from-red-600 to-amber-600 text-yellow-100 font-extrabold" },
+        tag_nhi: { text: "🥈 GIẢI NHÌ VANG DANH 🥈", class: "bg-gradient-to-r from-stone-400 to-slate-200 text-stone-900 font-bold" },
+        tag_ba: { text: "🥉 GIẢI BA HẢO THỦ 🥉", class: "bg-gradient-to-r from-amber-700 to-yellow-800 text-yellow-200 font-bold" },
+        tag_tienmat: { text: "💵 GIẢI TIỀN MẶT TƯƠI 💵", class: "bg-gradient-to-r from-emerald-600 to-green-500 text-white font-bold" },
+        tag_ingame: { text: "⚔️ GIẢI INGAME QUÝ HIẾM ⚔️", class: "bg-gradient-to-r from-cyan-700 to-blue-600 text-cyan-100 font-bold" },
+        tag_khuyenkhich: { text: "🎁 GIẢI KHUYẾN KHÍCH 🎁", class: "bg-stone-800 border border-amber-600 text-amber-300 font-bold" },
+        tag_kyniem: { text: "🖤 KỶ NIỆM ĐEN ĐỦI 🖤", class: "bg-stone-900 border border-stone-600 text-stone-400 font-bold" }
+      };
+      const badge = badgeConfig[record.tag] || { text: "🎁 PHẦN QUÀ GIAO LƯU", class: "bg-stone-700 text-yellow-200" };
+      tierBadge.innerText = badge.text;
+      tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-2 " + badge.class;
 
       document.getElementById('modal-result').classList.remove('hidden');
     }
@@ -1221,9 +1232,12 @@
             <select onchange="adminUpdatePrizeTag(${index}, this.value)" class="px-1.5 py-0.5 rounded bg-black/80 border border-amber-700 text-yellow-300 text-[10px] font-semibold">
               <option value="tag_dacbiet" ${p.tag === 'tag_dacbiet' ? 'selected' : ''}>Tag: Đặc Biệt</option>
               <option value="tag_nhat" ${p.tag === 'tag_nhat' ? 'selected' : ''}>Tag: Giải Nhất</option>
-              <option value="tag_nhi_ba" ${p.tag === 'tag_nhi_ba' ? 'selected' : ''}>Tag: Nhì / Ba</option>
-              <option value="tag_khuyenkhich" ${p.tag === 'tag_khuyenkhich' ? 'selected' : ''}>Tag: Khuyến Khích</option>
-              <option value="tag_kyniem" ${p.tag === 'tag_kyniem' ? 'selected' : ''}>Tag: Kỷ Niệm</option>
+              <option value="tag_nhi" ${p.tag === 'tag_nhi' ? 'selected' : ''}>Tag: Giải Nhì</option>
+              <option value="tag_ba" ${p.tag === 'tag_ba' ? 'selected' : ''}>Tag: Giải Ba</option>
+              <option value="tag_ingame" ${p.tag === 'tag_ingame' ? 'selected' : ''}>Tag: Giải Ingame</option>
+              <option value="tag_tienmat" ${p.tag === 'tag_tienmat' ? 'selected' : ''}>Tag: Giải Tiền Mặt</option>
+              <option value="tag_khuyenkhich" ${p.tag === 'tag_khuyenkhich' ? 'selected' : ''}>Tag: Giải Khuyến Khích</option>
+              <option value="tag_kyniem" ${p.tag === 'tag_kyniem' ? 'selected' : ''}>Tag: Kỷ Niệm Đen Đủi</option>
             </select>
           </div>
         `;
@@ -1272,7 +1286,8 @@
     function adminUpdatePrizeTag(idx, newTag) {
       if (state.prizes[idx]) {
         state.prizes[idx].tag = newTag;
-        state.prizes[idx].score = newTag === 'tag_dacbiet' ? 100 : (newTag === 'tag_nhat' ? 85 : (newTag === 'tag_nhi_ba' ? 65 : (newTag === 'tag_khuyenkhich' ? 50 : 20)));
+        const tagScores = { tag_dacbiet: 100, tag_nhat: 90, tag_nhi: 80, tag_ba: 70, tag_tienmat: 85, tag_ingame: 60, tag_khuyenkhich: 40, tag_kyniem: 20 };
+        state.prizes[idx].score = tagScores[newTag] || 30;
         syncPrizesToStorageAndCloud();
       }
     }
@@ -1303,7 +1318,7 @@
         id: "p_" + Date.now(),
         name: name,
         tag: tag,
-        score: tag === 'tag_dacbiet' ? 100 : (tag === 'tag_nhat' ? 85 : (tag === 'tag_nhi_ba' ? 65 : (tag === 'tag_khuyenkhich' ? 50 : 20))),
+        score: ({ tag_dacbiet: 100, tag_nhat: 90, tag_nhi: 80, tag_ba: 70, tag_tienmat: 85, tag_ingame: 60, tag_khuyenkhich: 40, tag_kyniem: 20 })[tag] || 30,
         qty: qty
       });
 
@@ -1429,21 +1444,19 @@
         const qty = p.qty !== undefined ? p.qty : 1;
         totalRemaining += qty;
 
-        let badgeText = "Quà Lưu Niệm";
-        let badgeStyle = "bg-stone-800 border-stone-600 text-stone-300";
-        if (p.tag === 'tag_dacbiet') {
-          badgeText = "ĐẶC BIỆT";
-          badgeStyle = "bg-gradient-to-r from-yellow-500 to-amber-600 text-red-950 font-black border-yellow-300";
-        } else if (p.tag === 'tag_nhat') {
-          badgeText = "GIẢI NHẤT";
-          badgeStyle = "bg-red-800 text-yellow-200 border-red-500";
-        } else if (p.tag === 'tag_nhi_ba') {
-          badgeText = "NHÌ / BA";
-          badgeStyle = "bg-amber-900 text-amber-200 border-amber-600";
-        } else if (p.tag === 'tag_khuyenkhich') {
-          badgeText = "KHUYẾN KHÍCH";
-          badgeStyle = "bg-blue-950 text-blue-200 border-blue-600";
-        }
+        const tagMap = {
+          tag_dacbiet: { text: "ĐẶC BIỆT", style: "bg-gradient-to-r from-yellow-500 to-amber-600 text-red-950 font-black border-yellow-300" },
+          tag_nhat: { text: "GIẢI NHẤT", style: "bg-red-800 text-yellow-200 border-red-500 font-bold" },
+          tag_nhi: { text: "GIẢI NHÌ", style: "bg-slate-300 text-slate-900 border-slate-400 font-bold" },
+          tag_ba: { text: "GIẢI BA", style: "bg-amber-900 text-amber-200 border-amber-600 font-bold" },
+          tag_tienmat: { text: "TIỀN MẶT", style: "bg-emerald-900 text-emerald-200 border-emerald-500 font-bold" },
+          tag_ingame: { text: "INGAME", style: "bg-cyan-950 text-cyan-200 border-cyan-500 font-bold" },
+          tag_khuyenkhich: { text: "KHUYẾN KHÍCH", style: "bg-stone-800 text-amber-300 border-amber-700 font-bold" },
+          tag_kyniem: { text: "KỶ NIỆM ĐEN ĐỦI", style: "bg-stone-900 text-stone-400 border-stone-700 font-bold" }
+        };
+        const curTag = tagMap[p.tag] || { text: "QUÀ TẶNG", style: "bg-stone-800 border-stone-600 text-stone-300" };
+        const badgeText = curTag.text;
+        const badgeStyle = curTag.style;
 
         const item = document.createElement('div');
         item.className = "flex items-center justify-between p-2.5 rounded-2xl bg-black/60 border border-amber-900/60 shadow-sm";
