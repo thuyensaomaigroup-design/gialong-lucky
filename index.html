@@ -105,7 +105,7 @@
 
     <!-- REMAINING PRIZES CLOUD COUNTER -->
     <div class="w-full text-center text-[11px] text-amber-300/80 mb-1">
-      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">0</b> phần thưởng
+      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">0</b> / <span id="total-count">0</span> phần thưởng
     </div>
 
     <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
@@ -206,7 +206,7 @@
       </div>
 
       <div class="flex justify-between items-center text-[11px] text-amber-300/80 mb-2 px-1">
-        <span>Danh mục phần thưởng đang chờ khai mở:</span>
+        <span>Danh mục phần thưởng (kho đã chốt):</span>
         <span class="font-bold text-yellow-300">Còn lại: <b id="public-prize-remaining" class="text-emerald-400">0</b></span>
       </div>
 
@@ -224,7 +224,7 @@
 
   <!-- MODAL: RESULT POPUP -->
   <div id="modal-result" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
-    <div class="w-full max-w-sm rounded-3xl bg-wood border-2 border-yellow-500/90 p-5 text-center relative shadow-[0_0_50px_rgba(255,215,0,0.4)]">
+    <div class="w-full max-w-sm rounded-3xl bg-wood border-2 border-yellow-500/90 p-5 text-center relative shadow-[0_0_50px_rgba(255,215,0,0.4)] animate-scaleUp">
       <div class="text-3xl mb-1">🎉 🎊 🎉</div>
       <h3 class="text-xs uppercase font-extrabold tracking-widest text-amber-400 mb-1">GIA LONG BẢO RƯƠNG KHAI MỞ</h3>
       <h2 id="result-user-title" class="text-sm text-yellow-200 font-bold mb-3">Đại hiệp vô danh</h2>
@@ -234,7 +234,7 @@
           GIẢI THƯỞNG
         </div>
         <div id="result-prize-name" class="text-2xl font-black font-kiemhiep text-gold-gradient drop-shadow-[0_2px_10px_rgba(255,215,0,0.5)]">
-          Phần Thưởng
+          1.000.000 VNĐ
         </div>
       </div>
 
@@ -291,7 +291,7 @@
       </div>
 
       <div class="mt-3 pt-2 border-t border-amber-900/50 flex justify-between items-center text-xs">
-        <span class="text-amber-300/80">Tổng số người đã trúng: <b id="lb-total-count" class="text-yellow-300">0</b> người</span>
+        <span class="text-amber-300/80">Tổng số người đã trúng: <b id="lb-total-count" class="text-yellow-300">0</b>/<span id="lb-total-max">0</span></span>
         <button onclick="closeLeaderboard()" class="px-3 py-1.5 rounded-lg bg-amber-700 text-yellow-100 font-bold">Xong</button>
       </div>
     </div>
@@ -313,13 +313,13 @@
 
       <div class="flex-1 overflow-y-auto space-y-4 pr-1.5 custom-scrollbar text-xs">
         
-        <!-- SECTION 0: ONLINE USERS PRESENCE -->
+        <!-- SECTION 0: ONLINE USERS PRESENCE (THỐNG KÊ QUÂN SỐ VÀO BÀN TIỆC) -->
         <div class="p-3 rounded-2xl bg-black/50 border border-emerald-700/60 shadow">
           <div class="flex justify-between items-center mb-1.5">
             <h4 class="font-bold text-emerald-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
               <span>👥</span> QUÂN SỐ ĐANG VÀO TIỆC (REALTIME)
             </h4>
-            <span class="text-xs font-bold text-yellow-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/60" id="admin-online-badge">0</span>
+            <span class="text-xs font-bold text-yellow-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/60" id="admin-online-badge">0 máy</span>
           </div>
           <p class="text-[10px] text-emerald-200/70 mb-2">
             Danh sách thiết bị anh em đang quét mã QR có mặt trong bàn tiệc:
@@ -332,7 +332,7 @@
         <!-- SECTION 1: REMOTE REALTIME CONTROLS -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <h4 class="font-bold text-amber-300 mb-2 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-            <span>⚡</span> ĐIỀU KHIỂN ĐỒNG LOẠT
+            <span>⚡</span> ĐIỀU KHIỂN ĐỒNG LOẠT (TẤT CẢ ĐIỆN THOẠI)
           </h4>
           <div class="grid grid-cols-2 gap-2 mb-3">
             <button onclick="adminSetLock(false)" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-700 to-green-600 text-white font-bold text-xs hover:brightness-110 shadow flex items-center justify-center gap-1.5">
@@ -372,7 +372,7 @@
           </p>
         </div>
 
-        <!-- SECTION 2.5: QUẢN LÝ NGƯỜI ĐÃ MỞ -->
+        <!-- SECTION 2.5: QUẢN LÝ NGƯỜI ĐÃ MỞ (RESET TỪNG NGƯỜI ĐỂ TEST) -->
         <div class="p-3 rounded-2xl bg-black/50 border border-yellow-700/60">
           <div class="flex justify-between items-center mb-2">
             <h4 class="font-bold text-yellow-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
@@ -381,53 +381,58 @@
             <span class="text-[10px] text-amber-400 font-bold" id="admin-winners-count">0 người</span>
           </div>
           <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">
-            Khi test, bạn có thể bấm "Cho Mở Lại" để xóa lượt khóa của riêng người đó mà không cần xóa cả hệ thống:
+            "Hoàn & Mở Lại" = trả đúng 1 suất quà của người đó về kho + cho máy đó bốc lại (số lượng luôn khớp):
           </p>
           <div id="admin-winners-manage-list" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1 mb-1">
             <div class="text-[10px] text-stone-400 italic p-1">Chưa có ai mở rương.</div>
           </div>
         </div>
 
-        <!-- SECTION 3: REWARD LIST & TAG ASSIGNMENT -->
+        <!-- SECTION 3A: KHO ĐANG CHẠY (KHOÁ CỨNG - CHỈ XEM & ĐỐI SOÁT) -->
+        <div class="p-3 rounded-2xl bg-black/50 border border-emerald-700/70">
+          <div class="flex justify-between items-center mb-1">
+            <h4 class="font-bold text-emerald-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>🔐</span> KHO ĐANG CHẠY (ĐÃ KHOÁ CỨNG)
+            </h4>
+            <span class="text-[10px] text-yellow-300 font-bold" id="admin-audit-summary">Chưa chốt</span>
+          </div>
+          <p class="text-[10px] text-emerald-200/70 mb-2 leading-tight">
+            Không sửa tay được. Mỗi dòng luôn phải thoả: <b>Trúng + Còn = Chốt</b>. Sai sẽ hiện đỏ.
+          </p>
+          <div id="admin-audit-warning" class="hidden mb-2 p-2 rounded-lg bg-rose-900 border border-rose-400 text-rose-100 text-[11px] font-bold"></div>
+          <div id="admin-audit-list" class="space-y-1 max-h-56 overflow-y-auto custom-scrollbar pr-1"></div>
+        </div>
+
+        <!-- SECTION 3B: CẤU HÌNH (BẢN NHÁP - CHỈ ÁP DỤNG KHI CHỐT KHO) -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
             <div>
               <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-                <span>🎁</span> CẤU HÌNH KHO GIẢI THƯỞNG
+                <span>🎁</span> CẤU HÌNH KHO GIẢI THƯỞNG (BẢN NHÁP)
               </h4>
-              <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Còn: 0 phần</span>
+              <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Cấu hình: 0 phần</span>
             </div>
             <button onclick="adminResetDefaultPrizes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
-              Khôi phục kho mẫu ban đầu
+              Nạp quà mẫu
             </button>
           </div>
           <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">
-            Bạn có thể đổi tên, chọn Tag và số lượng cho từng món quà. Khi sửa sẽ tự lưu và đồng bộ:
+            Sửa ở đây KHÔNG ảnh hưởng vòng đang chạy. Sửa xong bấm <b>"CHỐT KHO &amp; BẮT ĐẦU VÒNG MỚI"</b> ở cuối bảng để áp dụng.
           </p>
+          <div id="admin-config-note" class="hidden mb-2 p-2 rounded-lg bg-amber-900/70 border border-yellow-500 text-yellow-100 text-[10px] font-bold"></div>
 
           <div id="admin-prizes-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1 mb-3">
-            <!-- Render via JS -->
           </div>
 
-          <!-- FORM THÊM QUÀ MỚI -->
           <div class="p-2 rounded-xl bg-amber-950/40 border border-amber-900/80 flex flex-col gap-1.5">
             <span class="font-bold text-amber-300 text-[10px] uppercase">+ THÊM PHẦN QUÀ MỚI:</span>
             <div class="grid grid-cols-12 gap-1.5">
               <input type="text" id="new-prize-name" placeholder="Tên quà (ví dụ: Nón Bảo Hiểm, 200k...)" class="col-span-6 px-2 py-1.5 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs">
-              <select id="new-prize-tag" class="col-span-4 px-1 py-1.5 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs font-semibold">
-                <option value="tag_dacbiet">Tag: Đặc Biệt</option>
-                <option value="tag_nhat">Tag: Giải Nhất</option>
-                <option value="tag_nhi">Tag: Giải Nhì</option>
-                <option value="tag_ba">Tag: Giải Ba</option>
-                <option value="tag_ingame">Tag: Giải Ingame</option>
-                <option value="tag_tienmat">Tag: Giải Tiền Mặt</option>
-                <option value="tag_khuyenkhich">Tag: Giải Khuyến Khích</option>
-                <option value="tag_kyniem">Tag: Kỷ Niệm Đen Đủi</option>
-              </select>
-              <input type="number" id="new-prize-qty" value="1" min="1" max="50" class="col-span-2 px-1 py-1.5 text-center rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs">
+              <select id="new-prize-tag" class="col-span-4 px-1 py-1.5 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs font-semibold"></select>
+              <input type="number" id="new-prize-qty" value="1" min="1" max="99" class="col-span-2 px-1 py-1.5 text-center rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs">
             </div>
             <button onclick="adminAddPrize()" class="w-full py-1.5 rounded-lg bg-gradient-to-r from-amber-700 to-yellow-600 text-red-950 font-bold text-xs shadow hover:brightness-110">
-              Thêm Vào Kho Quà
+              Thêm Vào Cấu Hình
             </button>
           </div>
         </div>
@@ -465,24 +470,19 @@
           </div>
         </div>
 
-        <!-- SECTION 5: SYSTEM RESET & TEST -->
+        <!-- SECTION 5: CHỐT KHO & VÒNG MỚI -->
         <div class="p-3 rounded-2xl bg-red-950/40 border border-red-800/80">
           <h4 class="font-bold text-rose-300 mb-1 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-            <span>⚠️</span> ĐIỀU KHIỂN & ĐẶT LẠI DỮ LIỆU
+            <span>⚠️</span> CHỐT KHO & ĐẶT LẠI
           </h4>
-          <p class="text-[10px] text-rose-200/80 mb-2">
-            Dành cho BTC khi chạy thử trước giờ tiệc hoặc bắt đầu tiệc chính thức.
+          <p class="text-[10px] text-rose-200/80 mb-2 leading-tight">
+            Chốt kho = chép CẤU HÌNH thành kho khoá cứng, xoá kết quả cũ, mọi máy được mở lại lượt, rương tự KHOÁ.
           </p>
-          <div class="grid grid-cols-2 gap-2 mb-2">
-            <button onclick="adminResetCurrentDevice()" class="py-2 rounded-xl bg-amber-900 hover:bg-amber-800 border border-amber-600 text-yellow-200 font-bold text-[11px]">
-              🔁 Mở Lại Lượt Riêng Máy Này
-            </button>
-            <button onclick="adminSyncDefaultCloud()" class="py-2 rounded-xl bg-blue-900 hover:bg-blue-800 border border-blue-500 text-blue-100 font-bold text-[11px]">
-              ☁️ Nạp Kho Mẫu Lên Cloud
-            </button>
-          </div>
-          <button onclick="adminResetAllCloud()" class="w-full py-2.5 rounded-xl bg-rose-900/90 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
-            🔄 BẮT ĐẦU VÒNG TIỆC MỚI (RESET LƯỢT MỞ, MÁY & BẢNG VINH DANH - GIỮ NGUYÊN QUÀ ĐÃ CÀI)
+          <button onclick="adminResetCurrentDevice()" class="w-full mb-2 py-2 rounded-xl bg-amber-900 hover:bg-amber-800 border border-amber-600 text-yellow-200 font-bold text-[11px]">
+            🔁 Hoàn quà & mở lại lượt cho MÁY NÀY (dùng khi test)
+          </button>
+          <button onclick="adminStartNewRound()" class="w-full py-2.5 rounded-xl bg-rose-900/90 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
+            🔐 CHỐT KHO & BẮT ĐẦU VÒNG MỚI
           </button>
         </div>
 
@@ -501,7 +501,7 @@
   <div id="modal-qr" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-xs rounded-3xl bg-wood border-2 border-yellow-500 p-5 text-center shadow-2xl">
       <h3 class="font-kiemhiep font-bold text-amber-300 text-base mb-1">MÃ QUÉT VÀO BÀN TIỆC</h3>
-      <p class="text-xs text-amber-200/80 mb-3">Quét bằng Zalo hoặc Camera điện thoại</p>
+      <p class="text-xs text-amber-200/80 mb-3">Cho 20 anh em quét bằng Zalo hoặc Camera</p>
       
       <div class="bg-white p-3 rounded-2xl inline-block mb-3 shadow-lg">
         <div id="qr-code-box" class="w-48 h-48 mx-auto flex items-center justify-center"></div>
@@ -519,9 +519,9 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <!-- ================= JAVASCRIPT LOGIC (v2 - KHOÁ CỨNG GIẢI THƯỞNG) ================= -->
   <script>
-    /* ================= BỘ ÂM THANH GAME (WEB AUDIO API) ================= */
+    /* ================= BỘ ÂM THANH GAME (WEB AUDIO API - KHÔNG LO CHẶN LINK) ================= */
     let audioCtx = null;
     function initAudio() {
       if (!audioCtx) {
@@ -539,6 +539,7 @@
         const now = audioCtx.currentTime;
 
         if (type === 'tick') {
+          // Tiếng gõ nhịp kịch tính khi đang đục rương
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'triangle';
@@ -551,6 +552,7 @@
           osc.start(now);
           osc.stop(now + 0.08);
         } else if (type === 'open') {
+          // Tiếng rương bung nắp kim loại vang dội
           const osc1 = audioCtx.createOscillator();
           const osc2 = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -570,6 +572,7 @@
           osc1.stop(now + 0.5);
           osc2.stop(now + 0.5);
         } else if (type === 'win') {
+          // Tiếng nhạc pháo hoa chiến thắng
           const notes = [440, 554.37, 659.25, 880, 1108.73];
           notes.forEach((freq, idx) => {
             const osc = audioCtx.createOscillator();
@@ -583,15 +586,66 @@
             osc.start(now + idx * 0.09);
             osc.stop(now + idx * 0.09 + 0.5);
           });
+        } else if (type === 'unlock') {
+          // Tiếng phong ấn mở
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.25);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
         }
       } catch (e) {
         console.warn("Lỗi phát âm thanh:", e);
       }
     }
 
-    /* ================= CẤU HÌNH BAN TỔ CHỨC ================= */
-    const PIN_ADMIN = "1010";
+    /* =====================================================================
+       0. CẤU HÌNH TẬP TRUNG — MỌI THAM SỐ VẬN HÀNH SỬA Ở ĐÂY (v2 khoá cứng)
+       ===================================================================== */
+    const APP_CONFIG = {
+      VERSION: "v2-khoa-cung-10-10",
+      PIN_ADMIN: "1010",
+      DEFAULT_OPEN_SECONDS: 8,      // thời gian hoạt ảnh đục rương mặc định
+      CLAIM_MAX_RETRY: 6,           // số lần thử lại khi mạng nghẽn (KHÔNG bao giờ bốc offline)
+      CLAIM_RETRY_BASE_MS: 400,     // nhịp chờ tăng dần giữa các lần thử
+      CLAIM_JITTER_MS: 1200,        // trễ ngẫu nhiên trước khi bốc -> 20 máy không đập vào máy chủ cùng 1 tích tắc
+      CLAIM_WAIT_WARN_MS: 8000,     // quá thời gian này thì báo "mạng chậm, đừng tắt trang"
+      ONE_DRAW_PER_NAME: true,      // 1 TÊN = 1 lượt (chặn đổi trình duyệt / ẩn danh để bốc lại)
+      ROOT: "room_v2",              // nhánh dữ liệu mới; bản cũ (room/...) bị khoá vĩnh viễn
+      LEGACY_ROOT: "room"
+    };
+    const PIN_ADMIN = APP_CONFIG.PIN_ADMIN;
 
+    const PATH = {
+      status: APP_CONFIG.ROOT + "/status",
+      config: APP_CONFIG.ROOT + "/config/prizes",     // CẤU HÌNH GỐC (số lượng ban đầu) — chỉ BTC sửa
+      draw:   APP_CONFIG.ROOT + "/draw",              // KHO ĐÃ CHỐT của vòng đang chạy: pool + claims + byName
+      quotes: APP_CONFIG.ROOT + "/quotes",
+      online: APP_CONFIG.ROOT + "/online_users",
+      legacyStatus: APP_CONFIG.LEGACY_ROOT + "/status",
+      legacyMaster: APP_CONFIG.LEGACY_ROOT + "/master_prizes",
+      legacyQuotes: APP_CONFIG.LEGACY_ROOT + "/quotes"
+    };
+
+    /* Bảng TAG duy nhất: nhãn, điểm, kiểu hiển thị (sửa 1 chỗ dùng mọi nơi) */
+    const TAGS = {
+      tag_dacbiet:     { label: "Đặc Biệt",          score: 100, resultText: "⭐ GIẢI ĐẶC BIỆT HOÀNG KIM ⭐", resultClass: "bg-gradient-to-r from-yellow-300 to-amber-500 text-red-950 shadow-md font-black", publicText: "ĐẶC BIỆT",        publicClass: "bg-gradient-to-r from-yellow-500 to-amber-600 text-red-950 font-black border-yellow-300" },
+      tag_nhat:        { label: "Giải Nhất",         score: 90,  resultText: "🔥 GIẢI NHẤT DANH TRẤN 🔥",   resultClass: "bg-gradient-to-r from-red-600 to-amber-600 text-yellow-100 font-extrabold",  publicText: "GIẢI NHẤT",       publicClass: "bg-red-800 text-yellow-200 border-red-500 font-bold" },
+      tag_nhi:         { label: "Giải Nhì",          score: 80,  resultText: "🥈 GIẢI NHÌ VANG DANH 🥈",    resultClass: "bg-gradient-to-r from-stone-400 to-slate-200 text-stone-900 font-bold",     publicText: "GIẢI NHÌ",        publicClass: "bg-slate-300 text-slate-900 border-slate-400 font-bold" },
+      tag_ba:          { label: "Giải Ba",           score: 70,  resultText: "🥉 GIẢI BA HẢO THỦ 🥉",       resultClass: "bg-gradient-to-r from-amber-700 to-yellow-800 text-yellow-200 font-bold",    publicText: "GIẢI BA",         publicClass: "bg-amber-900 text-amber-200 border-amber-600 font-bold" },
+      tag_ingame:      { label: "Giải Ingame",       score: 60,  resultText: "⚔️ GIẢI INGAME QUÝ HIẾM ⚔️",  resultClass: "bg-gradient-to-r from-cyan-700 to-blue-600 text-cyan-100 font-bold",         publicText: "INGAME",          publicClass: "bg-cyan-950 text-cyan-200 border-cyan-500 font-bold" },
+      tag_tienmat:     { label: "Giải Tiền Mặt",     score: 85,  resultText: "💵 GIẢI TIỀN MẶT TƯƠI 💵",    resultClass: "bg-gradient-to-r from-emerald-600 to-green-500 text-white font-bold",       publicText: "TIỀN MẶT",        publicClass: "bg-emerald-900 text-emerald-200 border-emerald-500 font-bold" },
+      tag_khuyenkhich: { label: "Giải Khuyến Khích", score: 40,  resultText: "🎁 GIẢI KHUYẾN KHÍCH 🎁",     resultClass: "bg-stone-800 border border-amber-600 text-amber-300 font-bold",             publicText: "KHUYẾN KHÍCH",    publicClass: "bg-stone-800 text-amber-300 border-amber-700 font-bold" },
+      tag_kyniem:      { label: "Kỷ Niệm Đen Đủi",   score: 20,  resultText: "🖤 KỶ NIỆM ĐEN ĐỦI 🖤",       resultClass: "bg-stone-900 border border-stone-600 text-stone-400 font-bold",            publicText: "KỶ NIỆM ĐEN ĐỦI", publicClass: "bg-stone-900 text-stone-400 border-stone-700 font-bold" }
+    };
+
+    /* CẤU HÌNH FIREBASE REALTIME DATABASE (giữ nguyên project cũ) */
     const firebaseConfig = {
       apiKey: "AIzaSyD-qz9Ze4_-Rz2Rzc5sz5XpB1CHyBgDLo0",
       authDomain: "gialong-lucky.firebaseapp.com",
@@ -602,30 +656,14 @@
       appId: "1:562014117337:web:99f8fb6a4fb323c8714dc8"
     };
 
-    let isFirebaseReady = false;
-    let db = null;
-    let deviceId = localStorage.getItem("gialong_device_id_v1");
-    if (!deviceId) {
-      deviceId = "dev_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now().toString(36);
-      localStorage.setItem("gialong_device_id_v1", deviceId);
-    }
-
     const DEFAULT_PRIZES = [
-      { id: "p1", name: "1.000.000 VNĐ (Tiền Mặt)", tag: "tag_dacbiet", score: 100, qty: 1 },
-      { id: "p2", name: "500.000 VNĐ (Tiền Mặt)", tag: "tag_nhat", score: 90, qty: 1 },
-      { id: "p3", name: "100.000 Xu Server", tag: "tag_nhat", score: 85, qty: 1 },
-      { id: "p4", name: "50.000 Xu Server", tag: "tag_nhi", score: 75, qty: 1 },
-      { id: "p5", name: "30.000 Xu Server", tag: "tag_nhi", score: 65, qty: 1 },
-      { id: "p6", name: "10.000 Xu Khuyến Khích (Giải A)", tag: "tag_khuyenkhich", score: 50, qty: 1 },
-      { id: "p7", name: "10.000 Xu Khuyến Khích (Giải B)", tag: "tag_khuyenkhich", score: 50, qty: 1 },
-      { id: "p8", name: "Quà Lưu Niệm Bang Gia Long 01", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p9", name: "Quà Lưu Niệm Bang Gia Long 02", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p10", name: "Quà Lưu Niệm Bang Gia Long 03", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p11", name: "Quà Lưu Niệm Bang Gia Long 04", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p12", name: "Quà Lưu Niệm Bang Gia Long 05", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p13", name: "Quà Lưu Niệm Bang Gia Long 06", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p14", name: "Quà Lưu Niệm Bang Gia Long 07", tag: "tag_kyniem", score: 20, qty: 1 },
-      { id: "p15", name: "Quà Lưu Niệm Bang Gia Long 08", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p1",  name: "1.000.000 VNĐ (Tiền Mặt)", tag: "tag_dacbiet", qty: 1 },
+      { id: "p2",  name: "500.000 VNĐ (Tiền Mặt)", tag: "tag_nhat", qty: 1 },
+      { id: "p3",  name: "100.000 Xu Server", tag: "tag_nhat", qty: 1 },
+      { id: "p4",  name: "50.000 Xu Server", tag: "tag_nhi", qty: 1 },
+      { id: "p5",  name: "30.000 Xu Server", tag: "tag_ba", qty: 1 },
+      { id: "p6",  name: "10.000 Xu Khuyến Khích", tag: "tag_khuyenkhich", qty: 2 },
+      { id: "p8",  name: "Quà Lưu Niệm Bang Gia Long", tag: "tag_kyniem", qty: 8 }
     ];
 
     const DEFAULT_QUOTES = {
@@ -674,283 +712,382 @@
       ]
     };
 
+    /* ===================================================================
+       1. LÕI THUẦN (KHÔNG PHỤ THUỘC GIAO DIỆN) — đã kiểm thử tự động
+       Mọi thay đổi kho chỉ đi qua applyClaim / applyRelease bên trong
+       transaction Firebase => nguyên tử: 1 suất quà không thể vào tay 2 người.
+       =================================================================== */
+    /* @@CORE_START */
+    function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+    function toInt(v, d) { const n = parseInt(v, 10); return isNaN(n) ? (d || 0) : n; }
+
+    function slugName(name) {
+      const s = (name || "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      return s || "vo_danh";
+    }
+
+    function tagScore(tag) { return (typeof TAGS !== "undefined" && TAGS[tag]) ? TAGS[tag].score : 30; }
+
+    /* Chuẩn hoá danh sách cấu hình: id duy nhất, không có giá trị undefined (Firebase từ chối undefined) */
+    function normalizeConfig(list) {
+      const out = [];
+      const used = {};
+      (Array.isArray(list) ? list : Object.values(list || {})).forEach((p, i) => {
+        if (!p || !p.name) return;
+        let id = (p.id && /^[A-Za-z0-9_-]+$/.test(p.id)) ? p.id : ("p" + i);
+        let key = id, k = 2;
+        while (used[key]) key = id + "_" + (k++);
+        used[key] = true;
+        const tag = p.tag || "tag_kyniem";
+        out.push({ id: key, name: String(p.name).trim(), tag: tag, score: tagScore(tag), qty: Math.max(0, toInt(p.qty, 1)) });
+      });
+      return out;
+    }
+
+    /* Biến cấu hình gốc thành KHO ĐÃ CHỐT. total = số lượng chốt, qty = còn lại */
+    function buildDrawFromConfig(list, now) {
+      const pool = {};
+      normalizeConfig(list).forEach((p, i) => {
+        pool[p.id] = { name: p.name, tag: p.tag, score: p.score, qty: p.qty, total: p.qty, order: i };
+      });
+      return { round: now, lockedAt: now, pool: pool };
+    }
+
+    function poolToArray(pool) {
+      return Object.keys(pool || {}).map(id => Object.assign({ id: id }, pool[id]))
+        .sort((a, b) => toInt(a.order) - toInt(b.order));
+    }
+
+    function sumField(list, field) {
+      return (list || []).reduce((s, p) => s + Math.max(0, toInt(p[field])), 0);
+    }
+
+    /* HÀM LÕI BỐC QUÀ — chạy bên trong transaction.
+       Kiểm tra theo thứ tự: máy đã bốc? -> tên đã bốc? -> còn suất? -> bốc + trừ + ghi người trúng
+       TRONG CÙNG 1 LẦN GHI. Trả về next=undefined nghĩa là huỷ ghi. */
+    function applyClaim(cur, ctx) {
+      if (cur === null || cur === undefined) return { next: null, result: { code: "NO_POOL" } };
+      if (!cur.pool) return { next: undefined, result: { code: "NO_POOL" } };
+      const claims = cur.claims || {};
+      if (claims[ctx.deviceId]) return { next: undefined, result: { code: "ALREADY", record: claims[ctx.deviceId] } };
+      const byName = cur.byName || {};
+      if (ctx.oneDrawPerName && byName[ctx.nameSlug] && byName[ctx.nameSlug] !== ctx.deviceId) {
+        const other = claims[byName[ctx.nameSlug]];
+        return { next: undefined, result: { code: "NAME_TAKEN", record: other || null } };
+      }
+      const tickets = [];
+      Object.keys(cur.pool).forEach(id => {
+        const q = Math.max(0, toInt(cur.pool[id].qty));
+        for (let i = 0; i < q; i++) tickets.push(id);
+      });
+      if (!tickets.length) return { next: undefined, result: { code: "EMPTY" } };
+
+      const id = tickets[Math.floor(ctx.rand() * tickets.length)];
+      const prize = cur.pool[id];
+      const record = {
+        deviceId: ctx.deviceId,
+        user: ctx.user,
+        nameSlug: ctx.nameSlug,
+        prizeId: id,
+        prize: prize.name || "",
+        tag: prize.tag || "tag_kyniem",
+        score: toInt(prize.score, 50),
+        quote: ctx.pickQuote(prize.tag || "tag_kyniem") || "",
+        round: cur.round || 0,
+        timestamp: ctx.now,
+        time: ctx.time || ""
+      };
+      const next = clone(cur);
+      next.pool[id].qty = Math.max(0, toInt(prize.qty) - 1);
+      next.claims = Object.assign({}, claims, { [ctx.deviceId]: record });
+      next.byName = Object.assign({}, byName, { [ctx.nameSlug]: ctx.deviceId });
+      return { next: next, result: { code: "OK", record: record } };
+    }
+
+    /* Hoàn 1 lượt: trả đúng suất quà về kho + mở lại máy + mở lại tên — cùng 1 lần ghi */
+    function applyRelease(cur, targetDeviceId) {
+      if (!cur || !cur.claims || !cur.claims[targetDeviceId]) return { next: undefined, result: { code: "NOT_FOUND" } };
+      const next = clone(cur);
+      const rec = next.claims[targetDeviceId];
+      const item = next.pool && next.pool[rec.prizeId];
+      if (item) {
+        const total = toInt(item.total, Infinity);
+        item.qty = Math.min(total, toInt(item.qty) + 1);
+      }
+      delete next.claims[targetDeviceId];
+      if (next.byName && rec.nameSlug && next.byName[rec.nameSlug] === targetDeviceId) delete next.byName[rec.nameSlug];
+      return { next: next, result: { code: "OK", record: rec } };
+    }
+
+    /* Đối soát: với mỗi giải, CÒN + ĐÃ TRÚNG phải = SỐ CHỐT. Sai là báo đỏ. */
+    function auditDraw(draw) {
+      const pool = (draw && draw.pool) || {};
+      const claimed = {};
+      Object.values((draw && draw.claims) || {}).forEach(c => { claimed[c.prizeId] = (claimed[c.prizeId] || 0) + 1; });
+      const rows = poolToArray(pool).map(p => {
+        const total = toInt(p.total), remaining = toInt(p.qty), cl = claimed[p.id] || 0;
+        return { id: p.id, name: p.name, tag: p.tag, total: total, remaining: remaining, claimed: cl, ok: remaining >= 0 && remaining + cl === total };
+      });
+      Object.keys(claimed).forEach(id => {
+        if (!pool[id]) rows.push({ id: id, name: "(giải không có trong kho)", total: 0, remaining: 0, claimed: claimed[id], ok: false });
+      });
+      return rows;
+    }
+    /* @@CORE_END */
+
+    /* ===================================================================
+       2. TRẠNG THÁI THIẾT BỊ
+       =================================================================== */
     const KEY_USER = "gialong_user_v1";
-    const KEY_DEVICE_OPENED = "gialong_device_opened_v1";
-    const KEY_DEVICE_PRIZE = "gialong_device_prize_v1";
-    const KEY_MASTER_PRIZES = "gialong_master_prizes_v1";
-    const KEY_CUSTOM_QUOTES = "gialong_custom_quotes_v1";
+    const KEY_DEVICE_ID = "gialong_device_id_v1";
+    const KEY_MY_CLAIM = "gialong_my_claim_v2";
+    const KEY_CONFIG_CACHE = "gialong_config_v2";
+    const KEY_CUSTOM_QUOTES = "gialong_quotes_v2";
 
-    let savedMasterPrizes = null;
-    try {
-      savedMasterPrizes = JSON.parse(localStorage.getItem(KEY_MASTER_PRIZES));
-    } catch(e) {}
-    let initialMasterPrizes = (savedMasterPrizes && savedMasterPrizes.length) ? savedMasterPrizes : JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+    function readJSON(key, fallback) {
+      try { const v = JSON.parse(localStorage.getItem(key)); return (v === null || v === undefined) ? fallback : v; }
+      catch (e) { return fallback; }
+    }
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    function escapeHtml(s) {
+      return String(s === undefined || s === null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
 
-    let savedCustomQuotes = null;
-    try {
-      savedCustomQuotes = JSON.parse(localStorage.getItem(KEY_CUSTOM_QUOTES));
-    } catch(e) {}
-    let initialQuotes = savedCustomQuotes || JSON.parse(JSON.stringify(DEFAULT_QUOTES));
+    let deviceId = localStorage.getItem(KEY_DEVICE_ID);
+    if (!deviceId) {
+      deviceId = "dev_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now().toString(36);
+      localStorage.setItem(KEY_DEVICE_ID, deviceId);
+    }
+
+    let isFirebaseReady = false;
+    let db = null;
 
     let state = {
       isLocked: true,
-      openDuration: 8,
+      openDuration: APP_CONFIG.DEFAULT_OPEN_SECONDS,
       userName: localStorage.getItem(KEY_USER) || "Chưa đặt danh xưng",
-      hasOpened: localStorage.getItem(KEY_DEVICE_OPENED) === "true",
-      configuredPrizes: initialMasterPrizes,
-      prizes: JSON.parse(JSON.stringify(initialMasterPrizes)),
-      quotes: initialQuotes,
+      connected: false,
+      drawLoaded: false,
+      draw: null,
+      configuredPrizes: (() => { const c = readJSON(KEY_CONFIG_CACHE, null); return (Array.isArray(c) && c.length) ? c : normalizeConfig(DEFAULT_PRIZES); })(),
+      prizes: [],
       winners: [],
-      rawWinnersObj: {},
+      myClaim: readJSON(KEY_MY_CLAIM, null),
+      hasOpened: false,
+      isOpening: false,
+      quotes: readJSON(KEY_CUSTOM_QUOTES, null) || clone(DEFAULT_QUOTES),
       onlineUsers: {}
     };
+    state.hasOpened = !!state.myClaim;
 
+    function pickQuote(tag) {
+      const list = (state.quotes && state.quotes[tag] && state.quotes[tag].length) ? state.quotes[tag]
+        : (DEFAULT_QUOTES[tag] || DEFAULT_QUOTES.tag_kyniem);
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    /* ===================================================================
+       3. KHỞI ĐỘNG
+       =================================================================== */
     window.addEventListener('pointerdown', () => { initAudio(); }, { once: true });
 
     window.addEventListener('DOMContentLoaded', () => {
+      fillTagSelects();
       initFirebase();
       renderUI();
+      updatePrizeCounters();
       if (!isNameValid(localStorage.getItem(KEY_USER))) {
         setTimeout(() => { promptUserName(true); }, 500);
       }
     });
 
-    /* ================= FIREBASE REALTIME HUB ================= */
+    function fillTagSelects() {
+      ["new-prize-tag", "admin-quote-tag-select"].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = Object.keys(TAGS).map(k => `<option value="${k}">Tag: ${TAGS[k].label}</option>`).join("");
+      });
+    }
+
+    function setIndicator(mode) {
+      const el = document.getElementById('cloud-indicator');
+      if (!el) return;
+      const m = mode || (!isFirebaseReady ? "fail" : (state.connected ? "on" : "off"));
+      const map = {
+        on:   ["🟢 Cloud Realtime", "bg-emerald-950 border-emerald-500 text-emerald-300"],
+        off:  ["🔴 Mất kết nối", "bg-red-950 border-red-500 text-red-300"],
+        fail: ["⚪ Không nối được máy chủ", "bg-stone-900 border-stone-600 text-stone-300"]
+      };
+      el.innerText = map[m][0];
+      el.className = "text-[10px] px-2 py-0.5 rounded-full border " + map[m][1];
+    }
+
     function initFirebase() {
-      const indicator = document.getElementById('cloud-indicator');
-      if (firebaseConfig.apiKey && firebaseConfig.databaseURL) {
-        try {
-          if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-          }
-          db = firebase.database();
-          isFirebaseReady = true;
-          indicator.innerText = "🟢 Cloud Realtime";
-          indicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500 text-emerald-300";
-
-          // Presence System
-          const userPresenceRef = db.ref('room/online_users/' + deviceId);
-          userPresenceRef.set({
-            name: state.userName,
-            online: true,
-            lastSeen: Date.now()
-          });
-          userPresenceRef.onDisconnect().remove();
-
-          db.ref('room/online_users').on('value', (snap) => {
-            const users = snap.val() || {};
-            state.onlineUsers = users;
-            renderOnlineUsers();
-          });
-
-          // Lắng nghe tín hiệu reset toàn bộ
-          db.ref('room/reset_signal').on('value', (snap) => {
-            const sig = snap.val();
-            if (sig && sig.timestamp) {
-              const lastReset = parseInt(localStorage.getItem('gialong_last_reset_ts') || '0', 10);
-              if (sig.timestamp > lastReset) {
-                localStorage.setItem('gialong_last_reset_ts', sig.timestamp.toString());
-                localStorage.removeItem(KEY_DEVICE_OPENED);
-                localStorage.removeItem(KEY_DEVICE_PRIZE);
-                state.hasOpened = false;
-                renderUI();
-              }
-            }
-          });
-
-          // Lắng nghe reset riêng từng máy
-          db.ref('room/reset_devices/' + deviceId).on('value', (snap) => {
-            const val = snap.val();
-            if (val && val.reset) {
-              localStorage.removeItem(KEY_DEVICE_OPENED);
-              localStorage.removeItem(KEY_DEVICE_PRIZE);
-              state.hasOpened = false;
-              renderUI();
-              db.ref('room/reset_devices/' + deviceId).remove();
-            }
-          });
-
-          // Lắng nghe trạng thái khóa/mở
-          db.ref('room/status').on('value', (snap) => {
-            const data = snap.val();
-            if (data) {
-              state.isLocked = data.isLocked !== undefined ? data.isLocked : true;
-              state.openDuration = data.openDuration || 8;
-              renderUI();
-            }
-          });
-
-          // Lắng nghe cấu hình Master Prizes
-          db.ref('room/master_prizes').on('value', (snap) => {
-            const masterList = snap.val();
-            if (masterList) {
-              const list = Array.isArray(masterList) ? masterList : Object.values(masterList);
-              if (list.length) {
-                state.configuredPrizes = list;
-                localStorage.setItem(KEY_MASTER_PRIZES, JSON.stringify(list));
-              }
-            }
-          });
-
-          // Lắng nghe câu troll
-          db.ref('room/quotes').on('value', (snap) => {
-            const qList = snap.val();
-            if (qList) {
-              state.quotes = qList;
-              localStorage.setItem(KEY_CUSTOM_QUOTES, JSON.stringify(qList));
-              renderAdminQuotes();
-            }
-          });
-
-          // Lắng nghe kho quà còn lại trên Cloud
-          db.ref('room/prizes').on('value', (snap) => {
-            const raw = snap.val();
-            if (raw) {
-              const list = Array.isArray(raw) ? raw : Object.values(raw);
-              state.prizes = list.map(p => ({
-                id: p.id || ("p_" + Math.random().toString(36).substring(2,7)),
-                name: p.name || "",
-                tag: p.tag || "tag_kyniem",
-                score: p.score || 50,
-                qty: Math.max(0, parseInt(p.qty, 10) || 0)
-              }));
-              updatePrizeCounters();
-              renderAdminPrizes();
-            }
-          });
-
-          // Lắng nghe Bảng Vinh Danh Realtime
-          db.ref('room/winners').on('value', (snap) => {
-            const winnersData = snap.val();
-            state.rawWinnersObj = winnersData || {};
-            if (winnersData) {
-              state.winners = Object.entries(winnersData).map(([key, val]) => ({ firebaseKey: key, ...val })).sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-            } else {
-              state.winners = [];
-            }
-            updateLeaderboardCounter();
-            renderAdminWinnersManage();
-          });
-
-        } catch (e) {
-          console.warn("Firebase Init Error:", e);
-          indicator.innerText = "🟠 Offline Mode";
-        }
-      } else {
-        indicator.innerText = "⚪ Chưa cấu hình Cloud";
-        indicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-stone-900 border border-stone-600 text-stone-300";
+      try {
+        if (typeof firebase === "undefined") throw new Error("Firebase SDK không tải được");
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        isFirebaseReady = true;
+      } catch (e) {
+        console.warn("Firebase Init Error:", e);
+        isFirebaseReady = false;
+        setIndicator("fail");
+        return;
       }
+
+      // Trạng thái mạng thật (không đoán)
+      db.ref('.info/connected').on('value', snap => {
+        state.connected = snap.val() === true;
+        setIndicator();
+        if (state.connected) registerPresence();
+        renderUI();
+      });
+
+      db.ref(PATH.online).on('value', snap => { state.onlineUsers = snap.val() || {}; renderOnlineUsers(); });
+
+      db.ref(PATH.status).on('value', snap => {
+        const data = snap.val() || {};
+        state.isLocked = data.isLocked !== undefined ? data.isLocked : true;
+        state.openDuration = toInt(data.openDuration, APP_CONFIG.DEFAULT_OPEN_SECONDS);
+        renderUI();
+      });
+
+      db.ref(PATH.config).on('value', snap => {
+        const v = snap.val();
+        if (v) {
+          state.configuredPrizes = normalizeConfig(v);
+          localStorage.setItem(KEY_CONFIG_CACHE, JSON.stringify(state.configuredPrizes));
+        }
+        renderAdminConfig();
+        renderAdminAudit();
+      });
+
+      db.ref(PATH.quotes).on('value', snap => {
+        const q = snap.val();
+        if (q) {
+          state.quotes = q;
+          localStorage.setItem(KEY_CUSTOM_QUOTES, JSON.stringify(q));
+        }
+        renderAdminQuotes();
+      });
+
+      db.ref(PATH.draw).on('value', snap => onDrawUpdate(snap.val()));
+    }
+
+    function registerPresence() {
+      if (!db) return;
+      const ref = db.ref(PATH.online + '/' + deviceId);
+      ref.onDisconnect().remove();
+      ref.set({ name: state.userName, online: true, lastSeen: Date.now() });
+    }
+
+    /* MỌI THỨ HIỂN THỊ ĐỀU SUY RA TỪ KHO ĐÃ CHỐT TRÊN MÁY CHỦ — máy nào cũng thấy cùng 1 sự thật */
+    function onDrawUpdate(draw) {
+      state.draw = draw;
+      state.drawLoaded = true;
+      state.prizes = poolToArray(draw && draw.pool);
+      const claims = (draw && draw.claims) || {};
+      state.winners = Object.keys(claims).map(k => Object.assign({}, claims[k], { deviceId: k }))
+        .sort((a, b) => toInt(b.timestamp) - toInt(a.timestamp));
+
+      if (!state.isOpening) {
+        const mine = claims[deviceId] || null;
+        state.myClaim = mine;
+        state.hasOpened = !!mine;
+        if (mine) localStorage.setItem(KEY_MY_CLAIM, JSON.stringify(mine));
+        else localStorage.removeItem(KEY_MY_CLAIM);
+      }
+
+      updatePrizeCounters();
+      updateLeaderboardCounter();
+      if (!document.getElementById('modal-leaderboard').classList.contains('hidden')) renderLeaderboard();
+      renderAdminWinnersManage();
+      renderAdminAudit();
+      renderUI();
+    }
+
+    /* ===================================================================
+       4. HIỂN THỊ
+       =================================================================== */
+    function totals() {
+      return { remaining: sumField(state.prizes, 'qty'), total: sumField(state.prizes, 'total') };
+    }
+
+    function updatePrizeCounters() {
+      const t = totals();
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      set('remaining-count', t.remaining);
+      set('total-count', t.total);
+      set('public-prize-remaining', t.remaining + '/' + t.total);
+      renderPublicPrizeList();
+    }
+
+    function updateLeaderboardCounter() {
+      const el = document.getElementById('lb-total-count');
+      if (el) el.innerText = state.winners.length;
+      const mx = document.getElementById('lb-total-max');
+      if (mx) mx.innerText = totals().total;
     }
 
     function renderOnlineUsers() {
       const listEl = document.getElementById('admin-online-users-list');
       const badgeEl = document.getElementById('admin-online-badge');
       if (!listEl) return;
-
-      const userKeys = Object.keys(state.onlineUsers || {});
-      const count = userKeys.length;
-      if (badgeEl) badgeEl.innerText = count;
-
-      if (count === 0) {
+      const keys = Object.keys(state.onlineUsers || {});
+      if (badgeEl) badgeEl.innerText = keys.length + " máy";
+      if (!keys.length) {
         listEl.innerHTML = '<span class="text-[10px] text-stone-400 italic">Chưa có ai vào bàn tiệc.</span>';
         return;
       }
-
-      listEl.innerHTML = '';
-      userKeys.forEach(k => {
-        const u = state.onlineUsers[k];
-        const chip = document.createElement('div');
-        chip.className = "flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-600/70 text-[10px] text-emerald-200 font-medium";
-        chip.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> <span>${u.name || 'Đại hiệp'}</span>`;
-        listEl.appendChild(chip);
-      });
+      listEl.innerHTML = keys.map(k => {
+        const u = state.onlineUsers[k] || {};
+        return `<div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-600/70 text-[10px] text-emerald-200 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> <span>${escapeHtml(u.name || 'Đại hiệp')}</span></div>`;
+      }).join("");
     }
 
-    function renderAdminWinnersManage() {
-      const listEl = document.getElementById('admin-winners-manage-list');
-      const countEl = document.getElementById('admin-winners-count');
-      if (!listEl) return;
-
-      if (countEl) countEl.innerText = state.winners.length + " người";
-
-      if (!state.winners || state.winners.length === 0) {
-        listEl.innerHTML = '<div class="text-[10px] text-stone-400 italic p-1">Chưa có ai mở rương.</div>';
-        return;
-      }
-
-      listEl.innerHTML = '';
-      state.winners.forEach(w => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-1.5 rounded-lg bg-black/60 border border-amber-900/60 text-[11px]";
-        item.innerHTML = `
-          <div class="truncate mr-2">
-            <span class="font-bold text-yellow-300">${w.user}</span>
-            <span class="text-[10px] text-amber-200/80 ml-1 truncate">(${w.prize})</span>
-          </div>
-          <button onclick="adminResetSpecificWinner('${w.firebaseKey}', '${w.deviceId || ''}', '${w.user}')" class="px-2 py-0.5 rounded bg-amber-800 hover:bg-amber-700 text-yellow-100 font-bold text-[10px] flex-shrink-0">
-            Cho Mở Lại
-          </button>
-        `;
-        listEl.appendChild(item);
-      });
+    function setBanner(cls, html) {
+      const b = document.getElementById('status-lock-banner');
+      b.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 shadow " + cls;
+      document.getElementById('status-lock-text').innerHTML = html;
+    }
+    function setButton(enabled, cls, html) {
+      const btn = document.getElementById('btn-open-chest');
+      btn.disabled = !enabled;
+      btn.className = "w-full rounded-2xl font-kiemhiep uppercase tracking-wider transition-all duration-300 shadow-lg flex items-center justify-center gap-2 " + cls + (enabled ? " cursor-pointer" : " cursor-not-allowed");
+      btn.innerHTML = html;
     }
 
-    function adminResetSpecificWinner(firebaseKey, targetDeviceId, userName) {
-      if (confirm(`Mở lại lượt quay cho huynh đệ "${userName}"?`)) {
-        if (isFirebaseReady && db) {
-          if (firebaseKey) {
-            db.ref('room/winners/' + firebaseKey).remove();
-          }
-          if (targetDeviceId) {
-            db.ref('room/reset_devices/' + targetDeviceId).set({ reset: true, timestamp: Date.now() });
-          }
-        }
-        if (targetDeviceId === deviceId || !targetDeviceId) {
-          adminResetCurrentDevice();
-        }
-        alert(`Đã xóa kết quả và mở lại quyền quay cho ${userName}!`);
-      }
-    }
-
-    function updatePrizeCounters() {
-      let count = 0;
-      (state.prizes || []).forEach(p => count += Math.max(0, parseInt(p.qty, 10) || 0));
-      document.getElementById('remaining-count').innerText = count;
-      renderPublicPrizeList();
-      const poolSum = document.getElementById('admin-pool-summary');
-      if (poolSum) poolSum.innerText = "Còn: " + count + " phần";
-    }
-
-    function updateLeaderboardCounter() {
-      document.getElementById('lb-total-count').innerText = state.winners.length;
-    }
-
-    /* ================= UI RENDERING ================= */
     function renderUI() {
       document.getElementById('display-user-name').innerText = state.userName;
+      const DIM = "py-4 bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-extrabold text-lg";
+      const t = totals();
 
-      const lockBanner = document.getElementById('status-lock-banner');
-      const lockText = document.getElementById('status-lock-text');
-      const openBtn = document.getElementById('btn-open-chest');
-
-      if (state.hasOpened) {
-        lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-stone-900/90 border border-amber-600/50 text-amber-300 text-xs font-semibold flex items-center justify-center gap-2 shadow";
-        lockText.innerHTML = "✅ HUYNH ĐỆ ĐÃ KHAI MỞ RƯƠNG (MỖI NGƯỜI 1 LẦN DUY NHẤT)";
-        openBtn.disabled = false;
-        openBtn.className = "w-full py-3.5 rounded-2xl bg-gradient-to-r from-stone-800 to-amber-950 border border-amber-600/80 text-amber-300 font-kiemhiep font-bold text-base tracking-wider uppercase shadow-lg hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer";
-        openBtn.innerHTML = "<span>🎁</span> <span>XEM LẠI PHẦN THƯỞNG ĐÃ TRÚNG</span>";
+      if (state.isOpening) {
+        setBanner("bg-amber-950/90 border border-yellow-600/80 text-yellow-200", "⏳ ĐANG KHAI MỞ... ĐỪNG TẮT TRANG");
+        setButton(false, DIM, "<span>⏳</span> <span>ĐANG MỞ RƯƠNG</span>");
+      } else if (state.hasOpened) {
+        setBanner("bg-stone-900/90 border border-amber-600/50 text-amber-300", "✅ HUYNH ĐỆ ĐÃ KHAI MỞ RƯƠNG (MỖI NGƯỜI 1 LẦN DUY NHẤT)");
+        setButton(true, "py-3.5 bg-gradient-to-r from-stone-800 to-amber-950 border border-amber-600/80 text-amber-300 font-bold text-base hover:brightness-110", "<span>🎁</span> <span>XEM LẠI PHẦN THƯỞNG ĐÃ TRÚNG</span>");
+      } else if (!isFirebaseReady || !state.connected) {
+        setBanner("bg-red-950/90 border border-red-700/80 text-red-200", "📡 MẤT KẾT NỐI MÁY CHỦ - KIỂM TRA WIFI/4G RỒI TẢI LẠI TRANG");
+        setButton(false, DIM, "<span>📡</span> <span>CHỜ KẾT NỐI</span>");
+      } else if (!state.drawLoaded || !state.draw || !state.draw.pool) {
+        setBanner("bg-red-950/90 border border-red-700/80 text-red-200", "📦 KHO QUÀ CHƯA ĐƯỢC BTC CHỐT");
+        setButton(false, DIM, "<span>🔒</span> <span>CHỜ BTC CHỐT KHO</span>");
+      } else if (t.remaining <= 0) {
+        setBanner("bg-stone-900/90 border border-stone-600 text-stone-300", "🈳 KHO QUÀ ĐÃ ĐƯỢC KHAI MỞ HẾT");
+        setButton(false, DIM, "<span>🈳</span> <span>HẾT QUÀ</span>");
       } else if (state.isLocked) {
-        lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-red-950/90 border border-red-700/80 text-red-200 text-xs font-semibold flex items-center justify-center gap-2 shadow";
-        lockText.innerHTML = "🔒 BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC";
-        openBtn.disabled = true;
-        openBtn.className = "w-full py-4 rounded-2xl bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-kiemhiep font-extrabold text-lg tracking-wider uppercase transition-all duration-300 shadow-lg cursor-not-allowed flex items-center justify-center gap-2";
-        openBtn.innerHTML = "<span>🔒</span> <span>CHỜ LỆNH BTC</span>";
+        setBanner("bg-red-950/90 border border-red-700/80 text-red-200", "<span class='animate-pulse'>🔒</span> BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC");
+        setButton(false, DIM, "<span>🔒</span> <span>CHỜ LỆNH BTC</span>");
       } else {
-        lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-emerald-950/90 border border-emerald-600/80 text-emerald-200 text-xs font-semibold flex items-center justify-center gap-2 shadow";
-        lockText.innerHTML = "✨ PHONG ẤN ĐÃ MỞ - HUYNH ĐỆ ĐỒNG LOẠT KHAI MỞ!";
-        openBtn.disabled = false;
-        openBtn.className = "w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 border-2 border-yellow-200 text-red-950 font-kiemhiep font-black text-xl tracking-wider uppercase transition-all duration-300 shadow-2xl pulse-btn hover:brightness-110 active:scale-95 flex items-center justify-center gap-2 cursor-pointer";
-        openBtn.innerHTML = "<span>⚔️</span> <span>KHAI MỞ BẢO RƯƠNG</span> <span>⚔️</span>";
+        setBanner("bg-emerald-950/90 border border-emerald-600/80 text-emerald-200", "✨ PHONG ẤN ĐÃ MỞ - HUYNH ĐỆ ĐỒNG LOẠT KHAI MỞ!");
+        setButton(true, "py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 border-2 border-yellow-200 text-red-950 font-black text-xl shadow-2xl pulse-btn hover:brightness-110 active:scale-95", "<span>⚔️</span> <span>KHAI MỞ BẢO RƯƠNG</span> <span>⚔️</span>");
       }
 
       document.getElementById('admin-time-val').innerText = state.openDuration + " giây";
@@ -960,723 +1097,532 @@
 
     function isNameValid(name) {
       if (!name) return false;
-      const clean = name.trim();
-      return clean.length > 0 && clean.toLowerCase() !== "huynh đệ vô danh" && clean.toLowerCase() !== "chưa đặt danh xưng";
+      const clean = name.trim().toLowerCase();
+      return clean.length > 0 && clean !== "huynh đệ vô danh" && clean !== "chưa đặt danh xưng";
     }
 
     function promptUserName(isRequired = false) {
+      if (state.hasOpened) {
+        alert("Đại hiệp đã mở rương với tên \"" + (state.myClaim ? state.myClaim.user : state.userName) + "\". Tên trên Bảng Vàng không đổi được nữa.");
+        return true;
+      }
       let name = "";
       while (true) {
         const current = isNameValid(state.userName) ? state.userName : "";
         const entered = prompt(
-          isRequired 
-            ? "⚠️ BẮT BUỘC: Đại hiệp vui lòng nhập Tên hoặc Ingame để khắc tên vào Bảng Vinh Danh:" 
-            : "Nhập Tên hoặc Tên Ingame của Huynh Đệ:", 
+          isRequired
+            ? "⚠️ BẮT BUỘC: Nhập Tên hoặc Tên Ingame để ghi vào Bảng Vàng (mỗi tên chỉ được mở rương 1 lần):"
+            : "Nhập Tên hoặc Tên Ingame của Huynh Đệ:",
           current
         );
-
-        if (entered !== null && entered.trim().length > 0 && entered.trim().toLowerCase() !== "huynh đệ vô danh") {
-          name = entered.trim();
+        if (entered !== null && isNameValid(entered)) {
+          name = entered.trim().substring(0, 40);
+          const taken = state.draw && state.draw.byName && state.draw.byName[slugName(name)];
+          if (taken && taken !== deviceId) {
+            alert("Tên \"" + name + "\" đã mở rương trên một máy khác. Mỗi tên chỉ 1 lượt — hãy nhập đúng tên của mình.");
+            if (!isRequired) return false;
+            continue;
+          }
           break;
         }
-
-        if (!isRequired) {
-          return false;
-        }
-
-        alert("Đại hiệp chưa đặt tên! Vui lòng nhập tên chính xác trước khi vào bàn tiệc.");
+        if (!isRequired) return false;
+        alert("Đại hiệp chưa đặt tên! Xin vui lòng nhập tên chính xác trước khi vào bàn tiệc.");
       }
-
       state.userName = name;
-      localStorage.setItem(KEY_USER, state.userName);
-      document.getElementById('display-user-name').innerText = state.userName;
-
-      if (isFirebaseReady && db) {
-        db.ref('room/online_users/' + deviceId).update({ name: state.userName });
-      }
+      localStorage.setItem(KEY_USER, name);
+      document.getElementById('display-user-name').innerText = name;
+      if (isFirebaseReady && db) db.ref(PATH.online + '/' + deviceId).update({ name: name });
       return true;
     }
 
     function handleChestClick() {
-      if (!isNameValid(state.userName)) {
-        alert("⚠️ ĐẠI HIỆP CHƯA ĐẶT TÊN!\nVui lòng nhập Tên hoặc Ingame để khắc tên vào Bảng Vàng trước khi mở rương.");
-        const ok = promptUserName(true);
-        if (!ok) return;
-      }
-
-      if (state.hasOpened) {
-        showMyPrizeModal();
-        return;
-      }
-      if (state.isLocked) {
-        alert("Bảo Rương đang phong ấn! Xin đợi Ban Tổ Chức phát hiệu lệnh mở khóa đồng loạt.");
-      } else {
-        triggerOpenChest();
-      }
+      if (state.isOpening) return;            // CHỐT CHẶN: bấm rương liên tục không tạo thêm lượt
+      triggerOpenChest();
     }
 
     function showMyPrizeModal() {
-      try {
-        const savedPrize = JSON.parse(localStorage.getItem(KEY_DEVICE_PRIZE));
-        if (savedPrize) {
-          showResultModal(savedPrize);
-        } else {
-          alert("Thiết bị này đã mở rương rồi!");
-        }
-      } catch(e) {
-        alert("Thiết bị này đã mở rương rồi!");
-      }
+      if (state.myClaim) showResultModal(state.myClaim);
+      else alert("Thiết bị này đã mở rương rồi!");
     }
 
-    /* ================= SEQUENCE MỞ RƯƠNG ================= */
-    let openingInterval = null;
-    let isSpinning = false;
-
-    function triggerOpenChest() {
-      if (isSpinning) return;
-
+    /* ===================================================================
+       5. MỞ RƯƠNG — bốc trên máy chủ NGAY khi bấm, hoạt ảnh chỉ để hồi hộp
+       =================================================================== */
+    async function triggerOpenChest() {
+      if (state.isOpening) return;            // CHỐT 1: không bao giờ chạy 2 lượt song song trên 1 máy
       if (!isNameValid(state.userName)) {
         alert("⚠️ ĐẠI HIỆP CHƯA ĐẶT TÊN!\nVui lòng nhập Tên hoặc Ingame trước khi mở rương.");
-        const ok = promptUserName(true);
-        if (!ok) return;
+        if (!promptUserName(true)) return;
       }
-
-      if (state.hasOpened) {
-        showMyPrizeModal();
+      if (state.hasOpened) { showMyPrizeModal(); return; }
+      if (!isFirebaseReady || !state.connected) {
+        alert("📡 Máy đang mất kết nối máy chủ. Kiểm tra WiFi/4G rồi tải lại trang.\n(Bản mới KHÔNG cho bốc offline để tránh trùng giải.)");
         return;
       }
-      if (state.isLocked) return;
+      if (!state.draw || !state.draw.pool) { alert("Kho quà chưa được BTC chốt. Xin đợi hiệu lệnh!"); return; }
+      if (state.isLocked) { alert("Bảo Rương đang phong ấn! Xin đợi BTC mở khóa."); return; }
+      if (totals().remaining <= 0) { alert("⚠️ KHO BẢO RƯƠNG ĐÃ ĐƯỢC KHAI MỞ HẾT!"); return; }
 
-      let totalRemaining = 0;
-      (state.prizes || []).forEach(p => {
-        totalRemaining += Math.max(0, parseInt(p.qty, 10) || 0);
-      });
-      if (totalRemaining <= 0) {
-        alert("⚠️ KHO BẢO RƯƠNG ĐÃ ĐƯỢC KHAI MỞ HẾT SẠCH!\nXin đợi Ban Tổ Chức khởi động vòng tiếp theo.");
-        return;
-      }
-
-      isSpinning = true;
-      initAudio();
-      const openBtn = document.getElementById('btn-open-chest');
-      openBtn.disabled = true;
-
-      const chestContainer = document.getElementById('chest-container');
-      const progressWrapper = document.getElementById('progress-wrapper');
-      const progressBar = document.getElementById('progress-bar-fill');
-      const progressPercent = document.getElementById('progress-percentage');
-      const countdownOverlay = document.getElementById('countdown-overlay');
-      const countdownNumber = document.getElementById('countdown-number');
-
-      chestContainer.classList.add('chest-shaking', 'chest-glow');
-      progressWrapper.classList.remove('hidden');
-      countdownOverlay.classList.remove('hidden');
-
-      const totalDuration = state.openDuration * 1000;
-      const startTime = Date.now();
-      let lastSecond = state.openDuration;
-
-      countdownNumber.innerText = lastSecond;
-      playSound('tick');
-
-      openingInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(100, (elapsed / totalDuration) * 100);
-        const remainingSeconds = Math.max(0, Math.ceil((totalDuration - elapsed) / 1000));
-
-        progressBar.style.width = progress + "%";
-        progressPercent.innerText = Math.floor(progress) + "%";
-
-        if (remainingSeconds !== lastSecond) {
-          lastSecond = remainingSeconds;
-          countdownNumber.innerText = remainingSeconds;
-          playSound('tick');
-        }
-
-        if (progress >= 100) {
-          clearInterval(openingInterval);
-          finishOpeningChest();
-        }
-      }, 50);
-    }
-
-    function finishOpeningChest() {
-      const chestContainer = document.getElementById('chest-container');
-      const progressWrapper = document.getElementById('progress-wrapper');
-      const countdownOverlay = document.getElementById('countdown-overlay');
-
-      chestContainer.classList.remove('chest-shaking');
-      progressWrapper.classList.add('hidden');
-      countdownOverlay.classList.add('hidden');
-      playSound('open');
-
-      if (isFirebaseReady && db) {
-        claimPrizeFromCloud();
-      } else {
-        claimPrizeLocal();
-      }
-    }
-
-    /* BỐC QUÀ CHUẨN TRANSACTION ATOMIC TRÁNH TRÙNG/VƯỢT GIẢI */
-    function claimPrizeFromCloud() {
-      const prizesRef = db.ref('room/prizes');
-      let awardedPrize = null;
-
-      prizesRef.transaction((currentPrizes) => {
-        if (!currentPrizes) return currentPrizes;
-
-        // Chuẩn hóa mảng an toàn
-        let list = Array.isArray(currentPrizes) ? currentPrizes : Object.values(currentPrizes);
-        list = list.map((p, idx) => ({
-          id: p.id || ("p_" + (idx + 1)),
-          name: p.name || "",
-          tag: p.tag || "tag_kyniem",
-          score: p.score || 50,
-          qty: Math.max(0, parseInt(p.qty, 10) || 0)
-        }));
-
-        // Tìm tất cả các món quà còn số lượng > 0
-        let availablePool = [];
-        list.forEach((p, idx) => {
-          if (p.qty > 0) {
-            for (let i = 0; i < p.qty; i++) {
-              availablePool.push(idx);
-            }
-          }
-        });
-
-        if (availablePool.length === 0) {
-          awardedPrize = null;
-          return list;
-        }
-
-        // Chọn ngẫu nhiên 1 slot
-        const chosenIdx = availablePool[Math.floor(Math.random() * availablePool.length)];
-        
-        // Clone dữ liệu giải trao
-        awardedPrize = {
-          id: list[chosenIdx].id,
-          name: list[chosenIdx].name,
-          tag: list[chosenIdx].tag,
-          score: list[chosenIdx].score
-        };
-
-        // Giảm số lượng chính xác 1 đơn vị
-        list[chosenIdx].qty = list[chosenIdx].qty - 1;
-
-        return list;
-      }, (error, committed, snapshot) => {
-        isSpinning = false;
-
-        if (error) {
-          console.error("Lỗi transaction:", error);
-          alert("Lỗi kết nối khi nhận quà, vui lòng thử lại!");
-          renderUI();
-          return;
-        }
-
-        if (!committed || !awardedPrize) {
-          alert("⚠️ Kho bảo rương đã được người khác bốc hết hoặc có xung đột lượt quay. Vui lòng bấm mở lại!");
-          renderUI();
-          return;
-        }
-
-        // Ghi nhận quà chính xác được Cloud phê duyệt
-        registerAwardedPrize(awardedPrize);
-      });
-    }
-
-    function claimPrizeLocal() {
-      isSpinning = false;
-      let availableIndexes = [];
-      state.prizes.forEach((p, idx) => {
-        const qty = parseInt(p.qty, 10) || 0;
-        if (qty > 0) {
-          for (let i = 0; i < qty; i++) availableIndexes.push(idx);
-        }
-      });
-
-      if (availableIndexes.length === 0) {
-        alert("Kho quà đã hết sạch số lượng!");
-        renderUI();
-        return;
-      }
-
-      const chosenIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-      const picked = JSON.parse(JSON.stringify(state.prizes[chosenIdx]));
-      
-      state.prizes[chosenIdx].qty = Math.max(0, (parseInt(state.prizes[chosenIdx].qty, 10) || 1) - 1);
-      syncPrizesToStorageAndCloud(false);
-
-      registerAwardedPrize(picked);
-    }
-
-    function registerAwardedPrize(picked) {
-      const quotesList = state.quotes[picked.tag] || state.quotes['tag_kyniem'] || DEFAULT_QUOTES.tag_kyniem;
-      const quote = quotesList[Math.floor(Math.random() * quotesList.length)];
-
-      const record = {
-        id: "w_" + Date.now(),
-        deviceId: deviceId,
-        user: state.userName,
-        prize: picked.name,
-        tag: picked.tag,
-        score: picked.score || 50,
-        quote: quote,
-        timestamp: Date.now(),
-        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-      };
-
-      if (isFirebaseReady && db) {
-        db.ref('room/winners').push(record);
-      }
-
-      saveDeviceOpened(record);
-      showResultModal(record);
-      playSound('win');
-      fireConfetti();
-    }
-
-    function saveDeviceOpened(record) {
-      state.hasOpened = true;
-      localStorage.setItem(KEY_DEVICE_OPENED, "true");
-      localStorage.setItem(KEY_DEVICE_PRIZE, JSON.stringify(record));
+      state.isOpening = true;
       renderUI();
+      initAudio();
+
+      const claimPromise = claimPrizeCloud();          // bốc ngay trên máy chủ
+      await playOpeningAnimation(state.openDuration * 1000);
+
+      setProgressText("Đang xác nhận phần quà với máy chủ...");
+      const slowTimer = setTimeout(() => setProgressText("Mạng chậm, đang chờ máy chủ xác nhận... ĐỪNG TẮT TRANG"), APP_CONFIG.CLAIM_WAIT_WARN_MS);
+      const res = await claimPromise;
+      clearTimeout(slowTimer);
+
+      stopOpeningAnimation();
+      state.isOpening = false;
+      handleClaimResult(res);
+    }
+
+    async function claimPrizeCloud() {
+      await sleep(Math.random() * APP_CONFIG.CLAIM_JITTER_MS);
+      let last = { code: "ERROR" };
+      for (let attempt = 1; attempt <= APP_CONFIG.CLAIM_MAX_RETRY; attempt++) {
+        last = await runClaimTransaction();
+        if (last.code !== "ERROR") return last;
+        console.warn("Bốc quà lỗi, thử lại lần", attempt, last.error);
+        await sleep(APP_CONFIG.CLAIM_RETRY_BASE_MS * attempt + Math.random() * APP_CONFIG.CLAIM_RETRY_BASE_MS);
+      }
+      return last;
+    }
+
+    function runClaimTransaction() {
+      return new Promise(resolve => {
+        const now = Date.now();
+        const ctx = {
+          deviceId: deviceId,
+          user: state.userName,
+          nameSlug: slugName(state.userName),
+          now: now,
+          time: new Date(now).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+          rand: Math.random,
+          oneDrawPerName: APP_CONFIG.ONE_DRAW_PER_NAME,
+          pickQuote: pickQuote
+        };
+        let result = null;
+        db.ref(PATH.draw).transaction(cur => {
+          const r = applyClaim(cur, ctx);
+          result = r.result;
+          return r.next;
+        }, (error, committed, snap) => {
+          if (error) return resolve({ code: "ERROR", error: String((error && error.message) || error) });
+          if (committed && result && result.code === "OK") {
+            // Đọc lại từ bản máy chủ đã xác nhận — chỉ tin cái máy chủ ghi
+            const v = snap && snap.val();
+            const rec = v && v.claims && v.claims[deviceId];
+            return resolve(rec ? { code: "OK", record: rec } : { code: "ERROR", error: "Không thấy bản ghi sau khi ghi" });
+          }
+          resolve(result || { code: "ERROR", error: "Không có kết quả" });
+        }, false);   // applyLocally=false: không hiện số tạm khi chưa được máy chủ duyệt
+      });
+    }
+
+    function handleClaimResult(res) {
+      if (res.code === "OK" || res.code === "ALREADY") {
+        state.myClaim = res.record;
+        state.hasOpened = true;
+        localStorage.setItem(KEY_MY_CLAIM, JSON.stringify(res.record));
+        renderUI();
+        playSound('open');
+        showResultModal(res.record);
+        if (res.code === "OK") { playSound('win'); fireConfetti(); }
+        return;
+      }
+      renderUI();
+      if (res.code === "NAME_TAKEN") {
+        alert("⚠️ Tên \"" + state.userName + "\" đã mở rương trên máy khác" + (res.record ? " (trúng: " + res.record.prize + ")" : "") + ".\nMỗi tên chỉ 1 lượt. Nếu nhầm, báo BTC.");
+      } else if (res.code === "EMPTY") {
+        alert("⚠️ KHO BẢO RƯƠNG ĐÃ HẾT QUÀ!\nXin đợi BTC.");
+      } else if (res.code === "NO_POOL") {
+        alert("Kho quà chưa được BTC chốt. Xin đợi hiệu lệnh!");
+      } else {
+        alert("📡 Máy chủ chưa xác nhận sau " + APP_CONFIG.CLAIM_MAX_RETRY + " lần thử.\nPhần quà CHƯA bị trừ. Kiểm tra mạng rồi bấm mở lại.");
+      }
+    }
+
+    /* Hoạt ảnh đục rương */
+    let openingInterval = null;
+    function setProgressText(t) { const el = document.getElementById('progress-status-text'); if (el) el.innerText = t; }
+
+    function playOpeningAnimation(totalDuration) {
+      return new Promise(resolve => {
+        const chest = document.getElementById('chest-container');
+        const wrap = document.getElementById('progress-wrapper');
+        const bar = document.getElementById('progress-bar-fill');
+        const pct = document.getElementById('progress-percentage');
+        const overlay = document.getElementById('countdown-overlay');
+        const num = document.getElementById('countdown-number');
+
+        chest.classList.add('chest-shaking', 'chest-glow');
+        wrap.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        setProgressText("Đang rặn quà từ Bình Bú....");
+
+        const start = Date.now();
+        let lastSecond = Math.ceil(totalDuration / 1000);
+        num.innerText = lastSecond;
+        playSound('tick');
+
+        clearInterval(openingInterval);
+        openingInterval = setInterval(() => {
+          const elapsed = Date.now() - start;
+          const progress = Math.min(100, (elapsed / totalDuration) * 100);
+          const rem = Math.max(0, Math.ceil((totalDuration - elapsed) / 1000));
+          bar.style.width = progress + "%";
+          pct.innerText = Math.floor(progress) + "%";
+          if (rem !== lastSecond) { lastSecond = rem; num.innerText = rem; playSound('tick'); }
+          if (progress >= 100) { clearInterval(openingInterval); resolve(); }
+        }, 50);
+      });
+    }
+
+    function stopOpeningAnimation() {
+      clearInterval(openingInterval);
+      document.getElementById('chest-container').classList.remove('chest-shaking');
+      document.getElementById('progress-wrapper').classList.add('hidden');
+      document.getElementById('countdown-overlay').classList.add('hidden');
     }
 
     function showResultModal(record) {
       document.getElementById('result-user-title').innerText = "Đại hiệp: " + record.user;
       document.getElementById('result-prize-name').innerText = record.prize;
-      document.getElementById('result-troll-quote').innerText = '"' + record.quote + '"';
-
-      const tierBadge = document.getElementById('result-tier-badge');
-      const badgeConfig = {
-        tag_dacbiet: { text: "⭐ GIẢI ĐẶC BIỆT HOÀNG KIM ⭐", class: "bg-gradient-to-r from-yellow-300 to-amber-500 text-red-950 shadow-md font-black" },
-        tag_nhat: { text: "🔥 GIẢI NHẤT DANH TRẤN 🔥", class: "bg-gradient-to-r from-red-600 to-amber-600 text-yellow-100 font-extrabold" },
-        tag_nhi: { text: "🥈 GIẢI NHÌ VANG DANH 🥈", class: "bg-gradient-to-r from-stone-400 to-slate-200 text-stone-900 font-bold" },
-        tag_ba: { text: "🥉 GIẢI BA HẢO THỦ 🥉", class: "bg-gradient-to-r from-amber-700 to-yellow-800 text-yellow-200 font-bold" },
-        tag_tienmat: { text: "💵 GIẢI TIỀN MẶT TƯƠI 💵", class: "bg-gradient-to-r from-emerald-600 to-green-500 text-white font-bold" },
-        tag_ingame: { text: "⚔️ GIẢI INGAME QUÝ HIẾM ⚔️", class: "bg-gradient-to-r from-cyan-700 to-blue-600 text-cyan-100 font-bold" },
-        tag_khuyenkhich: { text: "🎁 GIẢI KHUYẾN KHÍCH 🎁", class: "bg-stone-800 border border-amber-600 text-amber-300 font-bold" },
-        tag_kyniem: { text: "🖤 KỶ NIỆM ĐEN ĐỦI 🖤", class: "bg-stone-900 border border-stone-600 text-stone-400 font-bold" }
-      };
-      const badge = badgeConfig[record.tag] || { text: "🎁 PHẦN QUÀ GIAO LƯU", class: "bg-stone-700 text-yellow-200" };
-      tierBadge.innerText = badge.text;
-      tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-2 " + badge.class;
-
+      document.getElementById('result-troll-quote').innerText = '"' + (record.quote || "") + '"';
+      const t = TAGS[record.tag] || { resultText: "🎁 PHẦN QUÀ GIAO LƯU", resultClass: "bg-stone-700 text-yellow-200" };
+      const badge = document.getElementById('result-tier-badge');
+      badge.innerText = t.resultText;
+      badge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-2 " + t.resultClass;
       document.getElementById('modal-result').classList.remove('hidden');
     }
-
-    function closeResultModal() {
-      document.getElementById('modal-result').classList.add('hidden');
-    }
+    function closeResultModal() { document.getElementById('modal-result').classList.add('hidden'); }
 
     function fireConfetti() {
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#ffd700', '#ff4500', '#ffffff', '#e6a100']
-        });
-      } catch(e) {}
+      try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#ffd700', '#ff4500', '#ffffff', '#e6a100'] }); } catch (e) {}
     }
 
-    /* ================= BAN TỔ CHỨC (ADMIN) ================= */
-    function openPinModal() {
-      document.getElementById('input-admin-pin').value = '';
-      document.getElementById('modal-pin').classList.remove('hidden');
-    }
-    function closePinModal() {
-      document.getElementById('modal-pin').classList.add('hidden');
-    }
-    function togglePinVisibility() {
-      const pinInput = document.getElementById('input-admin-pin');
-      pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
-    }
+    /* ===================================================================
+       6. BAN TỔ CHỨC
+       =================================================================== */
+    function openPinModal() { document.getElementById('input-admin-pin').value = ''; document.getElementById('modal-pin').classList.remove('hidden'); }
+    function closePinModal() { document.getElementById('modal-pin').classList.add('hidden'); }
+    function togglePinVisibility() { const i = document.getElementById('input-admin-pin'); i.type = i.type === 'password' ? 'text' : 'password'; }
     function verifyPin() {
-      if (document.getElementById('input-admin-pin').value === PIN_ADMIN) {
-        closePinModal();
-        openAdminModal();
-      } else {
-        alert("Mã PIN không đúng!");
-      }
+      if (document.getElementById('input-admin-pin').value === PIN_ADMIN) { closePinModal(); openAdminModal(); }
+      else alert("Mã PIN không đúng!");
     }
 
-    function openAdminModal() {
-      renderAdminPrizes();
-      renderAdminQuotes();
-      renderOnlineUsers();
-      renderAdminWinnersManage();
+    async function openAdminModal() {
       document.getElementById('modal-admin').classList.remove('hidden');
+      renderAdminConfig(); renderAdminAudit(); renderAdminQuotes(); renderOnlineUsers(); renderAdminWinnersManage();
+      await ensureSeeded();
     }
-    function closeAdminModal() {
-      document.getElementById('modal-admin').classList.add('hidden');
-      renderUI();
+    function closeAdminModal() { document.getElementById('modal-admin').classList.add('hidden'); renderUI(); }
+
+    /* Lần đầu chạy bản mới: chép cấu hình quà + câu troll từ dữ liệu cũ sang (BTC phải kiểm lại số lượng) */
+    async function ensureSeeded() {
+      if (!isFirebaseReady || !db) return;
+      try {
+        const cfg = await db.ref(PATH.config).once('value');
+        if (!cfg.val()) {
+          const legacy = (await db.ref(PATH.legacyMaster).once('value')).val();
+          const list = legacy ? normalizeConfig(legacy) : [];
+          await db.ref(PATH.config).set(list.length ? list : normalizeConfig(DEFAULT_PRIZES));
+          alert("Đã chép danh sách quà từ bản cũ sang bản khoá cứng.\n⚠️ KIỂM TRA LẠI SỐ LƯỢNG từng quà ở mục CẤU HÌNH trước khi Chốt kho (bản cũ có thể đã lưu số lượng CÒN LẠI thay vì số gốc).");
+        }
+        const q = await db.ref(PATH.quotes).once('value');
+        if (!q.val()) {
+          const lq = (await db.ref(PATH.legacyQuotes).once('value')).val();
+          await db.ref(PATH.quotes).set(lq || DEFAULT_QUOTES);
+        }
+      } catch (e) { console.warn("Seed lỗi:", e); }
+    }
+
+    function requireCloud() {
+      if (!isFirebaseReady || !state.connected) { alert("Máy BTC đang mất kết nối máy chủ. Kiểm tra mạng rồi thử lại."); return false; }
+      return true;
     }
 
     function adminSetLock(lockStatus) {
-      state.isLocked = lockStatus;
-      if (isFirebaseReady && db) {
-        db.ref('room/status').update({
-          isLocked: lockStatus,
-          openDuration: state.openDuration,
-          updatedAt: Date.now()
-        });
-        alert(lockStatus ? "ĐÃ KHÓA LẠI TẤT CẢ CÁC MÁY!" : "ĐÃ MỞ KHÓA TẤT CẢ CÁC MÁY ĐỒNG LOẠT!");
-      } else {
-        renderUI();
-        alert("Đang ở chế độ Offline!");
-      }
+      if (!requireCloud()) return;
+      if (!lockStatus && (!state.draw || !state.draw.pool)) { alert("Chưa CHỐT KHO. Bấm 'CHỐT KHO & BẮT ĐẦU VÒNG MỚI' trước khi mở khoá."); return; }
+      db.ref(PATH.status).update({ isLocked: lockStatus, openDuration: state.openDuration, updatedAt: Date.now() })
+        .then(() => alert(lockStatus ? "ĐÃ KHÓA LẠI TẤT CẢ MÁY!" : "ĐÃ MỞ KHÓA TOÀN BỘ MÁY ĐỒNG LOẠT!"))
+        .catch(e => alert("Lỗi: " + e.message));
     }
 
     function adminUpdateTime(val) {
-      state.openDuration = parseInt(val, 10);
+      state.openDuration = toInt(val, APP_CONFIG.DEFAULT_OPEN_SECONDS);
       document.getElementById('admin-time-val').innerText = val + " giây";
-      if (isFirebaseReady && db) {
-        db.ref('room/status').update({ openDuration: state.openDuration });
+      if (isFirebaseReady && db) db.ref(PATH.status).update({ openDuration: state.openDuration });
+    }
+
+    /* --- 6a. KHO ĐANG CHẠY: chỉ xem + đối soát (không sửa tay được) --- */
+    function renderAdminAudit() {
+      const box = document.getElementById('admin-audit-list');
+      const sum = document.getElementById('admin-audit-summary');
+      const warn = document.getElementById('admin-audit-warning');
+      if (!box) return;
+      if (!state.draw || !state.draw.pool) {
+        box.innerHTML = '<div class="text-[10px] text-rose-300 italic p-2">Chưa chốt kho. Sửa CẤU HÌNH bên dưới rồi bấm "CHỐT KHO & BẮT ĐẦU VÒNG MỚI".</div>';
+        if (sum) sum.innerText = "Chưa chốt";
+        if (warn) warn.classList.add('hidden');
+        return;
+      }
+      const rows = auditDraw(state.draw);
+      const bad = rows.filter(r => !r.ok);
+      const t = totals();
+      if (sum) sum.innerText = `Chốt ${t.total} · Còn ${t.remaining} · Đã trúng ${state.winners.length}`;
+      box.innerHTML = `
+        <div class="grid grid-cols-12 gap-1 px-1.5 text-[9px] uppercase text-amber-500/80 font-bold"><span class="col-span-6">Giải</span><span class="col-span-2 text-center">Chốt</span><span class="col-span-2 text-center">Trúng</span><span class="col-span-2 text-center">Còn</span></div>` +
+        rows.map(r => `
+        <div class="grid grid-cols-12 gap-1 items-center p-1.5 rounded-lg border text-[11px] ${r.ok ? 'bg-black/60 border-amber-900/60' : 'bg-rose-950/80 border-rose-500'}">
+          <span class="col-span-6 truncate font-bold text-yellow-200">${r.ok ? '' : '❌ '}${escapeHtml(r.name)}</span>
+          <span class="col-span-2 text-center text-amber-200">${r.total}</span>
+          <span class="col-span-2 text-center text-emerald-300">${r.claimed}</span>
+          <span class="col-span-2 text-center font-bold ${r.remaining > 0 ? 'text-yellow-300' : 'text-stone-500'}">${r.remaining}</span>
+        </div>`).join("");
+      if (warn) {
+        if (bad.length) {
+          warn.classList.remove('hidden');
+          warn.innerText = "❌ SAI LỆCH " + bad.length + " giải (Còn + Trúng ≠ Chốt). KHOÁ TẤT CẢ MÁY, chụp màn hình này lại.";
+        } else warn.classList.add('hidden');
+      }
+      const cfgNote = document.getElementById('admin-config-note');
+      if (cfgNote) {
+        const cfgTotal = sumField(state.configuredPrizes, 'qty');
+        const differs = JSON.stringify(normalizeConfig(state.configuredPrizes).map(p => [p.id, p.name, p.tag, p.qty])) !==
+          JSON.stringify(state.prizes.map(p => [p.id, p.name, p.tag, toInt(p.total)]));
+        cfgNote.classList.toggle('hidden', !differs);
+        cfgNote.innerText = `⚠️ Cấu hình (${cfgTotal} phần) đang KHÁC kho đang chạy (${t.total} phần). Thay đổi chỉ có hiệu lực khi bấm "CHỐT KHO & BẮT ĐẦU VÒNG MỚI".`;
       }
     }
 
-    function renderAdminPrizes() {
-      const container = document.getElementById('admin-prizes-list');
-      if (!container) return;
-      container.innerHTML = '';
+    function renderAdminWinnersManage() {
+      const listEl = document.getElementById('admin-winners-manage-list');
+      const countEl = document.getElementById('admin-winners-count');
+      if (!listEl) return;
+      if (countEl) countEl.innerText = state.winners.length + " người";
+      if (!state.winners.length) { listEl.innerHTML = '<div class="text-[10px] text-stone-400 italic p-1">Chưa có ai mở rương.</div>'; return; }
+      listEl.innerHTML = state.winners.map(w => `
+        <div class="flex items-center justify-between p-1.5 rounded-lg bg-black/60 border border-amber-900/60 text-[11px]">
+          <div class="truncate mr-2">
+            <span class="font-bold text-yellow-300">${escapeHtml(w.user)}</span>
+            <span class="text-[10px] text-amber-200/80 ml-1">(${escapeHtml(w.prize)})</span>
+            <span class="text-[9px] text-stone-400 ml-1">${escapeHtml(w.time || '')}</span>
+          </div>
+          <button data-dev="${escapeHtml(w.deviceId)}" data-user="${escapeHtml(w.user)}" onclick="adminReleaseClaim(this.dataset.dev, this.dataset.user)" class="px-2 py-0.5 rounded bg-amber-800 hover:bg-amber-700 text-yellow-100 font-bold text-[10px] flex-shrink-0">
+            Hoàn & Mở Lại
+          </button>
+        </div>`).join("");
+    }
 
-      if (!state.prizes || state.prizes.length === 0) {
-        container.innerHTML = '<div class="text-[10px] text-amber-500/70 italic p-2 text-center">Kho rương hiện đang rỗng.</div>';
-        return;
-      }
+    /* Hoàn quà: trả đúng 1 suất về kho + cho máy & tên đó bốc lại. Nguyên tử. */
+    function adminReleaseClaim(targetDeviceId, userName) {
+      if (!requireCloud()) return;
+      if (!confirm(`Hoàn phần quà của "${userName}" VỀ KHO và cho máy này mở lại?\n(Số lượng trong kho sẽ +1 đúng giải đó.)`)) return;
+      let result = null;
+      db.ref(PATH.draw).transaction(cur => {
+        const r = applyRelease(cur, targetDeviceId);
+        result = r.result;
+        return r.next;
+      }, (err, committed) => {
+        if (err) alert("Lỗi: " + err.message);
+        else if (committed && result && result.code === "OK") alert(`Đã hoàn "${result.record.prize}" về kho. ${userName} được mở lại.`);
+        else alert("Không tìm thấy lượt mở này (có thể đã được hoàn trước đó).");
+      }, false);
+    }
 
-      state.prizes.forEach((p, index) => {
-        const item = document.createElement('div');
-        item.className = "flex flex-col gap-1 p-2 rounded-xl bg-black/60 border border-amber-900/70 text-[11px]";
-        item.innerHTML = `
+    function adminResetCurrentDevice() {
+      if (!state.myClaim) { alert("Máy này chưa mở rương trong vòng hiện tại."); return; }
+      adminReleaseClaim(deviceId, state.myClaim.user || state.userName);
+    }
+
+    /* CHỐT KHO: chép cấu hình thành kho khoá cứng của vòng mới */
+    async function adminStartNewRound() {
+      if (!requireCloud()) return;
+      const cfg = normalizeConfig(state.configuredPrizes);
+      const total = sumField(cfg, 'qty');
+      if (!total) { alert("Cấu hình chưa có phần quà nào (tổng số lượng = 0)."); return; }
+      const lines = cfg.filter(p => p.qty > 0).map(p => `• ${p.name}: ${p.qty}`).join("\n");
+      if (!confirm(`CHỐT KHO & BẮT ĐẦU VÒNG MỚI?\n\nKho sẽ KHOÁ CỨNG đúng ${total} phần:\n${lines}\n\n- Xoá kết quả & Bảng Vàng vòng trước\n- Mọi máy được mở lại lượt\n- Rương tự KHOÁ; bấm "MỞ KHÓA TẤT CẢ" khi sẵn sàng`)) return;
+      try {
+        await db.ref(PATH.status).update({ isLocked: true, openDuration: state.openDuration, updatedAt: Date.now() });
+        // Khoá vĩnh viễn bản cũ (máy nào còn mở trang cũ sẽ không bốc được nữa)
+        await db.ref(PATH.legacyStatus).update({ isLocked: true, updatedAt: Date.now() });
+        await db.ref(PATH.draw).set(buildDrawFromConfig(cfg, Date.now()));
+        alert(`ĐÃ CHỐT KHO ${total} PHẦN.\nRương đang KHOÁ — bấm "MỞ KHÓA TẤT CẢ MÁY" khi anh em sẵn sàng.`);
+      } catch (e) { alert("Lỗi chốt kho: " + e.message); }
+    }
+
+    /* --- 6b. CẤU HÌNH (chỉ là bản nháp; không đụng kho đang chạy) --- */
+    function saveConfig() {
+      state.configuredPrizes = normalizeConfig(state.configuredPrizes);
+      localStorage.setItem(KEY_CONFIG_CACHE, JSON.stringify(state.configuredPrizes));
+      if (isFirebaseReady && db) db.ref(PATH.config).set(state.configuredPrizes);
+      renderAdminConfig();
+      renderAdminAudit();
+    }
+
+    function renderAdminConfig() {
+      const box = document.getElementById('admin-prizes-list');
+      const sum = document.getElementById('admin-pool-summary');
+      if (!box) return;
+      const list = state.configuredPrizes || [];
+      if (sum) sum.innerText = "Cấu hình: " + sumField(list, 'qty') + " phần";
+      if (!list.length) { box.innerHTML = '<div class="text-[10px] text-amber-500/70 italic p-2 text-center">Chưa có quà. Thêm quà bên dưới.</div>'; return; }
+      const opts = cur => Object.keys(TAGS).map(k => `<option value="${k}" ${cur === k ? 'selected' : ''}>Tag: ${TAGS[k].label}</option>`).join("");
+      box.innerHTML = list.map((p, i) => `
+        <div class="flex flex-col gap-1 p-2 rounded-xl bg-black/60 border border-amber-900/70 text-[11px]">
           <div class="flex items-center justify-between gap-1.5">
-            <input type="text" value="${p.name}" onchange="adminUpdatePrizeName(${index}, this.value)" class="flex-1 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold focus:border-yellow-400">
-            <button onclick="adminDeletePrize(${index})" title="Xóa món này" class="px-2 py-1 rounded bg-rose-950 border border-rose-700 text-rose-300 hover:bg-rose-900 text-xs font-bold">✕</button>
+            <input type="text" value="${escapeHtml(p.name)}" onchange="adminUpdatePrizeName(${i}, this.value)" class="flex-1 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold focus:border-yellow-400">
+            <button onclick="adminDeletePrize(${i})" class="px-2 py-1 rounded bg-rose-950 border border-rose-700 text-rose-300 hover:bg-rose-900 text-xs font-bold">✕</button>
           </div>
           <div class="flex items-center justify-between gap-1.5">
             <div class="flex items-center gap-1">
               <span class="text-[10px] text-amber-400/80">Số lượng:</span>
-              <input type="number" min="0" max="50" value="${p.qty !== undefined ? p.qty : 1}" onchange="adminUpdatePrizeQty(${index}, this.value)" class="w-12 px-1 py-0.5 text-center rounded bg-black/70 border border-amber-800 text-yellow-300 text-xs font-bold">
+              <input type="number" min="0" max="99" value="${toInt(p.qty)}" onchange="adminUpdatePrizeQty(${i}, this.value)" class="w-12 px-1 py-0.5 text-center rounded bg-black/70 border border-amber-800 text-yellow-300 text-xs font-bold">
             </div>
-            <select onchange="adminUpdatePrizeTag(${index}, this.value)" class="px-1.5 py-0.5 rounded bg-black/80 border border-amber-700 text-yellow-300 text-[10px] font-semibold">
-              <option value="tag_dacbiet" ${p.tag === 'tag_dacbiet' ? 'selected' : ''}>Tag: Đặc Biệt</option>
-              <option value="tag_nhat" ${p.tag === 'tag_nhat' ? 'selected' : ''}>Tag: Giải Nhất</option>
-              <option value="tag_nhi" ${p.tag === 'tag_nhi' ? 'selected' : ''}>Tag: Giải Nhì</option>
-              <option value="tag_ba" ${p.tag === 'tag_ba' ? 'selected' : ''}>Tag: Giải Ba</option>
-              <option value="tag_ingame" ${p.tag === 'tag_ingame' ? 'selected' : ''}>Tag: Giải Ingame</option>
-              <option value="tag_tienmat" ${p.tag === 'tag_tienmat' ? 'selected' : ''}>Tag: Giải Tiền Mặt</option>
-              <option value="tag_khuyenkhich" ${p.tag === 'tag_khuyenkhich' ? 'selected' : ''}>Tag: Giải Khuyến Khích</option>
-              <option value="tag_kyniem" ${p.tag === 'tag_kyniem' ? 'selected' : ''}>Tag: Kỷ Niệm Đen Đủi</option>
-            </select>
+            <select onchange="adminUpdatePrizeTag(${i}, this.value)" class="px-1.5 py-0.5 rounded bg-black/80 border border-amber-700 text-yellow-300 text-[10px] font-semibold">${opts(p.tag)}</select>
           </div>
-        `;
-        container.appendChild(item);
-      });
-      updatePrizeCounters();
+        </div>`).join("");
     }
 
-    function syncPrizesToStorageAndCloud(isConfigChanged = true) {
-      if (isConfigChanged) {
-        state.configuredPrizes = JSON.parse(JSON.stringify(state.prizes));
-        localStorage.setItem(KEY_MASTER_PRIZES, JSON.stringify(state.configuredPrizes));
-        if (isFirebaseReady && db) {
-          db.ref('room/master_prizes').set(state.configuredPrizes);
-        }
-      }
-      if (isFirebaseReady && db) {
-        db.ref('room/prizes').set(state.prizes);
-      }
-      updatePrizeCounters();
-    }
-
-    function syncQuotesToStorageAndCloud() {
-      localStorage.setItem(KEY_CUSTOM_QUOTES, JSON.stringify(state.quotes));
-      if (isFirebaseReady && db) {
-        db.ref('room/quotes').set(state.quotes);
-      }
-    }
-
-    function adminUpdatePrizeName(idx, newName) {
-      if (state.prizes[idx] && newName.trim()) {
-        state.prizes[idx].name = newName.trim();
-        syncPrizesToStorageAndCloud();
-      }
-    }
-
-    function adminUpdatePrizeQty(idx, newQty) {
-      const q = Math.max(0, parseInt(newQty, 10) || 0);
-      if (state.prizes[idx]) {
-        state.prizes[idx].qty = q;
-        syncPrizesToStorageAndCloud();
-      }
-    }
-
-    function adminUpdatePrizeTag(idx, newTag) {
-      if (state.prizes[idx]) {
-        state.prizes[idx].tag = newTag;
-        const tagScores = { tag_dacbiet: 100, tag_nhat: 90, tag_nhi: 80, tag_ba: 70, tag_tienmat: 85, tag_ingame: 60, tag_khuyenkhich: 40, tag_kyniem: 20 };
-        state.prizes[idx].score = tagScores[newTag] || 30;
-        syncPrizesToStorageAndCloud();
-      }
-    }
-
-    function adminDeletePrize(idx) {
-      if (confirm("Xóa phần quà này khỏi kho rương?")) {
-        state.prizes.splice(idx, 1);
-        syncPrizesToStorageAndCloud();
-        renderAdminPrizes();
-      }
-    }
+    function adminUpdatePrizeName(i, v) { if (state.configuredPrizes[i] && v.trim()) { state.configuredPrizes[i].name = v.trim(); saveConfig(); } }
+    function adminUpdatePrizeQty(i, v) { const q = toInt(v, -1); if (state.configuredPrizes[i] && q >= 0) { state.configuredPrizes[i].qty = q; saveConfig(); } else renderAdminConfig(); }
+    function adminUpdatePrizeTag(i, v) { if (state.configuredPrizes[i]) { state.configuredPrizes[i].tag = v; saveConfig(); } }
+    function adminDeletePrize(i) { if (confirm("Xoá phần quà này khỏi CẤU HÌNH?")) { state.configuredPrizes.splice(i, 1); saveConfig(); } }
 
     function adminAddPrize() {
       const nameInput = document.getElementById('new-prize-name');
-      const tagSelect = document.getElementById('new-prize-tag');
       const qtyInput = document.getElementById('new-prize-qty');
-
       const name = nameInput.value.trim();
-      const tag = tagSelect.value;
-      const qty = parseInt(qtyInput.value, 10) || 1;
-
-      if (!name) {
-        alert("Vui lòng nhập tên phần thưởng!");
-        return;
-      }
-
-      state.prizes.push({
-        id: "p_" + Date.now(),
-        name: name,
-        tag: tag,
-        score: ({ tag_dacbiet: 100, tag_nhat: 90, tag_nhi: 80, tag_ba: 70, tag_tienmat: 85, tag_ingame: 60, tag_khuyenkhich: 40, tag_kyniem: 20 })[tag] || 30,
-        qty: qty
-      });
-
-      nameInput.value = '';
-      qtyInput.value = '1';
-      syncPrizesToStorageAndCloud();
-      renderAdminPrizes();
+      const qty = toInt(qtyInput.value, 1);
+      if (!name) { alert("Vui lòng nhập tên phần thưởng!"); return; }
+      state.configuredPrizes.push({ id: "p_" + Date.now().toString(36), name: name, tag: document.getElementById('new-prize-tag').value, qty: Math.max(1, qty) });
+      nameInput.value = ''; qtyInput.value = '1';
+      saveConfig();
     }
 
     function adminResetDefaultPrizes() {
-      if (confirm("Khôi phục lại danh sách quà mẫu ban đầu?")) {
-        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
-        syncPrizesToStorageAndCloud();
-        renderAdminPrizes();
+      if (confirm("Thay CẤU HÌNH bằng danh sách quà mẫu?\n(Kho đang chạy KHÔNG bị ảnh hưởng cho tới khi bấm Chốt kho.)")) {
+        state.configuredPrizes = normalizeConfig(DEFAULT_PRIZES);
+        saveConfig();
       }
     }
 
-    function renderAdminQuotes() {
-      const currentTag = document.getElementById('admin-quote-tag-select').value;
-      const listContainer = document.getElementById('admin-quotes-list');
-      listContainer.innerHTML = '';
-      const quotes = state.quotes[currentTag] || [];
-      quotes.forEach((q, idx) => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-1.5 rounded-lg bg-black/40 border border-amber-900/50 text-[11px]";
-        item.innerHTML = `
-          <span class="text-amber-100 flex-1 mr-2 leading-tight italic">"${q}"</span>
-          <button onclick="adminDeleteQuote('${currentTag}', ${idx})" class="text-rose-400 text-xs px-1">✕</button>
-        `;
-        listContainer.appendChild(item);
-      });
+    /* --- 6c. CÂU TROLL --- */
+    function syncQuotes() {
+      localStorage.setItem(KEY_CUSTOM_QUOTES, JSON.stringify(state.quotes));
+      if (isFirebaseReady && db) db.ref(PATH.quotes).set(state.quotes);
     }
-
+    function renderAdminQuotes() {
+      const sel = document.getElementById('admin-quote-tag-select');
+      const box = document.getElementById('admin-quotes-list');
+      if (!sel || !box) return;
+      const tag = sel.value;
+      const quotes = (state.quotes && state.quotes[tag]) || [];
+      box.innerHTML = quotes.map((q, i) => `
+        <div class="flex items-center justify-between p-1.5 rounded-lg bg-black/40 border border-amber-900/50 text-[11px]">
+          <span class="text-amber-100 flex-1 mr-2 leading-tight italic">"${escapeHtml(q)}"</span>
+          <button onclick="adminDeleteQuote('${tag}', ${i})" class="text-rose-400 text-xs px-1">✕</button>
+        </div>`).join("");
+    }
     function adminAddQuote() {
-      const currentTag = document.getElementById('admin-quote-tag-select').value;
+      const tag = document.getElementById('admin-quote-tag-select').value;
       const input = document.getElementById('new-quote-text');
       const text = input.value.trim();
       if (!text) return;
-      if (!state.quotes[currentTag]) state.quotes[currentTag] = [];
-      state.quotes[currentTag].push(text);
+      if (!state.quotes[tag]) state.quotes[tag] = [];
+      state.quotes[tag].push(text);
       input.value = '';
-      renderAdminQuotes();
-      syncQuotesToStorageAndCloud();
+      renderAdminQuotes(); syncQuotes();
+    }
+    function adminDeleteQuote(tag, i) {
+      if (state.quotes[tag]) { state.quotes[tag].splice(i, 1); renderAdminQuotes(); syncQuotes(); }
     }
 
-    function adminDeleteQuote(tag, idx) {
-      if (state.quotes[tag]) {
-        state.quotes[tag].splice(idx, 1);
-        renderAdminQuotes();
-        syncQuotesToStorageAndCloud();
-      }
-    }
-
-    function adminResetCurrentDevice() {
-      state.hasOpened = false;
-      localStorage.removeItem(KEY_DEVICE_OPENED);
-      localStorage.removeItem(KEY_DEVICE_PRIZE);
-      renderUI();
-      alert("Đã mở lại lượt cho máy này!");
-    }
-
-    function adminSyncDefaultCloud() {
-      if (isFirebaseReady && db) {
-        db.ref('room/prizes').set(DEFAULT_PRIZES);
-        alert("Đã nạp kho mẫu lên Cloud thành công!");
-      } else {
-        alert("Chưa kết nối Firebase Cloud!");
-      }
-    }
-
-    function adminResetAllCloud() {
-      if (confirm("BẮT ĐẦU VÒNG TIỆC MỚI (RESET LƯỢT CHƠI)?\n\n✅ Khôi phục số lượng các món quà bạn đã cài đặt\n✅ Xóa danh sách trúng thưởng cũ\n✅ Mở lại lượt quay cho tất cả thiết bị\n🔒 Giữ nguyên 100% cấu hình quà & câu troll!")) {
-        localStorage.removeItem(KEY_DEVICE_OPENED);
-        localStorage.removeItem(KEY_DEVICE_PRIZE);
-        state.hasOpened = false;
-
-        const masterPool = state.configuredPrizes && state.configuredPrizes.length 
-          ? JSON.parse(JSON.stringify(state.configuredPrizes)) 
-          : JSON.parse(JSON.stringify(DEFAULT_PRIZES));
-
-        state.prizes = JSON.parse(JSON.stringify(masterPool));
-
-        if (isFirebaseReady && db) {
-          db.ref('room/status').update({ isLocked: true, openDuration: state.openDuration, updatedAt: Date.now() });
-          db.ref('room/prizes').set(masterPool);
-          db.ref('room/winners').remove();
-          db.ref('room/reset_devices').remove();
-          db.ref('room/reset_signal').set({ timestamp: Date.now() });
-        }
-
-        renderUI();
-        renderAdminPrizes();
-        updatePrizeCounters();
-        alert("ĐÃ RESET THÀNH CÔNG VÒNG TIỆC MỚI!");
-      }
-    }
-
-    /* ================= MODAL CƠ CẤU GIẢI ================= */
-    function openPrizeListModal() {
-      renderPublicPrizeList();
-      document.getElementById('modal-prize-list').classList.remove('hidden');
-    }
-
-    function closePrizeListModal() {
-      document.getElementById('modal-prize-list').classList.add('hidden');
-    }
+    /* ===================================================================
+       7. CƠ CẤU GIẢI & BẢNG VÀNG (công khai)
+       =================================================================== */
+    function openPrizeListModal() { renderPublicPrizeList(); document.getElementById('modal-prize-list').classList.remove('hidden'); }
+    function closePrizeListModal() { document.getElementById('modal-prize-list').classList.add('hidden'); }
 
     function renderPublicPrizeList() {
-      const container = document.getElementById('public-prize-list-container');
-      const remBadge = document.getElementById('public-prize-remaining');
-      if (!container) return;
-      container.innerHTML = '';
-
-      let totalRemaining = 0;
-      if (!state.prizes || state.prizes.length === 0) {
-        container.innerHTML = '<div class="text-center py-6 text-stone-400 italic text-xs">Kho quà hiện tại đã được bốc hết sạch!</div>';
-        if (remBadge) remBadge.innerText = '0';
+      const box = document.getElementById('public-prize-list-container');
+      if (!box) return;
+      if (!state.prizes.length) {
+        box.innerHTML = '<div class="text-center py-6 text-stone-400 italic text-xs">Kho quà chưa được BTC chốt.</div>';
         return;
       }
-
-      state.prizes.forEach(p => {
-        const qty = Math.max(0, parseInt(p.qty, 10) || 0);
-        totalRemaining += qty;
-
-        const tagMap = {
-          tag_dacbiet: { text: "ĐẶC BIỆT", style: "bg-gradient-to-r from-yellow-500 to-amber-600 text-red-950 font-black border-yellow-300" },
-          tag_nhat: { text: "GIẢI NHẤT", style: "bg-red-800 text-yellow-200 border-red-500 font-bold" },
-          tag_nhi: { text: "GIẢI NHÌ", style: "bg-slate-300 text-slate-900 border-slate-400 font-bold" },
-          tag_ba: { text: "GIẢI BA", style: "bg-amber-900 text-amber-200 border-amber-600 font-bold" },
-          tag_tienmat: { text: "TIỀN MẶT", style: "bg-emerald-900 text-emerald-200 border-emerald-500 font-bold" },
-          tag_ingame: { text: "INGAME", style: "bg-cyan-950 text-cyan-200 border-cyan-500 font-bold" },
-          tag_khuyenkhich: { text: "KHUYẾN KHÍCH", style: "bg-stone-800 text-amber-300 border-amber-700 font-bold" },
-          tag_kyniem: { text: "KỶ NIỆM ĐEN ĐỦI", style: "bg-stone-900 text-stone-400 border-stone-700 font-bold" }
-        };
-        const curTag = tagMap[p.tag] || { text: "QUÀ TẶNG", style: "bg-stone-800 border-stone-600 text-stone-300" };
-
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-2.5 rounded-2xl bg-black/60 border border-amber-900/60 shadow-sm";
-        item.innerHTML = `
+      box.innerHTML = state.prizes.map(p => {
+        const t = TAGS[p.tag] || { publicText: "QUÀ TẶNG", publicClass: "bg-stone-800 border-stone-600 text-stone-300" };
+        const rem = toInt(p.qty), tot = toInt(p.total);
+        return `
+        <div class="flex items-center justify-between p-2.5 rounded-2xl bg-black/60 border border-amber-900/60 shadow-sm ${rem <= 0 ? 'opacity-50' : ''}">
           <div class="flex items-center gap-2 truncate mr-2">
-            <span class="text-sm">🎁</span>
+            <span class="text-sm">${rem > 0 ? '🎁' : '✅'}</span>
             <div class="truncate">
-              <div class="font-bold text-yellow-200 text-xs truncate">${p.name}</div>
-              <div class="text-[10px] text-amber-400/80">Số lượng còn trong rương: <b class="text-yellow-300 font-bold">${qty}</b> phần</div>
+              <div class="font-bold text-yellow-200 text-xs truncate">${escapeHtml(p.name)}</div>
+              <div class="text-[10px] text-amber-400/80">Còn trong rương: <b class="text-yellow-300 font-bold">${rem}</b> / ${tot} phần</div>
             </div>
           </div>
-          <span class="text-[9px] px-2 py-0.5 rounded-full border uppercase tracking-wider font-bold flex-shrink-0 ${curTag.style}">
-            ${curTag.text}
-          </span>
-        `;
-        container.appendChild(item);
-      });
-
-      if (remBadge) remBadge.innerText = totalRemaining;
+          <span class="text-[9px] px-2 py-0.5 rounded-full border uppercase tracking-wider font-bold flex-shrink-0 ${t.publicClass}">${t.publicText}</span>
+        </div>`;
+      }).join("");
     }
 
-    /* ================= BẢNG VINH DANH ================= */
-    function openLeaderboard() {
-      renderLeaderboard();
-      document.getElementById('modal-leaderboard').classList.remove('hidden');
-    }
-    function closeLeaderboard() {
-      document.getElementById('modal-leaderboard').classList.add('hidden');
-    }
+    function openLeaderboard() { renderLeaderboard(); document.getElementById('modal-leaderboard').classList.remove('hidden'); }
+    function closeLeaderboard() { document.getElementById('modal-leaderboard').classList.add('hidden'); }
+
     function renderLeaderboard() {
       const list = document.getElementById('leaderboard-list');
-      list.innerHTML = '';
-      document.getElementById('lb-total-count').innerText = state.winners.length;
-
-      if (state.winners.length === 0) {
+      updateLeaderboardCounter();
+      if (!state.winners.length) {
         list.innerHTML = `<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa có ai mở rương. Chờ lệnh từ BTC!</div>`;
         return;
       }
-
-      state.winners.forEach((w, index) => {
-        let medal = `#${index + 1}`;
-        let badgeBg = "bg-stone-900 border-amber-900";
-        if (index === 0) { medal = "🥇"; badgeBg = "bg-gradient-to-r from-yellow-950 to-amber-900/80 border-yellow-500"; }
-        else if (index === 1) { medal = "🥈"; badgeBg = "bg-stone-900 border-stone-400"; }
-        else if (index === 2) { medal = "🥉"; badgeBg = "bg-amber-950/60 border-amber-700"; }
-
-        const item = document.createElement('div');
-        item.className = `p-2.5 rounded-2xl border ${badgeBg} flex items-center justify-between shadow-sm`;
-        item.innerHTML = `
+      list.innerHTML = state.winners.map((w, i) => {
+        let medal = `#${i + 1}`, bg = "bg-stone-900 border-amber-900";
+        if (i === 0) { medal = "🥇"; bg = "bg-gradient-to-r from-yellow-950 to-amber-900/80 border-yellow-500"; }
+        else if (i === 1) { medal = "🥈"; bg = "bg-stone-900 border-stone-400"; }
+        else if (i === 2) { medal = "🥉"; bg = "bg-amber-950/60 border-amber-700"; }
+        return `
+        <div class="p-2.5 rounded-2xl border ${bg} flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-2.5 truncate">
             <span class="text-base font-bold w-6 text-center">${medal}</span>
             <div class="truncate">
-              <div class="font-bold text-yellow-200 truncate">${w.user}</div>
-              <div class="text-[10px] text-amber-400/90 truncate">${w.prize}</div>
+              <div class="font-bold text-yellow-200 truncate">${escapeHtml(w.user)}</div>
+              <div class="text-[10px] text-amber-400/90 truncate">${escapeHtml(w.prize)}</div>
             </div>
           </div>
-          <div class="text-right flex-shrink-0 ml-2">
-            <span class="text-[9px] text-stone-400">${w.time || ''}</span>
-          </div>
-        `;
-        list.appendChild(item);
-      });
+          <div class="text-right flex-shrink-0 ml-2"><span class="text-[9px] text-stone-400">${escapeHtml(w.time || '')}</span></div>
+        </div>`;
+      }).join("");
     }
 
-    /* ================= MÃ QR ================= */
+    /* ===================================================================
+       8. MÃ QR (giữ nguyên)
+       =================================================================== */
     function openQrModal() {
-      const currentUrl = window.location.href;
-      document.getElementById('custom-qr-url').value = currentUrl;
-      drawQrCode(currentUrl);
+      const u = window.location.href;
+      document.getElementById('custom-qr-url').value = u;
+      drawQrCode(u);
       document.getElementById('modal-qr').classList.remove('hidden');
     }
-    function closeQrModal() {
-      document.getElementById('modal-qr').classList.add('hidden');
-    }
-    function regenerateCustomQr() {
-      const url = document.getElementById('custom-qr-url').value.trim();
-      if (url) drawQrCode(url);
-    }
+    function closeQrModal() { document.getElementById('modal-qr').classList.add('hidden'); }
+    function regenerateCustomQr() { const u = document.getElementById('custom-qr-url').value.trim(); if (u) drawQrCode(u); }
 
     let qrInstance = null;
     function drawQrCode(text) {
       const box = document.getElementById('qr-code-box');
       box.innerHTML = '';
       if (typeof QRCode !== 'undefined') {
-        qrInstance = new QRCode(box, {
-          text: text,
-          width: 192,
-          height: 192,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
-        });
+        qrInstance = new QRCode(box, { text: text, width: 192, height: 192, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
       } else {
         const img = document.createElement('img');
         img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" + encodeURIComponent(text);
@@ -1684,18 +1630,14 @@
         box.appendChild(img);
       }
     }
-
     function downloadQrImage() {
       const box = document.getElementById('qr-code-box');
       const img = box.querySelector('img');
       const canvas = box.querySelector('canvas');
       const link = document.createElement('a');
       link.download = 'QR_GiaLongBaoRuong.png';
-      if (canvas) {
-        link.href = canvas.toDataURL();
-      } else if (img) {
-        link.href = img.src;
-      }
+      if (canvas) link.href = canvas.toDataURL();
+      else if (img) link.href = img.src;
       link.click();
     }
   </script>
