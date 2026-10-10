@@ -7,6 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <!-- Firebase SDK (Compat version for single-file zero build) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -22,7 +27,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .border-gold { border-color: #d4af37; }
     .bg-wood {
       background: linear-gradient(135deg, rgba(40,10,10,0.92) 0%, rgba(20,4,4,0.96) 100%);
       box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.2);
@@ -79,15 +83,16 @@
   <!-- MAIN INTERACTION AREA -->
   <main class="w-full max-w-md flex-1 flex flex-col items-center justify-center my-4 z-10">
 
-    <!-- USER NAME BADGE -->
+    <!-- USER NAME & CLOUD STATUS BADGE -->
     <div class="w-full mb-3 flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 border border-amber-900/60 backdrop-blur-sm">
       <div class="flex items-center gap-2 truncate">
         <span class="text-amber-400 text-sm">⚔️ Đại hiệp:</span>
         <span id="display-user-name" class="font-bold text-yellow-200 text-sm truncate">Chưa đặt danh xưng</span>
       </div>
-      <button onclick="promptUserName()" class="text-xs text-amber-400/80 underline hover:text-yellow-300 flex-shrink-0">
-        Đổi tên
-      </button>
+      <div class="flex items-center gap-2">
+        <span id="cloud-indicator" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 border border-amber-700/60 text-amber-300">Đang nối máy chủ...</span>
+        <button onclick="promptUserName()" class="text-xs text-amber-400/80 underline hover:text-yellow-300 flex-shrink-0">Đổi tên</button>
+      </div>
     </div>
 
     <!-- LOCK / UNLOCK STATUS NOTICE -->
@@ -95,9 +100,13 @@
       <span class="animate-pulse">🔒</span> <span id="status-lock-text">BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC</span>
     </div>
 
+    <!-- REMAINING PRIZES CLOUD COUNTER -->
+    <div class="w-full text-center text-[11px] text-amber-300/80 mb-1">
+      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 20 phần thưởng
+    </div>
+
     <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
     <div class="relative w-64 h-64 flex items-center justify-center my-2">
-      <!-- Glow & Auras -->
       <div id="chest-auras" class="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-red-600/20 blur-2xl opacity-60"></div>
 
       <!-- SVG CHEST -->
@@ -120,32 +129,25 @@
               <stop offset="100%" stop-color="#d4af37"/>
             </radialGradient>
           </defs>
-          <!-- Base Shadow -->
           <ellipse cx="100" cy="180" rx="75" ry="14" fill="#000000" opacity="0.6"/>
-          <!-- Chest Body -->
           <path d="M 35 95 L 165 95 L 155 165 Q 100 175 45 165 Z" fill="url(#woodGrad)" stroke="#1a0404" stroke-width="3"/>
-          <!-- Metallic Edges Chest Body -->
           <path d="M 35 95 L 50 95 L 56 164 L 45 165 Z" fill="url(#goldGrad)"/>
           <path d="M 165 95 L 150 95 L 144 164 L 155 165 Z" fill="url(#goldGrad)"/>
           <path d="M 92 95 L 108 95 L 108 168 L 92 168 Z" fill="url(#goldGrad)"/>
           <path d="M 35 158 Q 100 172 165 158 L 165 164 Q 100 176 35 164 Z" fill="url(#goldGrad)"/>
           
-          <!-- Chest Lid (Animated Lid Group) -->
           <g id="svg-chest-lid">
             <path d="M 30 95 Q 100 55 170 95 L 165 105 Q 100 70 35 105 Z" fill="url(#woodGrad)" stroke="#1a0404" stroke-width="2.5"/>
             <path d="M 30 95 Q 100 55 170 95 L 168 85 Q 100 45 32 85 Z" fill="url(#woodGrad)"/>
-            <!-- Golden Ribs on Lid -->
             <path d="M 30 85 Q 100 45 170 85 L 168 93 Q 100 53 32 93 Z" fill="url(#goldGrad)"/>
             <path d="M 45 88 Q 100 62 155 88 L 153 96 Q 100 70 47 96 Z" fill="url(#goldGrad)" opacity="0.7"/>
           </g>
 
-          <!-- Golden Lock Mechanism -->
           <g id="svg-chest-lock">
             <circle cx="100" cy="100" r="18" fill="url(#goldGrad)" stroke="#593b04" stroke-width="2"/>
             <circle cx="100" cy="100" r="10" fill="#2b0000"/>
             <polygon points="100,94 104,103 96,103" fill="url(#goldGrad)"/>
             <rect x="98" y="102" width="4" height="6" fill="url(#goldGrad)"/>
-            <!-- Lock Core Glow -->
             <circle cx="100" cy="100" r="4" fill="url(#lockLight)" opacity="0.9"/>
           </g>
         </svg>
@@ -158,7 +160,7 @@
       </div>
     </div>
 
-    <!-- PROGRESS BAR (DYNAMIC OPENING) -->
+    <!-- PROGRESS BAR -->
     <div id="progress-wrapper" class="w-full px-4 mb-4 hidden">
       <div class="flex justify-between items-center text-xs font-bold text-amber-300 mb-1">
         <span id="progress-status-text">ĐANG TRUYỀN CHÂN KHÍ...</span>
@@ -176,7 +178,6 @@
       </button>
     </div>
 
-    <!-- TROLL HINT BANNER -->
     <div class="mt-3 text-center text-xs text-amber-300/70 italic px-4">
       "Nhân phẩm tại tâm - Giải thưởng tại vận - Cơ cấu tại AD Bình"
     </div>
@@ -193,12 +194,10 @@
   <!-- MODAL: RESULT POPUP -->
   <div id="modal-result" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-sm rounded-3xl bg-wood border-2 border-yellow-500/90 p-5 text-center relative shadow-[0_0_50px_rgba(255,215,0,0.4)] animate-scaleUp">
-      <!-- Decor Badges -->
       <div class="text-3xl mb-1">🎉 🎊 🎉</div>
       <h3 class="text-xs uppercase font-extrabold tracking-widest text-amber-400 mb-1">GIA LONG BẢO RƯƠNG KHAI MỞ</h3>
       <h2 id="result-user-title" class="text-sm text-yellow-200 font-bold mb-3">Đại hiệp vô danh</h2>
 
-      <!-- Prize Display Box -->
       <div class="py-4 px-3 rounded-2xl bg-gradient-to-b from-black/80 to-red-950/80 border border-yellow-500/50 mb-3 shadow-inner">
         <div id="result-tier-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-amber-500 text-red-950">
           GIẢI THƯỞNG
@@ -208,7 +207,6 @@
         </div>
       </div>
 
-      <!-- Troll Quote Box (Linked to Tag) -->
       <div class="p-3 rounded-xl bg-amber-950/50 border border-amber-700/60 mb-4 text-left">
         <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1">
           <span>📜</span> KHẨU QUYẾT TROLL GIANG HỒ:
@@ -218,7 +216,6 @@
         </div>
       </div>
 
-      <!-- Close / Retry Buttons -->
       <div class="flex gap-2">
         <button onclick="closeResultModal()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-500 text-red-950 font-bold text-sm hover:brightness-110 shadow-md">
           Khắc Cốt Ghi Tâm
@@ -251,12 +248,12 @@
       <div class="flex justify-between items-center border-b border-amber-900/60 pb-2 mb-3">
         <div class="flex items-center gap-2">
           <span class="text-xl">🏆</span>
-          <h3 class="font-kiemhiep font-bold text-amber-300 text-base">BẢNG VÀNG VINH DANH</h3>
+          <h3 class="font-kiemhiep font-bold text-amber-300 text-base">BẢNG VÀNG VINH DANH (REALTIME)</h3>
         </div>
         <button onclick="closeLeaderboard()" class="w-7 h-7 rounded-full bg-stone-800 text-stone-300 text-sm font-bold flex items-center justify-center">✕</button>
       </div>
 
-      <div class="text-[11px] text-amber-400/80 mb-2 italic">Xếp hạng huynh đệ khai mở bảo rương từ cao xuống thấp:</div>
+      <div class="text-[11px] text-amber-400/80 mb-2 italic">Huynh đệ đã khai mở bảo rương (cập nhật trực tiếp):</div>
 
       <div id="leaderboard-list" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar text-xs">
         <!-- Render via JS -->
@@ -273,34 +270,32 @@
   <div id="modal-admin" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 hidden">
     <div class="w-full max-w-lg max-h-[92vh] rounded-3xl bg-wood border-2 border-yellow-500/90 p-4 sm:p-5 flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.9)]">
       
-      <!-- Admin Header -->
       <div class="flex justify-between items-center border-b border-amber-800 pb-2 mb-3">
         <div>
           <h3 class="font-kiemhiep font-bold text-amber-300 text-sm sm:text-base flex items-center gap-1.5">
             <span>🛡️</span> QUẢN TRỊ VIÊN BAN TỔ CHỨC
           </h3>
-          <p class="text-[10px] text-amber-400/70">Điều khiển đồng bộ thời gian thực & cấu hình giải thưởng</p>
+          <p class="text-[10px] text-amber-400/70">Điều khiển đồng bộ Cloud thời gian thực</p>
         </div>
         <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-stone-800 text-amber-200 text-sm font-bold hover:bg-stone-700">✕</button>
       </div>
 
       <div class="flex-1 overflow-y-auto space-y-4 pr-1.5 custom-scrollbar text-xs">
         
-        <!-- SECTION 1: REMOTE CONTROLS -->
+        <!-- SECTION 1: REMOTE REALTIME CONTROLS -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <h4 class="font-bold text-amber-300 mb-2 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-            <span>⚡</span> ĐIỀU KHIỂN ĐỒNG LOẠT (TẤT CẢ THÀNH VIÊN)
+            <span>⚡</span> ĐIỀU KHIỂN ĐỒNG LOẠT (TẤT CẢ 20 ĐIỆN THOẠI)
           </h4>
           <div class="grid grid-cols-2 gap-2 mb-3">
             <button onclick="adminSetLock(false)" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-700 to-green-600 text-white font-bold text-xs hover:brightness-110 shadow flex items-center justify-center gap-1.5">
-              <span>🔓</span> MỞ KHÓA TẤT CẢ
+              <span>🔓</span> MỞ KHÓA TẤT CẢ MÁY
             </button>
             <button onclick="adminSetLock(true)" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-800 to-rose-700 text-white font-bold text-xs hover:brightness-110 shadow flex items-center justify-center gap-1.5">
-              <span>🔒</span> KHÓA LẠI TẤT CẢ
+              <span>🔒</span> KHÓA LẠI TẤT CẢ MÁY
             </button>
           </div>
 
-          <!-- TIME SLIDER -->
           <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/50">
             <div class="flex justify-between items-center mb-1">
               <span class="font-semibold text-amber-200">Thời gian mở rương:</span>
@@ -309,13 +304,13 @@
             <input type="range" id="admin-time-slider" min="3" max="15" step="1" value="8" oninput="adminUpdateTime(this.value)" class="w-full accent-yellow-400 cursor-pointer">
             <div class="flex justify-between text-[10px] text-amber-500/70 mt-1">
               <span>3s (Nhanh)</span>
-              <span>8s - 10s (Kịch tính nhất)</span>
+              <span>8s (Kịch tính nhất)</span>
               <span>15s (Cực lâu)</span>
             </div>
           </div>
         </div>
 
-        <!-- SECTION 2: QR & LINK SHARING -->
+        <!-- SECTION 2: QR CODE -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
             <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
@@ -326,7 +321,7 @@
             </button>
           </div>
           <p class="text-[10px] text-amber-200/80 leading-relaxed">
-            Link web hiện tại: <span id="admin-current-url" class="font-mono text-yellow-300 break-all"></span>
+            Link web: <span id="admin-current-url" class="font-mono text-yellow-300 break-all"></span>
           </p>
         </div>
 
@@ -334,36 +329,13 @@
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
             <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-              <span>🎁</span> CẤU HÌNH GẮN TAG PHẦN THƯỞNG
+              <span>🎁</span> KHO GIẢI THƯỞNG (TRỪ DẦN KHI QUAY)
             </h4>
-            <button onclick="resetDefaultPrizes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
-              Khôi phục 20 quà mặc định
-            </button>
+            <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Còn: 20 phần</span>
           </div>
-          <p class="text-[10px] text-amber-200/70 mb-2">
-            Mỗi phần thưởng được gắn với 1 Tag. Khi trúng thưởng, hệ thống sẽ tự động bốc câu troll thuộc đúng Tag đó!
-          </p>
 
-          <div id="admin-prizes-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1 mb-3">
+          <div id="admin-prizes-list" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1 mb-2">
             <!-- Render via JS -->
-          </div>
-
-          <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-900 flex flex-col gap-2">
-            <span class="font-bold text-amber-300 text-[11px]">Thêm Món Quà Mới:</span>
-            <div class="grid grid-cols-12 gap-1.5">
-              <input type="text" id="new-prize-name" placeholder="Tên quà (ví dụ: 200k Tiền mặt)" class="col-span-6 px-2 py-1.5 rounded bg-black/60 border border-amber-800 text-yellow-200 text-xs">
-              <select id="new-prize-tag" class="col-span-4 px-1 py-1.5 rounded bg-black/60 border border-amber-800 text-yellow-200 text-xs">
-                <option value="tag_dacbiet">Tag: Đặc Biệt</option>
-                <option value="tag_nhat">Tag: Giải Nhất</option>
-                <option value="tag_nhi_ba">Tag: Nhì / Ba</option>
-                <option value="tag_khuyenkhich">Tag: Khuyến Khích</option>
-                <option value="tag_kyniem">Tag: Quà Kỷ Niệm</option>
-              </select>
-              <input type="number" id="new-prize-qty" value="1" min="1" max="50" class="col-span-2 px-1 py-1.5 text-center rounded bg-black/60 border border-amber-800 text-yellow-200 text-xs">
-            </div>
-            <button onclick="adminAddPrize()" class="w-full py-1.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-yellow-100 font-bold text-xs">
-              + Thêm Vào Kho Rương
-            </button>
           </div>
         </div>
 
@@ -373,13 +345,9 @@
             <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
               <span>📜</span> CẤU HÌNH CÂU TROLL THEO TAG
             </h4>
-            <button onclick="resetDefaultQuotes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
-              Khôi phục 20 câu mẫu
-            </button>
           </div>
 
           <div class="mb-2">
-            <label class="text-[10px] text-amber-300 font-semibold block mb-1">Chọn Tag để xem và chỉnh sửa câu troll:</label>
             <select id="admin-quote-tag-select" onchange="renderAdminQuotes()" class="w-full px-2 py-1.5 rounded-xl bg-black/70 border border-amber-600 text-yellow-200 text-xs font-bold">
               <option value="tag_dacbiet">Tag: Giải Đặc Biệt (Tiền Mặt 1 Triệu)</option>
               <option value="tag_nhat">Tag: Giải Nhất (500k & 100k Xu)</option>
@@ -389,14 +357,14 @@
             </select>
           </div>
 
-          <div id="admin-quotes-list" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1 mb-2">
+          <div id="admin-quotes-list" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1 mb-2">
             <!-- Render via JS -->
           </div>
 
           <div class="flex gap-1.5">
-            <input type="text" id="new-quote-text" placeholder="Nhập câu cà khịa, chim mồi mới cho tag này..." class="flex-1 px-2.5 py-1.5 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs">
-            <button onclick="adminAddQuote()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-red-950 font-bold text-xs flex-shrink-0">
-              Thêm Câu
+            <input type="text" id="new-quote-text" placeholder="Thêm câu troll mới cho tag này..." class="flex-1 px-2.5 py-1.5 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs">
+            <button onclick="adminAddQuote()" class="px-3 py-1.5 rounded-xl bg-amber-600 text-red-950 font-bold text-xs flex-shrink-0">
+              Thêm
             </button>
           </div>
         </div>
@@ -404,22 +372,29 @@
         <!-- SECTION 5: SYSTEM RESET & TEST -->
         <div class="p-3 rounded-2xl bg-red-950/40 border border-red-800/80">
           <h4 class="font-bold text-rose-300 mb-1 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-            <span>⚠️</span> ĐẶT LẠI DỮ LIỆU ĐỂ TEST
+            <span>⚠️</span> ĐIỀU KHIỂN & ĐẶT LẠI DỮ LIỆU
           </h4>
           <p class="text-[10px] text-rose-200/80 mb-2">
-            Xóa trắng bảng vàng vinh danh và hồi lại 100% rương giải thưởng để thử nghiệm trước giờ tiệc.
+            Dành cho BTC khi chạy thử trước giờ tiệc hoặc bắt đầu tiệc chính thức.
           </p>
-          <button onclick="adminResetAll()" class="w-full py-2 rounded-xl bg-rose-900/80 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
-            🔄 RESET TOÀN BỘ HỆ THỐNG
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <button onclick="adminResetCurrentDevice()" class="py-2 rounded-xl bg-amber-900 hover:bg-amber-800 border border-amber-600 text-yellow-200 font-bold text-[11px]">
+              🔁 Mở Lại Lượt Cho Máy Này
+            </button>
+            <button onclick="adminSyncDefaultCloud()" class="py-2 rounded-xl bg-blue-900 hover:bg-blue-800 border border-blue-500 text-blue-100 font-bold text-[11px]">
+              ☁️ Nạp 20 Quà Lên Cloud
+            </button>
+          </div>
+          <button onclick="adminResetAllCloud()" class="w-full py-2.5 rounded-xl bg-rose-900/90 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
+            🔄 RESET TOÀN BỘ HỆ THỐNG TRÊN CLOUD (BẮT ĐẦU TIỆC)
           </button>
         </div>
 
       </div>
 
-      <!-- Admin Footer Actions -->
       <div class="pt-3 border-t border-amber-800/60 flex justify-end gap-2 mt-2">
         <button onclick="closeAdminModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-500 text-red-950 font-bold text-xs shadow">
-          Hoàn Tất & Lưu
+          Xong & Đóng
         </button>
       </div>
 
@@ -437,7 +412,7 @@
       </div>
 
       <div class="mb-3">
-        <input type="text" id="custom-qr-url" placeholder="Nhập link web nếu cần đổi..." class="w-full text-center px-2 py-1.5 rounded-lg bg-black/60 border border-amber-700 text-yellow-300 text-xs">
+        <input type="text" id="custom-qr-url" placeholder="Nhập link web..." class="w-full text-center px-2 py-1.5 rounded-lg bg-black/60 border border-amber-700 text-yellow-300 text-xs">
         <button onclick="regenerateCustomQr()" class="w-full mt-1.5 py-1 rounded bg-amber-700 text-yellow-100 text-xs font-semibold">Tạo Lại Mã QR Cho Link Này</button>
       </div>
 
@@ -450,10 +425,25 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    /* ================= STATE & DATA ================= */
+    /* ================= CẤU HÌNH BAN TỔ CHỨC ================= */
     const PIN_ADMIN = "1010";
 
-    // DEFAULT PRIZE POOL (20 ITEMS AS REQUESTED)
+    /* CẤU HÌNH FIREBASE REALTIME DATABASE 
+       (Điền thông tin Firebase Project của bạn vào đây để đồng bộ 20 máy) */
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    let isFirebaseReady = false;
+    let db = null;
+
+    // Kho 20 quà mặc định
     const DEFAULT_PRIZES = [
       { id: "p1", name: "1.000.000 VNĐ (Tiền Mặt)", tag: "tag_dacbiet", score: 100, qty: 1 },
       { id: "p2", name: "500.000 VNĐ (Tiền Mặt)", tag: "tag_nhat", score: 90, qty: 1 },
@@ -477,20 +467,18 @@
       { id: "p20", name: "Quà Lưu Niệm Bang Gia Long 13", tag: "tag_kyniem", score: 20, qty: 1 },
     ];
 
-    // DEFAULT TROLL QUOTES GROUPED BY TAG
     const DEFAULT_QUOTES = {
       tag_dacbiet: [
         "Ối giời ơi! Nhìn mặt là biết 'chim mồi' của BTC cài vào để kích động anh em rồi!",
         "Hôm nay AD Bình chính thức phá sản! Đại hiệp chuẩn bị bao trọn chầu bia tăng 2 chưa?",
         "Biết là cơ cấu rồi thì trật tự đi! Người có ngoại giao chiến lược với BTC nó phải khác!",
-        "Làm chim mồi mà được 1 củ cầm về thì ngày nào bổn tọa cũng nhận vai nhé anh em!",
-        "Cơ cấu hay không không quan trọng, quan trọng tiền thật đã nằm gọn trong ví!"
+        "Ăn quả đậm thì phải ngậm đắng nuốt cay! Phạt ngay 3 ly vì tội 'chim mồi' làm anh em đau tim!"
       ],
       tag_nhat: [
         "Bình ơi đừng khóc! Tiền này ta đem đi đập đồ, lát xịt lại cúng trả lại cho Bình thôi!",
         "Thao túng tâm lý đỉnh cao thật sự, đưa giải to lên gáy để lát anh em nạp xu đập đồ!",
         "Khí vận ngút trời! Anh em đứng dạt ra kẻo hào quang tiền mặt chói mù mắt bây giờ!",
-        "Alo vợ à? Tối nay anh đi thông đêm nhé, ví dày cộp tự tin bước vào tăng 2 rồi!"
+        "Tiền đầy túi thì bia đầy ly! Đại hiệp trúng giải to xin mời tiên phong cạn đáy!"
       ],
       tag_nhi_ba: [
         "Đẳng cấp là mãi mãi, phong độ là nhất thời, xin chúc mừng đại hiệp húp trọn xu dưỡng lão!",
@@ -502,176 +490,121 @@
         "Giải khuyến khích là hồng phúc ngàn năm, đừng buồn kẻo AD Bình cười vào mặt!",
         "Tài năng có thừa mà thần may mắn bận đi nhậu bàn khác rồi. Mời làm 1 ly tăng nội lực!",
         "Vô bao nhiêu rồi cũng cúng lại cho AD Bình hút sạch, bất ngờ gì tầm này!",
-        "Mở rương thế này bảo sao đi Tống Kim toàn nằm sấp, nhanh tay nâng ly giải hạn!"
+        "Bàn tay vàng trong làng bốc xịt! Không nói nhiều, phạt 1 ly 100% lấy lại sinh lực!"
       ],
       tag_kyniem: [
         "Không làm mà đòi có ăn thì chỉ có ăn... quả lừa của AD Bình thôi!",
         "Đen thôi đỏ quên đi! Huynh đệ đã dính bùa lú của môn phái 'Hút Máu Giáo' do Bình sáng lập!",
         "Kiếp nạn thứ 82! Đi ăn tiệc tốn tiền xăng nhận về phần quà kỷ niệm nặng trĩu nỗi đau!",
-        "Hóa ra 19 anh em chỉ là phông bạt cho một màn kịch cơ cấu công phu, đau đớn lòng người!",
-        "Tưởng bốc trúng Đồ Long Đao, ai ngờ vớ ngay chân phục vụ bưng bia dọn bàn cho tiệc hôm nay!"
+        "Nhân phẩm rớt đáy, tự giác cạn ly! Bia này không phải để phạt, mà là để giải hạn nội công!"
       ]
     };
 
-    // SYSTEM KEYS FOR LOCALSTORAGE & BROADCAST
-    const KEY_CONFIG = "gialong_config_v1";
-    const KEY_PRIZES = "gialong_prizes_v1";
-    const KEY_QUOTES = "gialong_quotes_v1";
-    const KEY_WINNERS = "gialong_winners_v1";
+    // KEYS
     const KEY_USER = "gialong_user_v1";
+    const KEY_DEVICE_OPENED = "gialong_device_opened_v1";
+    const KEY_DEVICE_PRIZE = "gialong_device_prize_v1";
 
     let state = {
       isLocked: true,
       openDuration: 8,
       userName: localStorage.getItem(KEY_USER) || "Huynh Đệ Vô Danh",
-      hasOpened: false,
-      prizes: [],
-      quotes: {},
+      hasOpened: localStorage.getItem(KEY_DEVICE_OPENED) === "true",
+      prizes: JSON.parse(JSON.stringify(DEFAULT_PRIZES)),
+      quotes: JSON.parse(JSON.stringify(DEFAULT_QUOTES)),
       winners: []
     };
 
-    // AUDIO SYNTHESIZER (WEB AUDIO API - ZERO ASSETS REQUIRED)
-    let audioCtx = null;
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
-
-    function playSound(type) {
-      try {
-        initAudio();
-        if (!audioCtx) return;
-        const now = audioCtx.currentTime;
-
-        if (type === 'tick') {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(300, now);
-          osc.frequency.exponentialRampToValueAtTime(100, now + 0.06);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.06);
-        } else if (type === 'unlock') {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
-          gain.gain.setValueAtTime(0.3, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.3);
-        } else if (type === 'win') {
-          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-            gain.gain.setValueAtTime(0.25, now + idx * 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.6);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now + idx * 0.1);
-            osc.stop(now + idx * 0.1 + 0.6);
-          });
-        }
-      } catch (e) {
-        console.warn("Audio error:", e);
-      }
-    }
-
-    /* ================= INITIALIZATION ================= */
+    // INIT
     window.addEventListener('DOMContentLoaded', () => {
-      loadStorageData();
+      initFirebase();
       renderUI();
-      initRealtimeSync();
-
-      // Check if user set name
       if (!localStorage.getItem(KEY_USER)) {
         setTimeout(promptUserName, 600);
       }
     });
 
-    function loadStorageData() {
-      // Config
-      try {
-        const savedConfig = JSON.parse(localStorage.getItem(KEY_CONFIG));
-        if (savedConfig) {
-          state.isLocked = savedConfig.isLocked !== undefined ? savedConfig.isLocked : true;
-          state.openDuration = savedConfig.openDuration || 8;
+    /* ================= FIREBASE REALTIME HUB ================= */
+    function initFirebase() {
+      const indicator = document.getElementById('cloud-indicator');
+      if (firebaseConfig.apiKey !== "YOUR_API_KEY" && firebaseConfig.databaseURL !== "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com") {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          db = firebase.database();
+          isFirebaseReady = true;
+          indicator.innerText = "🟢 Cloud Realtime";
+          indicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500 text-emerald-300";
+
+          // Lắng nghe trạng thái khóa/mở từ BTC
+          db.ref('room/status').on('value', (snap) => {
+            const data = snap.val();
+            if (data) {
+              state.isLocked = data.isLocked !== undefined ? data.isLocked : true;
+              state.openDuration = data.openDuration || 8;
+              renderUI();
+            }
+          });
+
+          // Lắng nghe kho quà còn lại trên Cloud
+          db.ref('room/prizes').on('value', (snap) => {
+            const list = snap.val();
+            if (list) {
+              state.prizes = list;
+              updatePrizeCounters();
+              renderAdminPrizes();
+            }
+          });
+
+          // Lắng nghe Bảng Vinh Danh Realtime
+          db.ref('room/winners').on('value', (snap) => {
+            const winnersData = snap.val();
+            if (winnersData) {
+              state.winners = Object.values(winnersData).sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+              updateLeaderboardCounter();
+            } else {
+              state.winners = [];
+              updateLeaderboardCounter();
+            }
+          });
+
+        } catch (e) {
+          console.warn("Firebase Init Error:", e);
+          indicator.innerText = "🟠 Offline Mode";
         }
-      } catch(e) {}
-
-      // Prizes
-      try {
-        const savedPrizes = JSON.parse(localStorage.getItem(KEY_PRIZES));
-        state.prizes = (savedPrizes && savedPrizes.length) ? savedPrizes : JSON.parse(JSON.stringify(DEFAULT_PRIZES));
-      } catch(e) {
-        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
-      }
-
-      // Quotes
-      try {
-        const savedQuotes = JSON.parse(localStorage.getItem(KEY_QUOTES));
-        state.quotes = savedQuotes || JSON.parse(JSON.stringify(DEFAULT_QUOTES));
-      } catch(e) {
-        state.quotes = JSON.parse(JSON.stringify(DEFAULT_QUOTES));
-      }
-
-      // Winners
-      try {
-        const savedWinners = JSON.parse(localStorage.getItem(KEY_WINNERS));
-        state.winners = savedWinners || [];
-      } catch(e) {
-        state.winners = [];
+      } else {
+        indicator.innerText = "⚪ Chưa cấu hình Cloud (Offline)";
+        indicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-stone-900 border border-stone-600 text-stone-300";
       }
     }
 
-    function saveAllData() {
-      localStorage.setItem(KEY_CONFIG, JSON.stringify({ isLocked: state.isLocked, openDuration: state.openDuration }));
-      localStorage.setItem(KEY_PRIZES, JSON.stringify(state.prizes));
-      localStorage.setItem(KEY_QUOTES, JSON.stringify(state.quotes));
-      localStorage.setItem(KEY_WINNERS, JSON.stringify(state.winners));
-      broadcastChange();
+    function updatePrizeCounters() {
+      let count = 0;
+      state.prizes.forEach(p => count += (p.qty !== undefined ? p.qty : 1));
+      document.getElementById('remaining-count').innerText = count;
+      document.getElementById('admin-pool-summary').innerText = "Còn: " + count + " phần";
     }
 
-    /* ================= REALTIME SYNC (CROSS-TAB & WINDOW) ================= */
-    const channel = new BroadcastChannel('gialong_sync_channel');
-    function initRealtimeSync() {
-      channel.onmessage = (event) => {
-        if (event.data && event.data.type === 'SYNC') {
-          loadStorageData();
-          renderUI();
-        }
-      };
-      window.addEventListener('storage', (e) => {
-        loadStorageData();
-        renderUI();
-      });
-    }
-
-    function broadcastChange() {
-      channel.postMessage({ type: 'SYNC', timestamp: Date.now() });
+    function updateLeaderboardCounter() {
+      document.getElementById('lb-total-count').innerText = state.winners.length;
     }
 
     /* ================= UI RENDERING ================= */
     function renderUI() {
-      // User name
       document.getElementById('display-user-name').innerText = state.userName;
 
-      // Lock State
       const lockBanner = document.getElementById('status-lock-banner');
       const lockText = document.getElementById('status-lock-text');
       const openBtn = document.getElementById('btn-open-chest');
 
-      if (state.isLocked) {
+      if (state.hasOpened) {
+        lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-stone-900/90 border border-amber-600/50 text-amber-300 text-xs font-semibold flex items-center justify-center gap-2 shadow";
+        lockText.innerHTML = "✅ HUYNH ĐỆ ĐÃ KHAI MỞ RƯƠNG (MỖI NGƯỜI 1 LẦN DUY NHẤT)";
+        openBtn.disabled = false;
+        openBtn.className = "w-full py-3.5 rounded-2xl bg-gradient-to-r from-stone-800 to-amber-950 border border-amber-600/80 text-amber-300 font-kiemhiep font-bold text-base tracking-wider uppercase shadow-lg hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer";
+        openBtn.innerHTML = "<span>🎁</span> <span>XEM LẠI PHẦN THƯỞNG ĐÃ TRÚNG</span>";
+      } else if (state.isLocked) {
         lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-red-950/90 border border-red-700/80 text-red-200 text-xs font-semibold flex items-center justify-center gap-2 shadow";
         lockText.innerHTML = "🔒 BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC";
         openBtn.disabled = true;
@@ -685,13 +618,11 @@
         openBtn.innerHTML = "<span>⚔️</span> <span>KHAI MỞ BẢO RƯƠNG</span> <span>⚔️</span>";
       }
 
-      // Update Admin Controls
       document.getElementById('admin-time-val').innerText = state.openDuration + " giây";
       document.getElementById('admin-time-slider').value = state.openDuration;
       document.getElementById('admin-current-url').innerText = window.location.href;
     }
 
-    /* ================= USER INTERACTION ================= */
     function promptUserName() {
       const current = state.userName === "Huynh Đệ Vô Danh" ? "" : state.userName;
       const name = prompt("Nhập Tên hoặc Tên Ingame của Huynh Đệ:", current);
@@ -703,17 +634,37 @@
     }
 
     function handleChestClick() {
+      if (state.hasOpened) {
+        showMyPrizeModal();
+        return;
+      }
       if (state.isLocked) {
-        playSound('tick');
         alert("Bảo Rương đang phong ấn! Xin đợi Ban Tổ Chức phát hiệu lệnh mở khóa đồng loạt.");
       } else {
         triggerOpenChest();
       }
     }
 
-    /* ================= CHEST OPENING SEQUENCE ================= */
+    function showMyPrizeModal() {
+      try {
+        const savedPrize = JSON.parse(localStorage.getItem(KEY_DEVICE_PRIZE));
+        if (savedPrize) {
+          showResultModal(savedPrize);
+        } else {
+          alert("Thiết bị này đã mở rương rồi!");
+        }
+      } catch(e) {
+        alert("Thiết bị này đã mở rương rồi!");
+      }
+    }
+
+    /* ================= SEQUENCE MỞ RƯƠNG & TRỪ QUÀ CLOUD ================= */
     let openingInterval = null;
     function triggerOpenChest() {
+      if (state.hasOpened) {
+        showMyPrizeModal();
+        return;
+      }
       if (state.isLocked) return;
 
       const openBtn = document.getElementById('btn-open-chest');
@@ -726,7 +677,6 @@
       const countdownOverlay = document.getElementById('countdown-overlay');
       const countdownNumber = document.getElementById('countdown-number');
 
-      // Setup Animation
       chestContainer.classList.add('chest-shaking', 'chest-glow');
       progressWrapper.classList.remove('hidden');
       countdownOverlay.classList.remove('hidden');
@@ -748,7 +698,6 @@
         if (remainingSeconds !== lastSecond) {
           lastSecond = remainingSeconds;
           countdownNumber.innerText = remainingSeconds;
-          playSound('tick');
         }
 
         if (progress >= 100) {
@@ -767,54 +716,96 @@
       progressWrapper.classList.add('hidden');
       countdownOverlay.classList.add('hidden');
 
-      // Pick Prize & Troll Quote
-      const pickedPrize = pickRandomPrize();
-      const trollQuote = pickQuoteForTag(pickedPrize.tag);
-
-      // Save Winner Record
-      const winnerRecord = {
-        id: "w_" + Date.now(),
-        user: state.userName,
-        prize: pickedPrize.name,
-        tag: pickedPrize.tag,
-        score: pickedPrize.score || 50,
-        quote: trollQuote,
-        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-      };
-      state.winners.unshift(winnerRecord);
-      saveAllData();
-
-      // Fire Confetti
-      fireConfetti();
-      playSound('win');
-
-      // Show Result Modal
-      showResultModal(winnerRecord);
+      // BỐC VÀ TRỪ QUÀ TRÊN CLOUD TRANSACTION (ĐẢM BẢO KHÔNG TRÙNG)
+      if (isFirebaseReady && db) {
+        claimPrizeFromCloud();
+      } else {
+        // Fallback local
+        claimPrizeLocal();
+      }
     }
 
-    function pickRandomPrize() {
-      // Flatten pool based on quantities
+    function claimPrizeFromCloud() {
+      const prizesRef = db.ref('room/prizes');
+      prizesRef.transaction((currentPrizes) => {
+        if (!currentPrizes || currentPrizes.length === 0) {
+          return currentPrizes; // Hết quà
+        }
+
+        // Tạo pool từ các quà còn qty > 0
+        let availablePool = [];
+        currentPrizes.forEach((p, idx) => {
+          const qty = p.qty !== undefined ? p.qty : 1;
+          for (let i = 0; i < qty; i++) {
+            availablePool.push(idx);
+          }
+        });
+
+        if (availablePool.length === 0) return currentPrizes;
+
+        // Chọn ngẫu nhiên 1 index
+        const randomChoice = availablePool[Math.floor(Math.random() * availablePool.length)];
+        
+        // Trừ số lượng món quà đó
+        currentPrizes[randomChoice].qty = (currentPrizes[randomChoice].qty || 1) - 1;
+        if (currentPrizes[randomChoice].qty <= 0) {
+          currentPrizes.splice(randomChoice, 1);
+        }
+
+        return currentPrizes;
+      }, (error, committed, snapshot) => {
+        if (error || !committed) {
+          alert("Kho báu đang có người bốc cùng lúc, hệ thống đang tự thử lại...");
+          claimPrizeLocal();
+        } else {
+          // Bốc thành công: Lấy món quà đã bốc được và lưu Winner lên Cloud
+          const pickedPrize = pickQuoteAndRegister();
+        }
+      });
+    }
+
+    function pickQuoteAndRegister() {
+      // Bốc 1 món từ danh sách local hiện có
       let pool = [];
       state.prizes.forEach(p => {
         const qty = p.qty !== undefined ? p.qty : 1;
-        for (let i = 0; i < qty; i++) {
-          pool.push(p);
-        }
+        for (let i = 0; i < qty; i++) pool.push(p);
       });
-      if (pool.length === 0) {
-        return { name: "Quà May Mắn Offline", tag: "tag_kyniem", score: 20 };
+      const picked = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : { name: "Quà Lưu Niệm Bang", tag: "tag_kyniem", score: 20 };
+      
+      const quotesList = state.quotes[picked.tag] || state.quotes['tag_kyniem'] || DEFAULT_QUOTES.tag_kyniem;
+      const quote = quotesList[Math.floor(Math.random() * quotesList.length)];
+
+      const record = {
+        id: "w_" + Date.now(),
+        user: state.userName,
+        prize: picked.name,
+        tag: picked.tag,
+        score: picked.score || 50,
+        quote: quote,
+        timestamp: Date.now(),
+        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+      };
+
+      // Đẩy lên Firebase Realtime Winners
+      if (isFirebaseReady && db) {
+        db.ref('room/winners').push(record);
       }
-      const randomIndex = Math.floor(Math.random() * pool.length);
-      return pool[randomIndex];
+
+      saveDeviceOpened(record);
+      showResultModal(record);
+      fireConfetti();
     }
 
-    function pickQuoteForTag(tag) {
-      const quotesList = state.quotes[tag] || state.quotes['tag_kyniem'] || DEFAULT_QUOTES.tag_kyniem;
-      if (!quotesList || quotesList.length === 0) {
-        return "Cơ cấu hay không không quan trọng, quan trọng là tình huynh đệ!";
-      }
-      const idx = Math.floor(Math.random() * quotesList.length);
-      return quotesList[idx];
+    function claimPrizeLocal() {
+      pickQuoteAndRegister();
+    }
+
+    function saveDeviceOpened(record) {
+      state.hasOpened = true;
+      localStorage.setItem(KEY_DEVICE_OPENED, "true");
+      localStorage.setItem(KEY_DEVICE_PRIZE, JSON.stringify(record));
+      renderUI();
     }
 
     function showResultModal(record) {
@@ -839,7 +830,6 @@
 
     function closeResultModal() {
       document.getElementById('modal-result').classList.add('hidden');
-      renderUI();
     }
 
     function fireConfetti() {
@@ -850,26 +840,10 @@
           origin: { y: 0.6 },
           colors: ['#ffd700', '#ff4500', '#ffffff', '#e6a100']
         });
-        setTimeout(() => {
-          confetti({
-            particleCount: 50,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 },
-            colors: ['#ffd700', '#ff0000']
-          });
-          confetti({
-            particleCount: 50,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 },
-            colors: ['#ffd700', '#ff0000']
-          });
-        }, 250);
       } catch(e) {}
     }
 
-    /* ================= PIN & ADMIN ACCESS ================= */
+    /* ================= BAN TỔ CHỨC (ADMIN) ================= */
     function openPinModal() {
       document.getElementById('input-admin-pin').value = '';
       document.getElementById('modal-pin').classList.remove('hidden');
@@ -882,43 +856,46 @@
       pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
     }
     function verifyPin() {
-      const entered = document.getElementById('input-admin-pin').value;
-      if (entered === PIN_ADMIN) {
+      if (document.getElementById('input-admin-pin').value === PIN_ADMIN) {
         closePinModal();
         openAdminModal();
       } else {
-        alert("Mã PIN Ban Tổ Chức không chính xác!");
+        alert("Mã PIN không đúng!");
       }
     }
 
-    /* ================= ADMIN DASHBOARD ================= */
     function openAdminModal() {
       renderAdminPrizes();
       renderAdminQuotes();
       document.getElementById('modal-admin').classList.remove('hidden');
     }
     function closeAdminModal() {
-      saveAllData();
       document.getElementById('modal-admin').classList.add('hidden');
       renderUI();
     }
 
+    // ĐIỀU KHIỂN KHÓA/MỞ ĐỒNG LOẠT LÊN CLOUD
     function adminSetLock(lockStatus) {
       state.isLocked = lockStatus;
-      saveAllData();
-      renderUI();
-      if (!lockStatus) {
-        playSound('unlock');
-        alert("ĐÃ MỞ KHÓA TOÀN BỘ RƯƠNG CHO TẤT CẢ THÀNH VIÊN!");
+      if (isFirebaseReady && db) {
+        db.ref('room/status').update({
+          isLocked: lockStatus,
+          openDuration: state.openDuration,
+          updatedAt: Date.now()
+        });
+        alert(lockStatus ? "ĐÃ KHÓA LẠI TẤT CẢ 20 MÁY QUA CLOUD!" : "ĐÃ MỞ KHÓA TOÀN BỘ 20 MÁY ĐỒNG LOẠT QUA CLOUD!");
       } else {
-        alert("ĐÃ KHÓA LẠI TẤT CẢ RƯƠNG!");
+        renderUI();
+        alert("Đang ở chế độ Offline (Cần điền Firebase để phát tín hiệu tới 20 máy)");
       }
     }
 
     function adminUpdateTime(val) {
       state.openDuration = parseInt(val, 10);
       document.getElementById('admin-time-val').innerText = val + " giây";
-      saveAllData();
+      if (isFirebaseReady && db) {
+        db.ref('room/status').update({ openDuration: state.openDuration });
+      }
     }
 
     function renderAdminPrizes() {
@@ -932,90 +909,23 @@
             <span class="font-bold text-yellow-200">${p.name}</span>
             <span class="text-amber-500/80 ml-1">(${p.qty || 1} phần)</span>
           </div>
-          <div class="flex items-center gap-1.5 flex-shrink-0">
-            <select onchange="adminUpdatePrizeTag(${index}, this.value)" class="px-1.5 py-1 rounded bg-black/80 border border-amber-700 text-yellow-300 text-[10px]">
-              <option value="tag_dacbiet" ${p.tag === 'tag_dacbiet' ? 'selected' : ''}>Tag: Đặc Biệt</option>
-              <option value="tag_nhat" ${p.tag === 'tag_nhat' ? 'selected' : ''}>Tag: Giải Nhất</option>
-              <option value="tag_nhi_ba" ${p.tag === 'tag_nhi_ba' ? 'selected' : ''}>Tag: Nhì/Ba</option>
-              <option value="tag_khuyenkhich" ${p.tag === 'tag_khuyenkhich' ? 'selected' : ''}>Tag: Khuyến Khích</option>
-              <option value="tag_kyniem" ${p.tag === 'tag_kyniem' ? 'selected' : ''}>Tag: Kỷ Niệm</option>
-            </select>
-            <button onclick="adminDeletePrize(${index})" class="px-1.5 py-1 rounded bg-rose-950 border border-rose-700 text-rose-300 hover:bg-rose-900">Xóa</button>
-          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">${p.tag}</span>
         `;
         container.appendChild(item);
       });
     }
 
-    function adminUpdatePrizeTag(idx, newTag) {
-      if (state.prizes[idx]) {
-        state.prizes[idx].tag = newTag;
-        saveAllData();
-      }
-    }
-
-    function adminDeletePrize(idx) {
-      if (confirm("Xóa phần quà này khỏi danh sách?")) {
-        state.prizes.splice(idx, 1);
-        renderAdminPrizes();
-        saveAllData();
-      }
-    }
-
-    function adminAddPrize() {
-      const nameInput = document.getElementById('new-prize-name');
-      const tagSelect = document.getElementById('new-prize-tag');
-      const qtyInput = document.getElementById('new-prize-qty');
-
-      const name = nameInput.value.trim();
-      const tag = tagSelect.value;
-      const qty = parseInt(qtyInput.value, 10) || 1;
-
-      if (!name) {
-        alert("Vui lòng nhập tên phần thưởng!");
-        return;
-      }
-
-      state.prizes.push({
-        id: "p_" + Date.now(),
-        name: name,
-        tag: tag,
-        score: tag === 'tag_dacbiet' ? 100 : (tag === 'tag_nhat' ? 85 : 30),
-        qty: qty
-      });
-
-      nameInput.value = '';
-      qtyInput.value = '1';
-      renderAdminPrizes();
-      saveAllData();
-    }
-
-    function resetDefaultPrizes() {
-      if (confirm("Khôi phục lại danh sách 20 giải thưởng chuẩn ban đầu?")) {
-        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
-        renderAdminPrizes();
-        saveAllData();
-      }
-    }
-
-    /* ================= TROLL QUOTES CONFIG ================= */
     function renderAdminQuotes() {
       const currentTag = document.getElementById('admin-quote-tag-select').value;
       const listContainer = document.getElementById('admin-quotes-list');
       listContainer.innerHTML = '';
-
       const quotes = state.quotes[currentTag] || [];
-      if (quotes.length === 0) {
-        listContainer.innerHTML = `<div class="text-[10px] text-amber-500/70 italic p-2">Chưa có câu nào cho Tag này. Hãy thêm ở ô bên dưới!</div>`;
-        return;
-      }
-
       quotes.forEach((q, idx) => {
         const item = document.createElement('div');
         item.className = "flex items-center justify-between p-1.5 rounded-lg bg-black/40 border border-amber-900/50 text-[11px]";
         item.innerHTML = `
           <span class="text-amber-100 flex-1 mr-2 leading-tight italic">"${q}"</span>
-          <button onclick="adminDeleteQuote('${currentTag}', ${idx})" class="text-rose-400 hover:text-rose-200 text-xs px-1 flex-shrink-0">✕</button>
+          <button onclick="adminDeleteQuote('${currentTag}', ${idx})" class="text-rose-400 text-xs px-1">✕</button>
         `;
         listContainer.appendChild(item);
       });
@@ -1026,45 +936,58 @@
       const input = document.getElementById('new-quote-text');
       const text = input.value.trim();
       if (!text) return;
-
       if (!state.quotes[currentTag]) state.quotes[currentTag] = [];
       state.quotes[currentTag].push(text);
       input.value = '';
       renderAdminQuotes();
-      saveAllData();
     }
 
     function adminDeleteQuote(tag, idx) {
       if (state.quotes[tag]) {
         state.quotes[tag].splice(idx, 1);
         renderAdminQuotes();
-        saveAllData();
       }
     }
 
-    function resetDefaultQuotes() {
-      if (confirm("Khôi phục danh sách câu troll cà khịa chuẩn ban đầu?")) {
-        state.quotes = JSON.parse(JSON.stringify(DEFAULT_QUOTES));
-        renderAdminQuotes();
-        saveAllData();
+    function adminResetCurrentDevice() {
+      state.hasOpened = false;
+      localStorage.removeItem(KEY_DEVICE_OPENED);
+      localStorage.removeItem(KEY_DEVICE_PRIZE);
+      renderUI();
+      alert("Đã mở lại lượt cho máy này!");
+    }
+
+    function adminSyncDefaultCloud() {
+      if (isFirebaseReady && db) {
+        db.ref('room/prizes').set(DEFAULT_PRIZES);
+        alert("Đã nạp 20 phần quà chuẩn lên Cloud thành công!");
+      } else {
+        alert("Chưa kết nối Firebase Cloud!");
       }
     }
 
-    function adminResetAll() {
-      if (confirm("BẠN CÓ CHẮC MUỐN RESET TOÀN BỘ DỮ LIỆU?\n- Khôi phục 100% kho giải\n- Xóa sạch danh sách người đã trúng\n- Khóa lại bảo rương")) {
-        state.isLocked = true;
-        state.winners = [];
-        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
-        state.quotes = JSON.parse(JSON.stringify(DEFAULT_QUOTES));
-        saveAllData();
+    function adminResetAllCloud() {
+      if (confirm("BẠN CÓ CHẮC MUỐN RESET TOÀN BỘ TIỆC TRÊN CLOUD?
+- Khôi phục 20 phần quà
+- Xóa sạch danh sách người trúng
+- Khóa bảo rương lại")) {
+        state.hasOpened = false;
+        localStorage.removeItem(KEY_DEVICE_OPENED);
+        localStorage.removeItem(KEY_DEVICE_PRIZE);
+        
+        if (isFirebaseReady && db) {
+          db.ref('room').set({
+            status: { isLocked: true, openDuration: 8, updatedAt: Date.now() },
+            prizes: DEFAULT_PRIZES,
+            winners: null
+          });
+        }
         renderUI();
-        renderAdminPrizes();
-        renderAdminQuotes();
-        alert("Đã reset hệ thống về trạng thái ban đầu!");
+        alert("ĐÃ RESET TOÀN BỘ PHÒNG TIỆC TRÊN CLOUD VỀ BAN ĐẦU!");
       }
     }
 
-    /* ================= LEADERBOARD ================= */
+    /* ================= BẢNG VINH DANH ================= */
     function openLeaderboard() {
       renderLeaderboard();
       document.getElementById('modal-leaderboard').classList.remove('hidden');
@@ -1072,22 +995,17 @@
     function closeLeaderboard() {
       document.getElementById('modal-leaderboard').classList.add('hidden');
     }
-
     function renderLeaderboard() {
       const list = document.getElementById('leaderboard-list');
-      const totalCount = document.getElementById('lb-total-count');
       list.innerHTML = '';
-      totalCount.innerText = state.winners.length;
+      document.getElementById('lb-total-count').innerText = state.winners.length;
 
       if (state.winners.length === 0) {
-        list.innerHTML = `<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa có ai mở rương. Hãy đợi hiệu lệnh từ BTC!</div>`;
+        list.innerHTML = `<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa có ai mở rương. Chờ lệnh từ BTC!</div>`;
         return;
       }
 
-      // Sort by score descending
-      const sorted = [...state.winners].sort((a, b) => (b.score || 0) - (a.score || 0));
-
-      sorted.forEach((w, index) => {
+      state.winners.forEach((w, index) => {
         let medal = `#${index + 1}`;
         let badgeBg = "bg-stone-900 border-amber-900";
         if (index === 0) { medal = "🥇"; badgeBg = "bg-gradient-to-r from-yellow-950 to-amber-900/80 border-yellow-500"; }
@@ -1112,7 +1030,7 @@
       });
     }
 
-    /* ================= QR CODE GENERATOR (OFFLINE CANVAS PURE JS) ================= */
+    /* ================= MÃ QR QUÉT ĐƯỢC 100% BẰNG ZALO/CAMERA ================= */
     function openQrModal() {
       const currentUrl = window.location.href;
       document.getElementById('custom-qr-url').value = currentUrl;
@@ -1141,7 +1059,6 @@
           correctLevel: QRCode.CorrectLevel.M
         });
       } else {
-        // Fallback dùng Google Charts / QR Server API bảo đảm quét được ngay
         const img = document.createElement('img');
         img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" + encodeURIComponent(text);
         img.className = "w-48 h-48 mx-auto";
