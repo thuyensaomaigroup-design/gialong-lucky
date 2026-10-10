@@ -328,14 +328,41 @@
         <!-- SECTION 3: REWARD LIST & TAG ASSIGNMENT -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <div class="flex justify-between items-center mb-2">
-            <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-              <span>🎁</span> KHO GIẢI THƯỞNG (TRỪ DẦN KHI QUAY)
-            </h4>
-            <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Còn: 20 phần</span>
+            <div>
+              <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+                <span>🎁</span> CẤU HÌNH KHO GIẢI THƯỞNG
+              </h4>
+              <span class="text-[10px] text-amber-400 font-bold" id="admin-pool-summary">Còn: 20 phần</span>
+            </div>
+            <button onclick="adminResetDefaultPrizes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
+              Khôi phục 20 quà chuẩn
+            </button>
+          </div>
+          <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">
+            Bạn có thể đổi tên, chọn Tag và số lượng cho từng món quà. Khi sửa sẽ tự lưu và đồng bộ:
+          </p>
+
+          <div id="admin-prizes-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1 mb-3">
+            <!-- Render via JS -->
           </div>
 
-          <div id="admin-prizes-list" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1 mb-2">
-            <!-- Render via JS -->
+          <!-- FORM THÊM QUÀ MỚI -->
+          <div class="p-2 rounded-xl bg-amber-950/40 border border-amber-900/80 flex flex-col gap-1.5">
+            <span class="font-bold text-amber-300 text-[10px] uppercase">+ THÊM PHẦN QUÀ MỚI:</span>
+            <div class="grid grid-cols-12 gap-1.5">
+              <input type="text" id="new-prize-name" placeholder="Tên quà (ví dụ: Nón Bảo Hiểm, 200k...)" class="col-span-6 px-2 py-1.5 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs">
+              <select id="new-prize-tag" class="col-span-4 px-1 py-1.5 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs font-semibold">
+                <option value="tag_dacbiet">Tag: Đặc Biệt</option>
+                <option value="tag_nhat">Tag: Giải Nhất</option>
+                <option value="tag_nhi_ba">Tag: Nhì / Ba</option>
+                <option value="tag_khuyenkhich">Tag: Khuyến Khích</option>
+                <option value="tag_kyniem">Tag: Kỷ Niệm</option>
+              </select>
+              <input type="number" id="new-prize-qty" value="1" min="1" max="50" class="col-span-2 px-1 py-1.5 text-center rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs">
+            </div>
+            <button onclick="adminAddPrize()" class="w-full py-1.5 rounded-lg bg-gradient-to-r from-amber-700 to-yellow-600 text-red-950 font-bold text-xs shadow hover:brightness-110">
+              Thêm Vào Kho Quà
+            </button>
           </div>
         </div>
 
@@ -900,19 +927,113 @@
 
     function renderAdminPrizes() {
       const container = document.getElementById('admin-prizes-list');
+      if (!container) return;
       container.innerHTML = '';
+
+      if (!state.prizes || state.prizes.length === 0) {
+        container.innerHTML = '<div class="text-[10px] text-amber-500/70 italic p-2 text-center">Kho rương hiện đang rỗng. Hãy thêm quà hoặc khôi phục mặc định!</div>';
+        return;
+      }
+
       state.prizes.forEach((p, index) => {
         const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-2 rounded-xl bg-black/40 border border-amber-900/60 text-[11px]";
+        item.className = "flex flex-col gap-1 p-2 rounded-xl bg-black/60 border border-amber-900/70 text-[11px]";
         item.innerHTML = `
-          <div class="flex-1 mr-2 truncate">
-            <span class="font-bold text-yellow-200">${p.name}</span>
-            <span class="text-amber-500/80 ml-1">(${p.qty || 1} phần)</span>
+          <div class="flex items-center justify-between gap-1.5">
+            <input type="text" value="${p.name}" onchange="adminUpdatePrizeName(${index}, this.value)" title="Nhấp vào để đổi tên quà" class="flex-1 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold focus:border-yellow-400">
+            <button onclick="adminDeletePrize(${index})" title="Xóa món này" class="px-2 py-1 rounded bg-rose-950 border border-rose-700 text-rose-300 hover:bg-rose-900 text-xs font-bold">✕</button>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">${p.tag}</span>
+          <div class="flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1">
+              <span class="text-[10px] text-amber-400/80">Số lượng:</span>
+              <input type="number" min="1" max="50" value="${p.qty || 1}" onchange="adminUpdatePrizeQty(${index}, this.value)" class="w-12 px-1 py-0.5 text-center rounded bg-black/70 border border-amber-800 text-yellow-300 text-xs font-bold">
+            </div>
+            <select onchange="adminUpdatePrizeTag(${index}, this.value)" class="px-1.5 py-0.5 rounded bg-black/80 border border-amber-700 text-yellow-300 text-[10px] font-semibold">
+              <option value="tag_dacbiet" ${p.tag === 'tag_dacbiet' ? 'selected' : ''}>Tag: Đặc Biệt</option>
+              <option value="tag_nhat" ${p.tag === 'tag_nhat' ? 'selected' : ''}>Tag: Giải Nhất</option>
+              <option value="tag_nhi_ba" ${p.tag === 'tag_nhi_ba' ? 'selected' : ''}>Tag: Nhì / Ba</option>
+              <option value="tag_khuyenkhich" ${p.tag === 'tag_khuyenkhich' ? 'selected' : ''}>Tag: Khuyến Khích</option>
+              <option value="tag_kyniem" ${p.tag === 'tag_kyniem' ? 'selected' : ''}>Tag: Kỷ Niệm</option>
+            </select>
+          </div>
         `;
         container.appendChild(item);
       });
+      updatePrizeCounters();
+    }
+
+    function syncPrizesToStorageAndCloud() {
+      if (isFirebaseReady && db) {
+        db.ref('room/prizes').set(state.prizes);
+      }
+      updatePrizeCounters();
+    }
+
+    function adminUpdatePrizeName(idx, newName) {
+      if (state.prizes[idx] && newName.trim()) {
+        state.prizes[idx].name = newName.trim();
+        syncPrizesToStorageAndCloud();
+      }
+    }
+
+    function adminUpdatePrizeQty(idx, newQty) {
+      const q = parseInt(newQty, 10);
+      if (state.prizes[idx] && q > 0) {
+        state.prizes[idx].qty = q;
+        syncPrizesToStorageAndCloud();
+      }
+    }
+
+    function adminUpdatePrizeTag(idx, newTag) {
+      if (state.prizes[idx]) {
+        state.prizes[idx].tag = newTag;
+        state.prizes[idx].score = newTag === 'tag_dacbiet' ? 100 : (newTag === 'tag_nhat' ? 85 : (newTag === 'tag_nhi_ba' ? 65 : (newTag === 'tag_khuyenkhich' ? 50 : 20)));
+        syncPrizesToStorageAndCloud();
+      }
+    }
+
+    function adminDeletePrize(idx) {
+      if (confirm("Xóa phần quà này khỏi kho rương?")) {
+        state.prizes.splice(idx, 1);
+        syncPrizesToStorageAndCloud();
+        renderAdminPrizes();
+      }
+    }
+
+    function adminAddPrize() {
+      const nameInput = document.getElementById('new-prize-name');
+      const tagSelect = document.getElementById('new-prize-tag');
+      const qtyInput = document.getElementById('new-prize-qty');
+
+      const name = nameInput.value.trim();
+      const tag = tagSelect.value;
+      const qty = parseInt(qtyInput.value, 10) || 1;
+
+      if (!name) {
+        alert("Vui lòng nhập tên phần thưởng!");
+        return;
+      }
+
+      state.prizes.push({
+        id: "p_" + Date.now(),
+        name: name,
+        tag: tag,
+        score: tag === 'tag_dacbiet' ? 100 : (tag === 'tag_nhat' ? 85 : (tag === 'tag_nhi_ba' ? 65 : (tag === 'tag_khuyenkhich' ? 50 : 20))),
+        qty: qty
+      });
+
+      nameInput.value = '';
+      qtyInput.value = '1';
+      syncPrizesToStorageAndCloud();
+      renderAdminPrizes();
+    }
+
+    function adminResetDefaultPrizes() {
+      if (confirm("Khôi phục lại danh sách 20 giải thưởng chuẩn ban đầu?")) {
+        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+        syncPrizesToStorageAndCloud();
+        renderAdminPrizes();
+      }
     }
 
     function renderAdminQuotes() {
