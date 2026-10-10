@@ -967,10 +967,7 @@
     }
 
     function adminResetAllCloud() {
-      if (confirm("BẠN CÓ CHẮC MUỐN RESET TOÀN BỘ TIỆC TRÊN CLOUD?
-- Khôi phục 20 phần quà
-- Xóa sạch danh sách người trúng
-- Khóa bảo rương lại")) {
+      if (confirm("BẠN CÓ CHẮC MUỐN RESET TOÀN BỘ TIỆC TRÊN CLOUD?\n- Khôi phục 20 phần quà\n- Xóa sạch danh sách người trúng\n- Khóa bảo rương lại")) {
         state.hasOpened = false;
         localStorage.removeItem(KEY_DEVICE_OPENED);
         localStorage.removeItem(KEY_DEVICE_PRIZE);
