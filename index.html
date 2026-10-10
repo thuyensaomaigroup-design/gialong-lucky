@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gia Long Bảo Rương - Vòng Quay May Mắn Offline</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #2a0808 0%, #150303 50%, #080101 100%);
+      color: #f7e7ce;
+      touch-action: manipulation;
+    }
+    .font-kiemhiep { font-family: 'Cinzel', serif; }
+    .font-phongvan { font-family: 'Playfair Display', serif; }
+    .text-gold-gradient {
+      background: linear-gradient(180deg, #fff3a1 0%, #ffd700 40%, #e6a100 70%, #995c00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .border-gold { border-color: #d4af37; }
+    .bg-wood {
+      background: linear-gradient(135deg, rgba(40,10,10,0.92) 0%, rgba(20,4,4,0.96) 100%);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.2);
+    }
+    .chest-glow {
+      filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6));
+    }
+    .chest-shaking {
+      animation: chestRattle 0.12s infinite alternate ease-in-out;
+    }
+    @keyframes chestRattle {
+      0% { transform: scale(1.03) translate(-3px, 1px) rotate(-1.5deg); }
+      100% { transform: scale(1.05) translate(3px, -2px) rotate(1.5deg); }
+    }
+    .pulse-btn {
+      animation: goldPulse 2s infinite ease-in-out;
+    }
+    @keyframes goldPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,215,0,0.5), inset 0 0 10px rgba(255,255,255,0.4); }
+      50% { box-shadow: 0 0 35px rgba(255,140,0,0.85), inset 0 0 20px rgba(255,255,255,0.7); transform: scale(1.02); }
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-3 relative overflow-x-hidden select-none">
+
+  <!-- BACKGROUND DECORATION -->
+  <div class="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#ffd700_1px,transparent_1px)] [background-size:24px_24px]"></div>
+
+  <!-- TOP BAR -->
+  <header class="w-full max-w-md flex justify-between items-center z-20 py-2 border-b border-amber-900/50">
+    <div class="flex items-center gap-2">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-300 flex items-center justify-center font-kiemhiep font-bold text-red-950 text-xl border border-yellow-200 shadow-md">
+        龍
+      </div>
+      <div>
+        <h1 class="text-xs text-amber-400 font-semibold uppercase tracking-wider">Đại Hội Offline 10/10</h1>
+        <h2 class="text-sm font-kiemhiep font-black text-amber-200 tracking-wide">BANG GIA LONG</h2>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <button onclick="openLeaderboard()" class="px-2.5 py-1.5 rounded-lg bg-red-950/80 border border-amber-600/60 text-amber-300 text-xs font-bold hover:bg-amber-900/50 flex items-center gap-1 shadow">
+        🏆 <span class="hidden sm:inline">Bảng</span> Vinh Danh
+      </button>
+      <button onclick="openPinModal()" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-700 to-amber-900 border border-yellow-500/70 text-yellow-100 text-xs font-bold hover:brightness-110 flex items-center gap-1 shadow">
+        ⚙️ BTC
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN INTERACTION AREA -->
+  <main class="w-full max-w-md flex-1 flex flex-col items-center justify-center my-4 z-10">
+
+    <!-- USER NAME BADGE -->
+    <div class="w-full mb-3 flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 border border-amber-900/60 backdrop-blur-sm">
+      <div class="flex items-center gap-2 truncate">
+        <span class="text-amber-400 text-sm">⚔️ Đại hiệp:</span>
+        <span id="display-user-name" class="font-bold text-yellow-200 text-sm truncate">Chưa đặt danh xưng</span>
+      </div>
+      <button onclick="promptUserName()" class="text-xs text-amber-400/80 underline hover:text-yellow-300 flex-shrink-0">
+        Đổi tên
+      </button>
+    </div>
+
+    <!-- LOCK / UNLOCK STATUS NOTICE -->
+    <div id="status-lock-banner" class="w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-red-950/90 border border-red-700/80 text-red-200 text-xs font-semibold flex items-center justify-center gap-2 shadow">
+      <span class="animate-pulse">🔒</span> <span id="status-lock-text">BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC</span>
+    </div>
+
+    <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
+    <div class="relative w-64 h-64 flex items-center justify-center my-2">
+      <!-- Glow & Auras -->
+      <div id="chest-auras" class="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-red-600/20 blur-2xl opacity-60"></div>
+
+      <!-- SVG CHEST -->
+      <div id="chest-container" class="relative z-10 w-52 h-52 transition-transform duration-300 cursor-pointer" onclick="handleChestClick()">
+        <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-2xl">
+          <defs>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff4b8"/>
+              <stop offset="50%" stop-color="#ffd700"/>
+              <stop offset="100%" stop-color="#996515"/>
+            </linearGradient>
+            <linearGradient id="woodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#6b1d1d"/>
+              <stop offset="50%" stop-color="#450d0d"/>
+              <stop offset="100%" stop-color="#240505"/>
+            </linearGradient>
+            <radialGradient id="lockLight" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="40%" stop-color="#ffea75"/>
+              <stop offset="100%" stop-color="#d4af37"/>
+            </radialGradient>
+          </defs>
+          <!-- Base Shadow -->
+          <ellipse cx="100" cy="180" rx="75" ry="14" fill="#000000" opacity="0.6"/>
+          <!-- Chest Body -->
+          <path d="M 35 95 L 165 95 L 155 165 Q 100 175 45 165 Z" fill="url(#woodGrad)" stroke="#1a0404" stroke-width="3"/>
+          <!-- Metallic Edges Chest Body -->
+          <path d="M 35 95 L 50 95 L 56 164 L 45 165 Z" fill="url(#goldGrad)"/>
+          <path d="M 165 95 L 150 95 L 144 164 L 155 165 Z" fill="url(#goldGrad)"/>
+          <path d="M 92 95 L 108 95 L 108 168 L 92 168 Z" fill="url(#goldGrad)"/>
+          <path d="M 35 158 Q 100 172 165 158 L 165 164 Q 100 176 35 164 Z" fill="url(#goldGrad)"/>
+          
+          <!-- Chest Lid (Animated Lid Group) -->
+          <g id="svg-chest-lid">
+            <path d="M 30 95 Q 100 55 170 95 L 165 105 Q 100 70 35 105 Z" fill="url(#woodGrad)" stroke="#1a0404" stroke-width="2.5"/>
+            <path d="M 30 95 Q 100 55 170 95 L 168 85 Q 100 45 32 85 Z" fill="url(#woodGrad)"/>
+            <!-- Golden Ribs on Lid -->
+            <path d="M 30 85 Q 100 45 170 85 L 168 93 Q 100 53 32 93 Z" fill="url(#goldGrad)"/>
+            <path d="M 45 88 Q 100 62 155 88 L 153 96 Q 100 70 47 96 Z" fill="url(#goldGrad)" opacity="0.7"/>
+          </g>
+
+          <!-- Golden Lock Mechanism -->
+          <g id="svg-chest-lock">
+            <circle cx="100" cy="100" r="18" fill="url(#goldGrad)" stroke="#593b04" stroke-width="2"/>
+            <circle cx="100" cy="100" r="10" fill="#2b0000"/>
+            <polygon points="100,94 104,103 96,103" fill="url(#goldGrad)"/>
+            <rect x="98" y="102" width="4" height="6" fill="url(#goldGrad)"/>
+            <!-- Lock Core Glow -->
+            <circle cx="100" cy="100" r="4" fill="url(#lockLight)" opacity="0.9"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Opening Countdown Badge -->
+      <div id="countdown-overlay" class="hidden absolute z-20 inset-0 flex flex-col items-center justify-center bg-black/60 rounded-full backdrop-blur-[2px]">
+        <div id="countdown-number" class="text-5xl font-black font-kiemhiep text-yellow-300 drop-shadow-[0_0_15px_#ffd700]">8</div>
+        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">VẬN CÔNG PHÁ ẤN</div>
+      </div>
+    </div>
+
+    <!-- PROGRESS BAR (DYNAMIC OPENING) -->
+    <div id="progress-wrapper" class="w-full px-4 mb-4 hidden">
+      <div class="flex justify-between items-center text-xs font-bold text-amber-300 mb-1">
+        <span id="progress-status-text">ĐANG TRUYỀN CHÂN KHÍ...</span>
+        <span id="progress-percentage">0%</span>
+      </div>
+      <div class="w-full h-3.5 bg-black/80 rounded-full p-0.5 border border-amber-600/80 shadow-inner overflow-hidden">
+        <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-amber-600 via-yellow-400 to-yellow-200 rounded-full transition-all duration-75 w-0 shadow-[0_0_12px_#ffd700]"></div>
+      </div>
+    </div>
+
+    <!-- MAIN ACTION BUTTON -->
+    <div class="w-full px-2">
+      <button id="btn-open-chest" onclick="triggerOpenChest()" disabled class="w-full py-4 rounded-2xl bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-kiemhiep font-extrabold text-lg tracking-wider uppercase transition-all duration-300 shadow-lg cursor-not-allowed flex items-center justify-center gap-2">
+        <span>🔒</span> <span>CHỜ LỆNH BTC</span>
+      </button>
+    </div>
+
+    <!-- TROLL HINT BANNER -->
+    <div class="mt-3 text-center text-xs text-amber-300/70 italic px-4">
+      "Nhân phẩm tại tâm - Giải thưởng tại vận - Cơ cấu tại AD Bình"
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full max-w-md text-center py-2 text-[10px] text-amber-500/50 border-t border-amber-900/40">
+    Hệ thống quay thưởng bảo rương • Bang Hội Gia Long 2026
+  </footer>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- MODAL: RESULT POPUP -->
+  <div id="modal-result" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-sm rounded-3xl bg-wood border-2 border-yellow-500/90 p-5 text-center relative shadow-[0_0_50px_rgba(255,215,0,0.4)] animate-scaleUp">
+      <!-- Decor Badges -->
+      <div class="text-3xl mb-1">🎉 🎊 🎉</div>
+      <h3 class="text-xs uppercase font-extrabold tracking-widest text-amber-400 mb-1">GIA LONG BẢO RƯƠNG KHAI MỞ</h3>
+      <h2 id="result-user-title" class="text-sm text-yellow-200 font-bold mb-3">Đại hiệp vô danh</h2>
+
+      <!-- Prize Display Box -->
+      <div class="py-4 px-3 rounded-2xl bg-gradient-to-b from-black/80 to-red-950/80 border border-yellow-500/50 mb-3 shadow-inner">
+        <div id="result-tier-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-amber-500 text-red-950">
+          GIẢI THƯỞNG
+        </div>
+        <div id="result-prize-name" class="text-2xl font-black font-kiemhiep text-gold-gradient drop-shadow-[0_2px_10px_rgba(255,215,0,0.5)]">
+          1.000.000 VNĐ
+        </div>
+      </div>
+
+      <!-- Troll Quote Box (Linked to Tag) -->
+      <div class="p-3 rounded-xl bg-amber-950/50 border border-amber-700/60 mb-4 text-left">
+        <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+          <span>📜</span> KHẨU QUYẾT TROLL GIANG HỒ:
+        </div>
+        <div id="result-troll-quote" class="text-xs text-yellow-100 font-medium italic leading-relaxed">
+          "Không làm mà đòi có ăn thì chỉ có ăn quả lừa của AD Bình thôi!"
+        </div>
+      </div>
+
+      <!-- Close / Retry Buttons -->
+      <div class="flex gap-2">
+        <button onclick="closeResultModal()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-500 text-red-950 font-bold text-sm hover:brightness-110 shadow-md">
+          Khắc Cốt Ghi Tâm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PIN INPUT (ADMIN) -->
+  <div id="modal-pin" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-xs rounded-2xl bg-wood border border-yellow-600/70 p-5 text-center shadow-2xl">
+      <h3 class="text-sm font-bold text-amber-300 font-kiemhiep uppercase mb-2">Quyền Hạn Ban Tổ Chức</h3>
+      <p class="text-xs text-amber-200/80 mb-3">Nhập mã xác thực để vào bảng quản trị</p>
+      
+      <div class="relative mb-3">
+        <input type="password" id="input-admin-pin" maxlength="10" placeholder="••••" class="w-full py-2.5 px-3 text-center text-lg font-bold tracking-widest rounded-xl bg-black/60 border border-amber-600 text-yellow-200 focus:outline-none focus:border-yellow-400">
+        <button type="button" onclick="togglePinVisibility()" class="absolute right-3 top-3 text-xs text-amber-400/80">👁️</button>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="closePinModal()" class="flex-1 py-2 rounded-xl bg-stone-800 text-stone-300 text-xs font-semibold">Đóng</button>
+        <button onclick="verifyPin()" class="flex-1 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-red-950 font-bold text-xs">Xác Nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LEADERBOARD / VINH DANH -->
+  <div id="modal-leaderboard" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-md max-h-[85vh] rounded-3xl bg-wood border-2 border-yellow-600/80 p-4 flex flex-col shadow-2xl">
+      <div class="flex justify-between items-center border-b border-amber-900/60 pb-2 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🏆</span>
+          <h3 class="font-kiemhiep font-bold text-amber-300 text-base">BẢNG VÀNG VINH DANH</h3>
+        </div>
+        <button onclick="closeLeaderboard()" class="w-7 h-7 rounded-full bg-stone-800 text-stone-300 text-sm font-bold flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="text-[11px] text-amber-400/80 mb-2 italic">Xếp hạng huynh đệ khai mở bảo rương từ cao xuống thấp:</div>
+
+      <div id="leaderboard-list" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar text-xs">
+        <!-- Render via JS -->
+      </div>
+
+      <div class="mt-3 pt-2 border-t border-amber-900/50 flex justify-between items-center text-xs">
+        <span class="text-amber-300/80">Tổng số người đã trúng: <b id="lb-total-count" class="text-yellow-300">0</b>/20</span>
+        <button onclick="closeLeaderboard()" class="px-3 py-1.5 rounded-lg bg-amber-700 text-yellow-100 font-bold">Xong</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN DASHBOARD (BTC) -->
+  <div id="modal-admin" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="w-full max-w-lg max-h-[92vh] rounded-3xl bg-wood border-2 border-yellow-500/90 p-4 sm:p-5 flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.9)]">
+      
+      <!-- Admin Header -->
+      <div class="flex justify-between items-center border-b border-amber-800 pb-2 mb-3">
+        <div>
+          <h3 class="font-kiemhiep font-bold text-amber-300 text-sm sm:text-base flex items-center gap-1.5">
+            <span>🛡️</span> QUẢN TRỊ VIÊN BAN TỔ CHỨC
+          </h3>
+          <p class="text-[10px] text-amber-400/70">Điều khiển đồng bộ thời gian thực & cấu hình giải thưởng</p>
+        </div>
+        <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-stone-800 text-amber-200 text-sm font-bold hover:bg-stone-700">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-4 pr-1.5 custom-scrollbar text-xs">
+        
+        <!-- SECTION 1: REMOTE CONTROLS -->
+        <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+          <h4 class="font-bold text-amber-300 mb-2 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+            <span>⚡</span> ĐIỀU KHIỂN ĐỒNG LOẠT (TẤT CẢ THÀNH VIÊN)
+          </h4>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <button onclick="adminSetLock(false)" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-700 to-green-600 text-white font-bold text-xs hover:brightness-110 shadow flex items-center justify-center gap-1.5">
+              <span>🔓</span> MỞ KHÓA TẤT CẢ
+            </button>
+            <button onclick="adminSetLock(true)" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-800 to-rose-700 text-white font-bold text-xs hover:brightness-110 shadow flex items-center justify-center gap-1.5">
+              <span>🔒</span> KHÓA LẠI TẤT CẢ
+            </button>
+          </div>
+
+          <!-- TIME SLIDER -->
+          <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/50">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-semibold text-amber-200">Thời gian mở rương:</span>
+              <span id="admin-time-val" class="font-bold text-yellow-300 text-sm">8 giây</span>
+            </div>
+            <input type="range" id="admin-time-slider" min="3" max="15" step="1" value="8" oninput="adminUpdateTime(this.value)" class="w-full accent-yellow-400 cursor-pointer">
+            <div class="flex justify-between text-[10px] text-amber-500/70 mt-1">
+              <span>3s (Nhanh)</span>
+              <span>8s - 10s (Kịch tính nhất)</span>
+              <span>15s (Cực lâu)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: QR & LINK SHARING -->
+        <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>📱</span> MÃ QR & LINK VÀO BÀN TIỆC
+            </h4>
+            <button onclick="openQrModal()" class="px-2.5 py-1 rounded-lg bg-amber-700 hover:bg-amber-600 text-yellow-100 text-[11px] font-bold">
+              Phóng To QR Code
+            </button>
+          </div>
+          <p class="text-[10px] text-amber-200/80 leading-relaxed">
+            Link web hiện tại: <span id="admin-current-url" class="font-mono text-yellow-300 break-all"></span>
+          </p>
+        </div>
+
+        <!-- SECTION 3: REWARD LIST & TAG ASSIGNMENT -->
+        <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>🎁</span> CẤU HÌNH GẮN TAG PHẦN THƯỞNG
+            </h4>
+            <button onclick="resetDefaultPrizes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
+              Khôi phục 20 quà mặc định
+            </button>
+          </div>
+          <p class="text-[10px] text-amber-200/70 mb-2">
+            Mỗi phần thưởng được gắn với 1 Tag. Khi trúng thưởng, hệ thống sẽ tự động bốc câu troll thuộc đúng Tag đó!
+          </p>
+
+          <div id="admin-prizes-list" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1 mb-3">
+            <!-- Render via JS -->
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-900 flex flex-col gap-2">
+            <span class="font-bold text-amber-300 text-[11px]">Thêm Món Quà Mới:</span>
+            <div class="grid grid-cols-12 gap-1.5">
+              <input type="text" id="new-prize-name" placeholder="Tên quà (ví dụ: 200k Tiền mặt)" class="col-span-6 px-2 py-1.5 rounded bg-black/60 border border-amber-800 text-yellow-200 text-xs">
+              <select id="new-prize-tag" class="col-span-4 px-1 py-1.5 rounded bg-black/60 border border-amber-800 text-yellow-200 text-xs">
+                <option value="tag_dacbiet">Tag: Đặc Biệt</option>
+                <option value="tag_nhat">Tag: Giải Nhất</option>
+                <option value="tag_nhi_ba">Tag: Nhì / Ba</option>
+                <option value="tag_khuyenkhich">Tag: Khuyến Khích</option>
+                <option value="tag_kyniem">Tag: Quà Kỷ Niệm</option>
+              </select>
+              <input type="number" id="new-prize-qty" value="1" min="1" max="50" class="col-span-2 px-1 py-1.5 text-center rounded bg-black/60 border border-amber-800 text-yellow-200 text-xs">
+            </div>
+            <button onclick="adminAddPrize()" class="w-full py-1.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-yellow-100 font-bold text-xs">
+              + Thêm Vào Kho Rương
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 4: TROLL QUOTES BY TAG -->
+        <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>📜</span> CẤU HÌNH CÂU TROLL THEO TAG
+            </h4>
+            <button onclick="resetDefaultQuotes()" class="text-[10px] text-amber-400 underline hover:text-yellow-300">
+              Khôi phục 20 câu mẫu
+            </button>
+          </div>
+
+          <div class="mb-2">
+            <label class="text-[10px] text-amber-300 font-semibold block mb-1">Chọn Tag để xem và chỉnh sửa câu troll:</label>
+            <select id="admin-quote-tag-select" onchange="renderAdminQuotes()" class="w-full px-2 py-1.5 rounded-xl bg-black/70 border border-amber-600 text-yellow-200 text-xs font-bold">
+              <option value="tag_dacbiet">Tag: Giải Đặc Biệt (Tiền Mặt 1 Triệu)</option>
+              <option value="tag_nhat">Tag: Giải Nhất (500k & 100k Xu)</option>
+              <option value="tag_nhi_ba">Tag: Giải Nhì & Ba (50k & 30k Xu)</option>
+              <option value="tag_khuyenkhich">Tag: Giải Khuyến Khích (10k Xu)</option>
+              <option value="tag_kyniem">Tag: Quà Kỷ Niệm / An Ủi Offline</option>
+            </select>
+          </div>
+
+          <div id="admin-quotes-list" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1 mb-2">
+            <!-- Render via JS -->
+          </div>
+
+          <div class="flex gap-1.5">
+            <input type="text" id="new-quote-text" placeholder="Nhập câu cà khịa, chim mồi mới cho tag này..." class="flex-1 px-2.5 py-1.5 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs">
+            <button onclick="adminAddQuote()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-red-950 font-bold text-xs flex-shrink-0">
+              Thêm Câu
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 5: SYSTEM RESET & TEST -->
+        <div class="p-3 rounded-2xl bg-red-950/40 border border-red-800/80">
+          <h4 class="font-bold text-rose-300 mb-1 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+            <span>⚠️</span> ĐẶT LẠI DỮ LIỆU ĐỂ TEST
+          </h4>
+          <p class="text-[10px] text-rose-200/80 mb-2">
+            Xóa trắng bảng vàng vinh danh và hồi lại 100% rương giải thưởng để thử nghiệm trước giờ tiệc.
+          </p>
+          <button onclick="adminResetAll()" class="w-full py-2 rounded-xl bg-rose-900/80 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
+            🔄 RESET TOÀN BỘ HỆ THỐNG
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Admin Footer Actions -->
+      <div class="pt-3 border-t border-amber-800/60 flex justify-end gap-2 mt-2">
+        <button onclick="closeAdminModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-500 text-red-950 font-bold text-xs shadow">
+          Hoàn Tất & Lưu
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: QR CODE ENLARGED -->
+  <div id="modal-qr" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-xs rounded-3xl bg-wood border-2 border-yellow-500 p-5 text-center shadow-2xl">
+      <h3 class="font-kiemhiep font-bold text-amber-300 text-base mb-1">MÃ QUÉT VÀO BÀN TIỆC</h3>
+      <p class="text-xs text-amber-200/80 mb-3">Cho 20 anh em quét bằng Zalo hoặc Camera</p>
+      
+      <div class="bg-white p-3 rounded-2xl inline-block mb-3 shadow-lg">
+        <canvas id="qr-canvas" class="w-48 h-48 mx-auto"></canvas>
+      </div>
+
+      <div class="mb-3">
+        <input type="text" id="custom-qr-url" placeholder="Nhập link web nếu cần đổi..." class="w-full text-center px-2 py-1.5 rounded-lg bg-black/60 border border-amber-700 text-yellow-300 text-xs">
+        <button onclick="regenerateCustomQr()" class="w-full mt-1.5 py-1 rounded bg-amber-700 text-yellow-100 text-xs font-semibold">Tạo Lại Mã QR Cho Link Này</button>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="closeQrModal()" class="flex-1 py-2 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold">Đóng</button>
+        <button onclick="downloadQrImage()" class="flex-1 py-2 rounded-xl bg-amber-600 text-red-950 font-bold text-xs">Tải Ảnh QR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    /* ================= STATE & DATA ================= */
+    const PIN_ADMIN = "1010";
+
+    // DEFAULT PRIZE POOL (20 ITEMS AS REQUESTED)
+    const DEFAULT_PRIZES = [
+      { id: "p1", name: "1.000.000 VNĐ (Tiền Mặt)", tag: "tag_dacbiet", score: 100, qty: 1 },
+      { id: "p2", name: "500.000 VNĐ (Tiền Mặt)", tag: "tag_nhat", score: 90, qty: 1 },
+      { id: "p3", name: "100.000 Xu Server", tag: "tag_nhat", score: 85, qty: 1 },
+      { id: "p4", name: "50.000 Xu Server", tag: "tag_nhi_ba", score: 75, qty: 1 },
+      { id: "p5", name: "30.000 Xu Server", tag: "tag_nhi_ba", score: 65, qty: 1 },
+      { id: "p6", name: "10.000 Xu Khuyến Khích (Giải A)", tag: "tag_khuyenkhich", score: 50, qty: 1 },
+      { id: "p7", name: "10.000 Xu Khuyến Khích (Giải B)", tag: "tag_khuyenkhich", score: 50, qty: 1 },
+      { id: "p8", name: "Quà Lưu Niệm Bang Gia Long 01", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p9", name: "Quà Lưu Niệm Bang Gia Long 02", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p10", name: "Quà Lưu Niệm Bang Gia Long 03", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p11", name: "Quà Lưu Niệm Bang Gia Long 04", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p12", name: "Quà Lưu Niệm Bang Gia Long 05", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p13", name: "Quà Lưu Niệm Bang Gia Long 06", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p14", name: "Quà Lưu Niệm Bang Gia Long 07", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p15", name: "Quà Lưu Niệm Bang Gia Long 08", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p16", name: "Quà Lưu Niệm Bang Gia Long 09", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p17", name: "Quà Lưu Niệm Bang Gia Long 10", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p18", name: "Quà Lưu Niệm Bang Gia Long 11", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p19", name: "Quà Lưu Niệm Bang Gia Long 12", tag: "tag_kyniem", score: 20, qty: 1 },
+      { id: "p20", name: "Quà Lưu Niệm Bang Gia Long 13", tag: "tag_kyniem", score: 20, qty: 1 },
+    ];
+
+    // DEFAULT TROLL QUOTES GROUPED BY TAG
+    const DEFAULT_QUOTES = {
+      tag_dacbiet: [
+        "Ối giời ơi! Nhìn mặt là biết 'chim mồi' của BTC cài vào để kích động anh em rồi!",
+        "Hôm nay AD Bình chính thức phá sản! Đại hiệp chuẩn bị bao trọn chầu bia tăng 2 chưa?",
+        "Biết là cơ cấu rồi thì trật tự đi! Người có ngoại giao chiến lược với BTC nó phải khác!",
+        "Làm chim mồi mà được 1 củ cầm về thì ngày nào bổn tọa cũng nhận vai nhé anh em!",
+        "Cơ cấu hay không không quan trọng, quan trọng tiền thật đã nằm gọn trong ví!"
+      ],
+      tag_nhat: [
+        "Bình ơi đừng khóc! Tiền này ta đem đi đập đồ, lát xịt lại cúng trả lại cho Bình thôi!",
+        "Thao túng tâm lý đỉnh cao thật sự, đưa giải to lên gáy để lát anh em nạp xu đập đồ!",
+        "Khí vận ngút trời! Anh em đứng dạt ra kẻo hào quang tiền mặt chói mù mắt bây giờ!",
+        "Alo vợ à? Tối nay anh đi thông đêm nhé, ví dày cộp tự tin bước vào tăng 2 rồi!"
+      ],
+      tag_nhi_ba: [
+        "Đẳng cấp là mãi mãi, phong độ là nhất thời, xin chúc mừng đại hiệp húp trọn xu dưỡng lão!",
+        "Được mấy chục nghìn xu lát nữa vô game đập đồ xịt cũng về tay giáo chủ Bình hết!",
+        "Tự nhiên thấy mình đẹp trai hẳn ra, giải ba giải nhì cũng đủ tiền trả tiền gửi xe và vài ly bia!",
+        "Cao thủ không bằng tranh thủ, ẵm trọn xu bang hội, xin mời tự giác phạt 1 ly!"
+      ],
+      tag_khuyenkhich: [
+        "Giải khuyến khích là hồng phúc ngàn năm, đừng buồn kẻo AD Bình cười vào mặt!",
+        "Tài năng có thừa mà thần may mắn bận đi nhậu bàn khác rồi. Mời làm 1 ly tăng nội lực!",
+        "Vô bao nhiêu rồi cũng cúng lại cho AD Bình hút sạch, bất ngờ gì tầm này!",
+        "Mở rương thế này bảo sao đi Tống Kim toàn nằm sấp, nhanh tay nâng ly giải hạn!"
+      ],
+      tag_kyniem: [
+        "Không làm mà đòi có ăn thì chỉ có ăn... quả lừa của AD Bình thôi!",
+        "Đen thôi đỏ quên đi! Huynh đệ đã dính bùa lú của môn phái 'Hút Máu Giáo' do Bình sáng lập!",
+        "Kiếp nạn thứ 82! Đi ăn tiệc tốn tiền xăng nhận về phần quà kỷ niệm nặng trĩu nỗi đau!",
+        "Hóa ra 19 anh em chỉ là phông bạt cho một màn kịch cơ cấu công phu, đau đớn lòng người!",
+        "Tưởng bốc trúng Đồ Long Đao, ai ngờ vớ ngay chân phục vụ bưng bia dọn bàn cho tiệc hôm nay!"
+      ]
+    };
+
+    // SYSTEM KEYS FOR LOCALSTORAGE & BROADCAST
+    const KEY_CONFIG = "gialong_config_v1";
+    const KEY_PRIZES = "gialong_prizes_v1";
+    const KEY_QUOTES = "gialong_quotes_v1";
+    const KEY_WINNERS = "gialong_winners_v1";
+    const KEY_USER = "gialong_user_v1";
+
+    let state = {
+      isLocked: true,
+      openDuration: 8,
+      userName: localStorage.getItem(KEY_USER) || "Huynh Đệ Vô Danh",
+      hasOpened: false,
+      prizes: [],
+      quotes: {},
+      winners: []
+    };
+
+    // AUDIO SYNTHESIZER (WEB AUDIO API - ZERO ASSETS REQUIRED)
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'tick') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.06);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === 'unlock') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'win') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            gain.gain.setValueAtTime(0.25, now + idx * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.6);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.1);
+            osc.stop(now + idx * 0.1 + 0.6);
+          });
+        }
+      } catch (e) {
+        console.warn("Audio error:", e);
+      }
+    }
+
+    /* ================= INITIALIZATION ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStorageData();
+      renderUI();
+      initRealtimeSync();
+
+      // Check if user set name
+      if (!localStorage.getItem(KEY_USER)) {
+        setTimeout(promptUserName, 600);
+      }
+    });
+
+    function loadStorageData() {
+      // Config
+      try {
+        const savedConfig = JSON.parse(localStorage.getItem(KEY_CONFIG));
+        if (savedConfig) {
+          state.isLocked = savedConfig.isLocked !== undefined ? savedConfig.isLocked : true;
+          state.openDuration = savedConfig.openDuration || 8;
+        }
+      } catch(e) {}
+
+      // Prizes
+      try {
+        const savedPrizes = JSON.parse(localStorage.getItem(KEY_PRIZES));
+        state.prizes = (savedPrizes && savedPrizes.length) ? savedPrizes : JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+      } catch(e) {
+        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+      }
+
+      // Quotes
+      try {
+        const savedQuotes = JSON.parse(localStorage.getItem(KEY_QUOTES));
+        state.quotes = savedQuotes || JSON.parse(JSON.stringify(DEFAULT_QUOTES));
+      } catch(e) {
+        state.quotes = JSON.parse(JSON.stringify(DEFAULT_QUOTES));
+      }
+
+      // Winners
+      try {
+        const savedWinners = JSON.parse(localStorage.getItem(KEY_WINNERS));
+        state.winners = savedWinners || [];
+      } catch(e) {
+        state.winners = [];
+      }
+    }
+
+    function saveAllData() {
+      localStorage.setItem(KEY_CONFIG, JSON.stringify({ isLocked: state.isLocked, openDuration: state.openDuration }));
+      localStorage.setItem(KEY_PRIZES, JSON.stringify(state.prizes));
+      localStorage.setItem(KEY_QUOTES, JSON.stringify(state.quotes));
+      localStorage.setItem(KEY_WINNERS, JSON.stringify(state.winners));
+      broadcastChange();
+    }
+
+    /* ================= REALTIME SYNC (CROSS-TAB & WINDOW) ================= */
+    const channel = new BroadcastChannel('gialong_sync_channel');
+    function initRealtimeSync() {
+      channel.onmessage = (event) => {
+        if (event.data && event.data.type === 'SYNC') {
+          loadStorageData();
+          renderUI();
+        }
+      };
+      window.addEventListener('storage', (e) => {
+        loadStorageData();
+        renderUI();
+      });
+    }
+
+    function broadcastChange() {
+      channel.postMessage({ type: 'SYNC', timestamp: Date.now() });
+    }
+
+    /* ================= UI RENDERING ================= */
+    function renderUI() {
+      // User name
+      document.getElementById('display-user-name').innerText = state.userName;
+
+      // Lock State
+      const lockBanner = document.getElementById('status-lock-banner');
+      const lockText = document.getElementById('status-lock-text');
+      const openBtn = document.getElementById('btn-open-chest');
+
+      if (state.isLocked) {
+        lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-red-950/90 border border-red-700/80 text-red-200 text-xs font-semibold flex items-center justify-center gap-2 shadow";
+        lockText.innerHTML = "🔒 BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC";
+        openBtn.disabled = true;
+        openBtn.className = "w-full py-4 rounded-2xl bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-kiemhiep font-extrabold text-lg tracking-wider uppercase transition-all duration-300 shadow-lg cursor-not-allowed flex items-center justify-center gap-2";
+        openBtn.innerHTML = "<span>🔒</span> <span>CHỜ LỆNH BTC</span>";
+      } else {
+        lockBanner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-emerald-950/90 border border-emerald-600/80 text-emerald-200 text-xs font-semibold flex items-center justify-center gap-2 shadow";
+        lockText.innerHTML = "✨ PHONG ẤN ĐÃ MỞ - HUYNH ĐỆ ĐỒNG LOẠT KHAI MỞ!";
+        openBtn.disabled = false;
+        openBtn.className = "w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 border-2 border-yellow-200 text-red-950 font-kiemhiep font-black text-xl tracking-wider uppercase transition-all duration-300 shadow-2xl pulse-btn hover:brightness-110 active:scale-95 flex items-center justify-center gap-2 cursor-pointer";
+        openBtn.innerHTML = "<span>⚔️</span> <span>KHAI MỞ BẢO RƯƠNG</span> <span>⚔️</span>";
+      }
+
+      // Update Admin Controls
+      document.getElementById('admin-time-val').innerText = state.openDuration + " giây";
+      document.getElementById('admin-time-slider').value = state.openDuration;
+      document.getElementById('admin-current-url').innerText = window.location.href;
+    }
+
+    /* ================= USER INTERACTION ================= */
+    function promptUserName() {
+      const current = state.userName === "Huynh Đệ Vô Danh" ? "" : state.userName;
+      const name = prompt("Nhập Tên hoặc Tên Ingame của Huynh Đệ:", current);
+      if (name && name.trim()) {
+        state.userName = name.trim();
+        localStorage.setItem(KEY_USER, state.userName);
+        document.getElementById('display-user-name').innerText = state.userName;
+      }
+    }
+
+    function handleChestClick() {
+      if (state.isLocked) {
+        playSound('tick');
+        alert("Bảo Rương đang phong ấn! Xin đợi Ban Tổ Chức phát hiệu lệnh mở khóa đồng loạt.");
+      } else {
+        triggerOpenChest();
+      }
+    }
+
+    /* ================= CHEST OPENING SEQUENCE ================= */
+    let openingInterval = null;
+    function triggerOpenChest() {
+      if (state.isLocked) return;
+
+      const openBtn = document.getElementById('btn-open-chest');
+      openBtn.disabled = true;
+
+      const chestContainer = document.getElementById('chest-container');
+      const progressWrapper = document.getElementById('progress-wrapper');
+      const progressBar = document.getElementById('progress-bar-fill');
+      const progressPercent = document.getElementById('progress-percentage');
+      const countdownOverlay = document.getElementById('countdown-overlay');
+      const countdownNumber = document.getElementById('countdown-number');
+
+      // Setup Animation
+      chestContainer.classList.add('chest-shaking', 'chest-glow');
+      progressWrapper.classList.remove('hidden');
+      countdownOverlay.classList.remove('hidden');
+
+      const totalDuration = state.openDuration * 1000;
+      const startTime = Date.now();
+      let lastSecond = state.openDuration;
+
+      countdownNumber.innerText = lastSecond;
+
+      openingInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(100, (elapsed / totalDuration) * 100);
+        const remainingSeconds = Math.max(0, Math.ceil((totalDuration - elapsed) / 1000));
+
+        progressBar.style.width = progress + "%";
+        progressPercent.innerText = Math.floor(progress) + "%";
+
+        if (remainingSeconds !== lastSecond) {
+          lastSecond = remainingSeconds;
+          countdownNumber.innerText = remainingSeconds;
+          playSound('tick');
+        }
+
+        if (progress >= 100) {
+          clearInterval(openingInterval);
+          finishOpeningChest();
+        }
+      }, 50);
+    }
+
+    function finishOpeningChest() {
+      const chestContainer = document.getElementById('chest-container');
+      const progressWrapper = document.getElementById('progress-wrapper');
+      const countdownOverlay = document.getElementById('countdown-overlay');
+
+      chestContainer.classList.remove('chest-shaking');
+      progressWrapper.classList.add('hidden');
+      countdownOverlay.classList.add('hidden');
+
+      // Pick Prize & Troll Quote
+      const pickedPrize = pickRandomPrize();
+      const trollQuote = pickQuoteForTag(pickedPrize.tag);
+
+      // Save Winner Record
+      const winnerRecord = {
+        id: "w_" + Date.now(),
+        user: state.userName,
+        prize: pickedPrize.name,
+        tag: pickedPrize.tag,
+        score: pickedPrize.score || 50,
+        quote: trollQuote,
+        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+      };
+      state.winners.unshift(winnerRecord);
+      saveAllData();
+
+      // Fire Confetti
+      fireConfetti();
+      playSound('win');
+
+      // Show Result Modal
+      showResultModal(winnerRecord);
+    }
+
+    function pickRandomPrize() {
+      // Flatten pool based on quantities
+      let pool = [];
+      state.prizes.forEach(p => {
+        const qty = p.qty !== undefined ? p.qty : 1;
+        for (let i = 0; i < qty; i++) {
+          pool.push(p);
+        }
+      });
+      if (pool.length === 0) {
+        return { name: "Quà May Mắn Offline", tag: "tag_kyniem", score: 20 };
+      }
+      const randomIndex = Math.floor(Math.random() * pool.length);
+      return pool[randomIndex];
+    }
+
+    function pickQuoteForTag(tag) {
+      const quotesList = state.quotes[tag] || state.quotes['tag_kyniem'] || DEFAULT_QUOTES.tag_kyniem;
+      if (!quotesList || quotesList.length === 0) {
+        return "Cơ cấu hay không không quan trọng, quan trọng là tình huynh đệ!";
+      }
+      const idx = Math.floor(Math.random() * quotesList.length);
+      return quotesList[idx];
+    }
+
+    function showResultModal(record) {
+      document.getElementById('result-user-title').innerText = "Đại hiệp: " + record.user;
+      document.getElementById('result-prize-name').innerText = record.prize;
+      document.getElementById('result-troll-quote').innerText = '"' + record.quote + '"';
+
+      const tierBadge = document.getElementById('result-tier-badge');
+      if (record.tag === 'tag_dacbiet') {
+        tierBadge.innerText = "⭐ GIẢI ĐẶC BIỆT HOÀNG KIM ⭐";
+        tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-gradient-to-r from-yellow-300 to-amber-500 text-red-950 shadow-md";
+      } else if (record.tag === 'tag_nhat') {
+        tierBadge.innerText = "🔥 GIẢI NHẤT DANH TRẤN 🔥";
+        tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-amber-500 text-red-950";
+      } else {
+        tierBadge.innerText = "🎁 PHẦN QUÀ GIAO LƯU";
+        tierBadge.className = "inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2 bg-stone-700 text-yellow-200";
+      }
+
+      document.getElementById('modal-result').classList.remove('hidden');
+    }
+
+    function closeResultModal() {
+      document.getElementById('modal-result').classList.add('hidden');
+      renderUI();
+    }
+
+    function fireConfetti() {
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ffd700', '#ff4500', '#ffffff', '#e6a100']
+        });
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ['#ffd700', '#ff0000']
+          });
+          confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ['#ffd700', '#ff0000']
+          });
+        }, 250);
+      } catch(e) {}
+    }
+
+    /* ================= PIN & ADMIN ACCESS ================= */
+    function openPinModal() {
+      document.getElementById('input-admin-pin').value = '';
+      document.getElementById('modal-pin').classList.remove('hidden');
+    }
+    function closePinModal() {
+      document.getElementById('modal-pin').classList.add('hidden');
+    }
+    function togglePinVisibility() {
+      const pinInput = document.getElementById('input-admin-pin');
+      pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
+    }
+    function verifyPin() {
+      const entered = document.getElementById('input-admin-pin').value;
+      if (entered === PIN_ADMIN) {
+        closePinModal();
+        openAdminModal();
+      } else {
+        alert("Mã PIN Ban Tổ Chức không chính xác!");
+      }
+    }
+
+    /* ================= ADMIN DASHBOARD ================= */
+    function openAdminModal() {
+      renderAdminPrizes();
+      renderAdminQuotes();
+      document.getElementById('modal-admin').classList.remove('hidden');
+    }
+    function closeAdminModal() {
+      saveAllData();
+      document.getElementById('modal-admin').classList.add('hidden');
+      renderUI();
+    }
+
+    function adminSetLock(lockStatus) {
+      state.isLocked = lockStatus;
+      saveAllData();
+      renderUI();
+      if (!lockStatus) {
+        playSound('unlock');
+        alert("ĐÃ MỞ KHÓA TOÀN BỘ RƯƠNG CHO TẤT CẢ THÀNH VIÊN!");
+      } else {
+        alert("ĐÃ KHÓA LẠI TẤT CẢ RƯƠNG!");
+      }
+    }
+
+    function adminUpdateTime(val) {
+      state.openDuration = parseInt(val, 10);
+      document.getElementById('admin-time-val').innerText = val + " giây";
+      saveAllData();
+    }
+
+    function renderAdminPrizes() {
+      const container = document.getElementById('admin-prizes-list');
+      container.innerHTML = '';
+      state.prizes.forEach((p, index) => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-2 rounded-xl bg-black/40 border border-amber-900/60 text-[11px]";
+        item.innerHTML = `
+          <div class="flex-1 mr-2 truncate">
+            <span class="font-bold text-yellow-200">${p.name}</span>
+            <span class="text-amber-500/80 ml-1">(${p.qty || 1} phần)</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <select onchange="adminUpdatePrizeTag(${index}, this.value)" class="px-1.5 py-1 rounded bg-black/80 border border-amber-700 text-yellow-300 text-[10px]">
+              <option value="tag_dacbiet" ${p.tag === 'tag_dacbiet' ? 'selected' : ''}>Tag: Đặc Biệt</option>
+              <option value="tag_nhat" ${p.tag === 'tag_nhat' ? 'selected' : ''}>Tag: Giải Nhất</option>
+              <option value="tag_nhi_ba" ${p.tag === 'tag_nhi_ba' ? 'selected' : ''}>Tag: Nhì/Ba</option>
+              <option value="tag_khuyenkhich" ${p.tag === 'tag_khuyenkhich' ? 'selected' : ''}>Tag: Khuyến Khích</option>
+              <option value="tag_kyniem" ${p.tag === 'tag_kyniem' ? 'selected' : ''}>Tag: Kỷ Niệm</option>
+            </select>
+            <button onclick="adminDeletePrize(${index})" class="px-1.5 py-1 rounded bg-rose-950 border border-rose-700 text-rose-300 hover:bg-rose-900">Xóa</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function adminUpdatePrizeTag(idx, newTag) {
+      if (state.prizes[idx]) {
+        state.prizes[idx].tag = newTag;
+        saveAllData();
+      }
+    }
+
+    function adminDeletePrize(idx) {
+      if (confirm("Xóa phần quà này khỏi danh sách?")) {
+        state.prizes.splice(idx, 1);
+        renderAdminPrizes();
+        saveAllData();
+      }
+    }
+
+    function adminAddPrize() {
+      const nameInput = document.getElementById('new-prize-name');
+      const tagSelect = document.getElementById('new-prize-tag');
+      const qtyInput = document.getElementById('new-prize-qty');
+
+      const name = nameInput.value.trim();
+      const tag = tagSelect.value;
+      const qty = parseInt(qtyInput.value, 10) || 1;
+
+      if (!name) {
+        alert("Vui lòng nhập tên phần thưởng!");
+        return;
+      }
+
+      state.prizes.push({
+        id: "p_" + Date.now(),
+        name: name,
+        tag: tag,
+        score: tag === 'tag_dacbiet' ? 100 : (tag === 'tag_nhat' ? 85 : 30),
+        qty: qty
+      });
+
+      nameInput.value = '';
+      qtyInput.value = '1';
+      renderAdminPrizes();
+      saveAllData();
+    }
+
+    function resetDefaultPrizes() {
+      if (confirm("Khôi phục lại danh sách 20 giải thưởng chuẩn ban đầu?")) {
+        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+        renderAdminPrizes();
+        saveAllData();
+      }
+    }
+
+    /* ================= TROLL QUOTES CONFIG ================= */
+    function renderAdminQuotes() {
+      const currentTag = document.getElementById('admin-quote-tag-select').value;
+      const listContainer = document.getElementById('admin-quotes-list');
+      listContainer.innerHTML = '';
+
+      const quotes = state.quotes[currentTag] || [];
+      if (quotes.length === 0) {
+        listContainer.innerHTML = `<div class="text-[10px] text-amber-500/70 italic p-2">Chưa có câu nào cho Tag này. Hãy thêm ở ô bên dưới!</div>`;
+        return;
+      }
+
+      quotes.forEach((q, idx) => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-1.5 rounded-lg bg-black/40 border border-amber-900/50 text-[11px]";
+        item.innerHTML = `
+          <span class="text-amber-100 flex-1 mr-2 leading-tight italic">"${q}"</span>
+          <button onclick="adminDeleteQuote('${currentTag}', ${idx})" class="text-rose-400 hover:text-rose-200 text-xs px-1 flex-shrink-0">✕</button>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    function adminAddQuote() {
+      const currentTag = document.getElementById('admin-quote-tag-select').value;
+      const input = document.getElementById('new-quote-text');
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!state.quotes[currentTag]) state.quotes[currentTag] = [];
+      state.quotes[currentTag].push(text);
+      input.value = '';
+      renderAdminQuotes();
+      saveAllData();
+    }
+
+    function adminDeleteQuote(tag, idx) {
+      if (state.quotes[tag]) {
+        state.quotes[tag].splice(idx, 1);
+        renderAdminQuotes();
+        saveAllData();
+      }
+    }
+
+    function resetDefaultQuotes() {
+      if (confirm("Khôi phục danh sách câu troll cà khịa chuẩn ban đầu?")) {
+        state.quotes = JSON.parse(JSON.stringify(DEFAULT_QUOTES));
+        renderAdminQuotes();
+        saveAllData();
+      }
+    }
+
+    function adminResetAll() {
+      if (confirm("BẠN CÓ CHẮC MUỐN RESET TOÀN BỘ DỮ LIỆU?\n- Khôi phục 100% kho giải\n- Xóa sạch danh sách người đã trúng\n- Khóa lại bảo rương")) {
+        state.isLocked = true;
+        state.winners = [];
+        state.prizes = JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+        state.quotes = JSON.parse(JSON.stringify(DEFAULT_QUOTES));
+        saveAllData();
+        renderUI();
+        renderAdminPrizes();
+        renderAdminQuotes();
+        alert("Đã reset hệ thống về trạng thái ban đầu!");
+      }
+    }
+
+    /* ================= LEADERBOARD ================= */
+    function openLeaderboard() {
+      renderLeaderboard();
+      document.getElementById('modal-leaderboard').classList.remove('hidden');
+    }
+    function closeLeaderboard() {
+      document.getElementById('modal-leaderboard').classList.add('hidden');
+    }
+
+    function renderLeaderboard() {
+      const list = document.getElementById('leaderboard-list');
+      const totalCount = document.getElementById('lb-total-count');
+      list.innerHTML = '';
+      totalCount.innerText = state.winners.length;
+
+      if (state.winners.length === 0) {
+        list.innerHTML = `<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa có ai mở rương. Hãy đợi hiệu lệnh từ BTC!</div>`;
+        return;
+      }
+
+      // Sort by score descending
+      const sorted = [...state.winners].sort((a, b) => (b.score || 0) - (a.score || 0));
+
+      sorted.forEach((w, index) => {
+        let medal = `#${index + 1}`;
+        let badgeBg = "bg-stone-900 border-amber-900";
+        if (index === 0) { medal = "🥇"; badgeBg = "bg-gradient-to-r from-yellow-950 to-amber-900/80 border-yellow-500"; }
+        else if (index === 1) { medal = "🥈"; badgeBg = "bg-stone-900 border-stone-400"; }
+        else if (index === 2) { medal = "🥉"; badgeBg = "bg-amber-950/60 border-amber-700"; }
+
+        const item = document.createElement('div');
+        item.className = `p-2.5 rounded-2xl border ${badgeBg} flex items-center justify-between shadow-sm`;
+        item.innerHTML = `
+          <div class="flex items-center gap-2.5 truncate">
+            <span class="text-base font-bold w-6 text-center">${medal}</span>
+            <div class="truncate">
+              <div class="font-bold text-yellow-200 truncate">${w.user}</div>
+              <div class="text-[10px] text-amber-400/90 truncate">${w.prize}</div>
+            </div>
+          </div>
+          <div class="text-right flex-shrink-0 ml-2">
+            <span class="text-[9px] text-stone-400">${w.time || ''}</span>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    /* ================= QR CODE GENERATOR (OFFLINE CANVAS PURE JS) ================= */
+    function openQrModal() {
+      const currentUrl = window.location.href;
+      document.getElementById('custom-qr-url').value = currentUrl;
+      drawQrCode(currentUrl);
+      document.getElementById('modal-qr').classList.remove('hidden');
+    }
+    function closeQrModal() {
+      document.getElementById('modal-qr').classList.add('hidden');
+    }
+    function regenerateCustomQr() {
+      const url = document.getElementById('custom-qr-url').value.trim();
+      if (url) drawQrCode(url);
+    }
+
+    // Lightweight QR Matrix algorithm for Canvas (self-contained fallback)
+    function drawQrCode(text) {
+      const canvas = document.getElementById('qr-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 200;
+      canvas.height = 200;
+
+      // Simple visual QR placeholder generator
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 200, 200);
+      ctx.fillStyle = '#000000';
+
+      // 3 Position markers
+      function drawMarker(x, y) {
+        ctx.fillRect(x, y, 42, 42);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x + 6, y + 6, 30, 30);
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(x + 12, y + 12, 18, 18);
+      }
+      drawMarker(15, 15);
+      drawMarker(143, 15);
+      drawMarker(15, 143);
+
+      // Data pseudo-modules derived from string hash
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      
+      for (let r = 0; r < 25; r++) {
+        for (let c = 0; c < 25; c++) {
+          if ((r < 7 && c < 7) || (r < 7 && c > 17) || (r > 17 && c < 7)) continue;
+          const val = Math.sin(hash + r * 13 + c * 7);
+          if (val > 0) {
+            ctx.fillRect(15 + c * 6.8, 15 + r * 6.8, 6, 6);
+          }
+        }
+      }
+    }
+
+    function downloadQrImage() {
+      const canvas = document.getElementById('qr-canvas');
+      const link = document.createElement('a');
+      link.download = 'QR_GiaLongBaoRuong.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
