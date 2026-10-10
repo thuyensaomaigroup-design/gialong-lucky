@@ -521,6 +521,90 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
+    /* ================= BỘ ÂM THANH GAME (WEB AUDIO API - KHÔNG LO CHẶN LINK) ================= */
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'tick') {
+          // Tiếng gõ nhịp kịch tính khi đang đục rương
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'open') {
+          // Tiếng rương bung nắp kim loại vang dội
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc1.type = 'sawtooth';
+          osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(150, now);
+          osc1.frequency.exponentialRampToValueAtTime(500, now + 0.4);
+          osc2.frequency.setValueAtTime(220, now);
+          osc2.frequency.exponentialRampToValueAtTime(660, now + 0.4);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.5);
+          osc2.stop(now + 0.5);
+        } else if (type === 'win') {
+          // Tiếng nhạc pháo hoa chiến thắng
+          const notes = [440, 554.37, 659.25, 880, 1108.73];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+            gain.gain.setValueAtTime(0.28, now + idx * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.09);
+            osc.stop(now + idx * 0.09 + 0.5);
+          });
+        } else if (type === 'unlock') {
+          // Tiếng phong ấn mở
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.25);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {
+        console.warn("Lỗi phát âm thanh:", e);
+      }
+    }
+
     /* ================= CẤU HÌNH BAN TỔ CHỨC ================= */
     const PIN_ADMIN = "1010";
 
@@ -643,6 +727,8 @@
     };
 
     // INIT
+    window.addEventListener('pointerdown', () => { initAudio(); }, { once: true });
+
     window.addEventListener('DOMContentLoaded', () => {
       initFirebase();
       renderUI();
@@ -976,6 +1062,17 @@
       }
       if (state.isLocked) return;
 
+      // Kiểm tra trước xem kho quà còn phần nào không
+      let totalRemaining = 0;
+      (state.prizes || []).forEach(p => {
+        totalRemaining += Math.max(0, parseInt(p.qty, 10) || 0);
+      });
+      if (totalRemaining <= 0) {
+        alert("⚠️ KHO BẢO RƯƠNG ĐÃ ĐƯỢC KHAI MỞ HẾT SẠCH!\nXin đợi Ban Tổ Chức khởi động vòng tiếp theo.");
+        return;
+      }
+
+      initAudio();
       const openBtn = document.getElementById('btn-open-chest');
       openBtn.disabled = true;
 
@@ -995,6 +1092,7 @@
       let lastSecond = state.openDuration;
 
       countdownNumber.innerText = lastSecond;
+      playSound('tick');
 
       openingInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
@@ -1007,6 +1105,7 @@
         if (remainingSeconds !== lastSecond) {
           lastSecond = remainingSeconds;
           countdownNumber.innerText = remainingSeconds;
+          playSound('tick');
         }
 
         if (progress >= 100) {
@@ -1024,8 +1123,8 @@
       chestContainer.classList.remove('chest-shaking');
       progressWrapper.classList.add('hidden');
       countdownOverlay.classList.add('hidden');
+      playSound('open');
 
-      // BỐC VÀ TRỪ QUÀ TRÊN CLOUD TRANSACTION (ĐẢM BẢO KHÔNG TRÙNG)
       if (isFirebaseReady && db) {
         claimPrizeFromCloud();
       } else {
@@ -1035,47 +1134,88 @@
 
     function claimPrizeFromCloud() {
       const prizesRef = db.ref('room/prizes');
-      prizesRef.transaction((currentPrizes) => {
-        if (!currentPrizes || currentPrizes.length === 0) {
-          return currentPrizes;
-        }
+      let awardedPrize = null;
 
+      prizesRef.transaction((currentPrizes) => {
+        if (!currentPrizes) return currentPrizes;
+
+        // Đảm bảo dạng mảng (tránh lỗi Firebase chuyển array thành object khi xóa key)
+        let list = Array.isArray(currentPrizes) ? currentPrizes : Object.values(currentPrizes);
+        
+        // Thu thập các vị trí món quà CÒN SỐ LƯỢNG > 0
         let availablePool = [];
-        currentPrizes.forEach((p, idx) => {
-          const qty = p.qty !== undefined ? p.qty : 1;
-          for (let i = 0; i < qty; i++) {
-            availablePool.push(idx);
+        list.forEach((p, idx) => {
+          const qty = parseInt(p.qty, 10) || 0;
+          if (qty > 0) {
+            for (let i = 0; i < qty; i++) {
+              availablePool.push(idx);
+            }
           }
         });
 
-        if (availablePool.length === 0) return currentPrizes;
+        // Nếu đã hết sạch quà
+        if (availablePool.length === 0) {
+          awardedPrize = null;
+          return currentPrizes;
+        }
 
-        const randomChoice = availablePool[Math.floor(Math.random() * availablePool.length)];
+        // Bốc trúng 1 vị trí ngẫu nhiên
+        const chosenIdx = availablePool[Math.floor(Math.random() * availablePool.length)];
         
-        currentPrizes[randomChoice].qty = (currentPrizes[randomChoice].qty || 1) - 1;
-        if (currentPrizes[randomChoice].qty <= 0) {
-          currentPrizes.splice(randomChoice, 1);
+        // Clone chính xác món quà vừa bốc được
+        awardedPrize = JSON.parse(JSON.stringify(list[chosenIdx]));
+
+        // TRỪ ĐÚNG 1 ĐƠN VỊ VÀ KHÓA LẠI: qty = qty - 1
+        const newQty = (parseInt(list[chosenIdx].qty, 10) || 1) - 1;
+        list[chosenIdx].qty = Math.max(0, newQty);
+
+        return list;
+      }, (error, committed, snapshot) => {
+        if (error) {
+          console.error("Lỗi transaction:", error);
+          alert("Mạng chập chờn khi nhận quà, đang thử nhận phần quà dự phòng...");
+          claimPrizeLocal();
+          return;
         }
 
-        return currentPrizes;
-      }, (error, committed, snapshot) => {
-        if (error || !committed) {
-          alert("Kho báu đang có người bốc cùng lúc, hệ thống đang tự thử lại...");
+        if (!committed || !awardedPrize) {
+          // Bị trùng với người khác hoặc kho quà đã hết sạch
+          alert("⚠️ Phần quà này vừa được huynh đệ khác nhanh tay bốc trước! Đang bốc phần quà kế tiếp...");
           claimPrizeLocal();
-        } else {
-          pickQuoteAndRegister();
+          return;
         }
+
+        // BỐC THÀNH CÔNG: Trao CHÍNH XÁC món quà đã được Cloud xác nhận trừ số lượng!
+        registerAwardedPrize(awardedPrize);
       });
     }
 
-    function pickQuoteAndRegister() {
-      let pool = [];
-      state.prizes.forEach(p => {
-        const qty = p.qty !== undefined ? p.qty : 1;
-        for (let i = 0; i < qty; i++) pool.push(p);
+    function claimPrizeLocal() {
+      // Logic bốc và trừ quà cục bộ (khi offline hoặc fallback)
+      let availableIndexes = [];
+      state.prizes.forEach((p, idx) => {
+        const qty = parseInt(p.qty, 10) || 0;
+        if (qty > 0) {
+          for (let i = 0; i < qty; i++) availableIndexes.push(idx);
+        }
       });
-      const picked = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : { name: "Quà Lưu Niệm Bang", tag: "tag_kyniem", score: 20 };
+
+      if (availableIndexes.length === 0) {
+        alert("Kho quà đã hết sạch số lượng!");
+        return;
+      }
+
+      const chosenIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+      const picked = JSON.parse(JSON.stringify(state.prizes[chosenIdx]));
       
+      // Trừ số lượng và đồng bộ
+      state.prizes[chosenIdx].qty = Math.max(0, (parseInt(state.prizes[chosenIdx].qty, 10) || 1) - 1);
+      syncPrizesToStorageAndCloud(false);
+
+      registerAwardedPrize(picked);
+    }
+
+    function registerAwardedPrize(picked) {
       const quotesList = state.quotes[picked.tag] || state.quotes['tag_kyniem'] || DEFAULT_QUOTES.tag_kyniem;
       const quote = quotesList[Math.floor(Math.random() * quotesList.length)];
 
@@ -1097,11 +1237,8 @@
 
       saveDeviceOpened(record);
       showResultModal(record);
+      playSound('win');
       fireConfetti();
-    }
-
-    function claimPrizeLocal() {
-      pickQuoteAndRegister();
     }
 
     function saveDeviceOpened(record) {
