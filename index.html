@@ -6,6 +6,7 @@
   <title>Gia Long Bảo Rương - Vòng Quay May Mắn Offline</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -432,7 +433,7 @@
       <p class="text-xs text-amber-200/80 mb-3">Cho 20 anh em quét bằng Zalo hoặc Camera</p>
       
       <div class="bg-white p-3 rounded-2xl inline-block mb-3 shadow-lg">
-        <canvas id="qr-canvas" class="w-48 h-48 mx-auto"></canvas>
+        <div id="qr-code-box" class="w-48 h-48 mx-auto flex items-center justify-center"></div>
       </div>
 
       <div class="mb-3">
@@ -1126,53 +1127,39 @@
       if (url) drawQrCode(url);
     }
 
-    // Lightweight QR Matrix algorithm for Canvas (self-contained fallback)
+    let qrInstance = null;
     function drawQrCode(text) {
-      const canvas = document.getElementById('qr-canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 200;
-      canvas.height = 200;
-
-      // Simple visual QR placeholder generator
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 200, 200);
-      ctx.fillStyle = '#000000';
-
-      // 3 Position markers
-      function drawMarker(x, y) {
-        ctx.fillRect(x, y, 42, 42);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(x + 6, y + 6, 30, 30);
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(x + 12, y + 12, 18, 18);
-      }
-      drawMarker(15, 15);
-      drawMarker(143, 15);
-      drawMarker(15, 143);
-
-      // Data pseudo-modules derived from string hash
-      let hash = 0;
-      for (let i = 0; i < text.length; i++) {
-        hash = ((hash << 5) - hash) + text.charCodeAt(i);
-        hash |= 0;
-      }
-      
-      for (let r = 0; r < 25; r++) {
-        for (let c = 0; c < 25; c++) {
-          if ((r < 7 && c < 7) || (r < 7 && c > 17) || (r > 17 && c < 7)) continue;
-          const val = Math.sin(hash + r * 13 + c * 7);
-          if (val > 0) {
-            ctx.fillRect(15 + c * 6.8, 15 + r * 6.8, 6, 6);
-          }
-        }
+      const box = document.getElementById('qr-code-box');
+      box.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        qrInstance = new QRCode(box, {
+          text: text,
+          width: 192,
+          height: 192,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else {
+        // Fallback dùng Google Charts / QR Server API bảo đảm quét được ngay
+        const img = document.createElement('img');
+        img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" + encodeURIComponent(text);
+        img.className = "w-48 h-48 mx-auto";
+        box.appendChild(img);
       }
     }
 
     function downloadQrImage() {
-      const canvas = document.getElementById('qr-canvas');
+      const box = document.getElementById('qr-code-box');
+      const img = box.querySelector('img');
+      const canvas = box.querySelector('canvas');
       const link = document.createElement('a');
       link.download = 'QR_GiaLongBaoRuong.png';
-      link.href = canvas.toDataURL();
+      if (canvas) {
+        link.href = canvas.toDataURL();
+      } else if (img) {
+        link.href = img.src;
+      }
       link.click();
     }
   </script>
