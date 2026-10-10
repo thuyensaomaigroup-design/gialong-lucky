@@ -70,11 +70,14 @@
       </div>
     </div>
     
-    <div class="flex items-center gap-2">
-      <button onclick="openLeaderboard()" class="px-2.5 py-1.5 rounded-lg bg-red-950/80 border border-amber-600/60 text-amber-300 text-xs font-bold hover:bg-amber-900/50 flex items-center gap-1 shadow">
-        🏆 <span class="hidden sm:inline">Bảng</span> Vinh Danh
+    <div class="flex items-center gap-1.5">
+      <button onclick="openPrizeListModal()" class="px-2 py-1.5 rounded-lg bg-amber-950/80 border border-yellow-500/60 text-yellow-300 text-xs font-bold hover:bg-amber-900/50 flex items-center gap-1 shadow">
+        🎁 <span class="hidden sm:inline">Cơ Cấu</span> Giải
       </button>
-      <button onclick="openPinModal()" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-700 to-amber-900 border border-yellow-500/70 text-yellow-100 text-xs font-bold hover:brightness-110 flex items-center gap-1 shadow">
+      <button onclick="openLeaderboard()" class="px-2 py-1.5 rounded-lg bg-red-950/80 border border-amber-600/60 text-amber-300 text-xs font-bold hover:bg-amber-900/50 flex items-center gap-1 shadow">
+        🏆 <span class="hidden sm:inline">Bảng</span> Vàng
+      </button>
+      <button onclick="openPinModal()" class="px-2 py-1.5 rounded-lg bg-gradient-to-r from-amber-700 to-amber-900 border border-yellow-500/70 text-yellow-100 text-xs font-bold hover:brightness-110 flex items-center gap-1 shadow">
         ⚙️ BTC
       </button>
     </div>
@@ -102,7 +105,7 @@
 
     <!-- REMAINING PRIZES CLOUD COUNTER -->
     <div class="w-full text-center text-[11px] text-amber-300/80 mb-1">
-      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 10 phần thưởng
+      Kho báu còn lại: <b id="remaining-count" class="text-yellow-300 font-bold">20</b> / 20 phần thưởng
     </div>
 
     <!-- CHEST GRAPHIC & EFFECT CONTAINER -->
@@ -156,14 +159,14 @@
       <!-- Opening Countdown Badge -->
       <div id="countdown-overlay" class="hidden absolute z-20 inset-0 flex flex-col items-center justify-center bg-black/60 rounded-full backdrop-blur-[2px]">
         <div id="countdown-number" class="text-5xl font-black font-kiemhiep text-yellow-300 drop-shadow-[0_0_15px_#ffd700]">8</div>
-        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">Phá Két Bình Bú</div>
+        <div class="text-xs text-amber-200 mt-1 uppercase tracking-widest font-bold">VẬN CÔNG PHÁ ẤN</div>
       </div>
     </div>
 
     <!-- PROGRESS BAR -->
     <div id="progress-wrapper" class="w-full px-4 mb-4 hidden">
       <div class="flex justify-between items-center text-xs font-bold text-amber-300 mb-1">
-        <span id="progress-status-text">Đang rặn quà từ Bình Bú...</span>
+        <span id="progress-status-text">ĐANG TRUYỀN CHÂN KHÍ...</span>
         <span id="progress-percentage">0%</span>
       </div>
       <div class="w-full h-3.5 bg-black/80 rounded-full p-0.5 border border-amber-600/80 shadow-inner overflow-hidden">
@@ -179,7 +182,7 @@
     </div>
 
     <div class="mt-3 text-center text-xs text-amber-300/70 italic px-4">
-      "Nhân phẩm tại tâm - Giải thưởng tại vận - Cơ cấu tại Lol Bình Bú"
+      "Nhân phẩm tại tâm - Giải thưởng tại vận - Cơ cấu tại AD Bình"
     </div>
 
   </main>
@@ -190,6 +193,34 @@
   </footer>
 
   <!-- ================= MODALS ================= -->
+
+  <!-- MODAL: DANH SÁCH GIẢI THƯỞNG CHO ANH EM XEM NGOÀI MÀN HÌNH -->
+  <div id="modal-prize-list" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-md max-h-[85vh] rounded-3xl bg-wood border-2 border-yellow-500/80 p-4 flex flex-col shadow-2xl">
+      <div class="flex justify-between items-center border-b border-amber-900/60 pb-2 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎁</span>
+          <h3 class="font-kiemhiep font-bold text-amber-300 text-base">KHO BÁU GIẢI THƯỞNG</h3>
+        </div>
+        <button onclick="closePrizeListModal()" class="w-7 h-7 rounded-full bg-stone-800 text-stone-300 text-sm font-bold flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="flex justify-between items-center text-[11px] text-amber-300/80 mb-2 px-1">
+        <span>Danh mục 20 phần thưởng đang chờ khai mở:</span>
+        <span class="font-bold text-yellow-300">Còn lại: <b id="public-prize-remaining" class="text-emerald-400">20</b></span>
+      </div>
+
+      <div id="public-prize-list-container" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar text-xs">
+        <!-- Render via JS -->
+      </div>
+
+      <div class="mt-3 pt-2 border-t border-amber-900/50 flex justify-end items-center">
+        <button onclick="closePrizeListModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-500 text-red-950 font-bold text-xs shadow">
+          Đã Hiểu, Quay Lại Mở Rương
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: RESULT POPUP -->
   <div id="modal-result" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
@@ -445,7 +476,7 @@
             </button>
           </div>
           <button onclick="adminResetAllCloud()" class="w-full py-2.5 rounded-xl bg-rose-900/90 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
-            🔄 RESET TOÀN BỘ HỆ THỐNG TRÊN CLOUD (MỞ LẠI CHO TẤT CẢ CÁC MÁY)
+            🔄 BẮT ĐẦU VÒNG TIỆC MỚI (RESET LƯỢT MỞ, MÁY & BẢNG VINH DANH - GIỮ NGUYÊN QUÀ ĐÃ CÀI)
           </button>
         </div>
 
@@ -568,14 +599,30 @@
     const KEY_USER = "gialong_user_v1";
     const KEY_DEVICE_OPENED = "gialong_device_opened_v1";
     const KEY_DEVICE_PRIZE = "gialong_device_prize_v1";
+    const KEY_MASTER_PRIZES = "gialong_master_prizes_v1";
+    const KEY_CUSTOM_QUOTES = "gialong_custom_quotes_v1";
+
+    // Lấy bản master quà đã cấu hình (nếu có lưu)
+    let savedMasterPrizes = null;
+    try {
+      savedMasterPrizes = JSON.parse(localStorage.getItem(KEY_MASTER_PRIZES));
+    } catch(e) {}
+    let initialMasterPrizes = (savedMasterPrizes && savedMasterPrizes.length) ? savedMasterPrizes : JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+
+    let savedCustomQuotes = null;
+    try {
+      savedCustomQuotes = JSON.parse(localStorage.getItem(KEY_CUSTOM_QUOTES));
+    } catch(e) {}
+    let initialQuotes = savedCustomQuotes || JSON.parse(JSON.stringify(DEFAULT_QUOTES));
 
     let state = {
       isLocked: true,
       openDuration: 8,
       userName: localStorage.getItem(KEY_USER) || "Chưa đặt danh xưng",
       hasOpened: localStorage.getItem(KEY_DEVICE_OPENED) === "true",
-      prizes: JSON.parse(JSON.stringify(DEFAULT_PRIZES)),
-      quotes: JSON.parse(JSON.stringify(DEFAULT_QUOTES)),
+      configuredPrizes: initialMasterPrizes,
+      prizes: JSON.parse(JSON.stringify(initialMasterPrizes)),
+      quotes: initialQuotes,
       winners: [],
       rawWinnersObj: {},
       onlineUsers: {}
@@ -654,6 +701,25 @@
               state.isLocked = data.isLocked !== undefined ? data.isLocked : true;
               state.openDuration = data.openDuration || 8;
               renderUI();
+            }
+          });
+
+          // Lắng nghe bản master quà cấu hình từ Cloud
+          db.ref('room/master_prizes').on('value', (snap) => {
+            const masterList = snap.val();
+            if (masterList && masterList.length) {
+              state.configuredPrizes = masterList;
+              localStorage.setItem(KEY_MASTER_PRIZES, JSON.stringify(masterList));
+            }
+          });
+
+          // Lắng nghe câu thoại troll từ Cloud
+          db.ref('room/quotes').on('value', (snap) => {
+            const qList = snap.val();
+            if (qList) {
+              state.quotes = qList;
+              localStorage.setItem(KEY_CUSTOM_QUOTES, JSON.stringify(qList));
+              renderAdminQuotes();
             }
           });
 
@@ -769,6 +835,7 @@
       let count = 0;
       state.prizes.forEach(p => count += (p.qty !== undefined ? p.qty : 1));
       document.getElementById('remaining-count').innerText = count;
+      renderPublicPrizeList();
       const poolSum = document.getElementById('admin-pool-summary');
       if (poolSum) poolSum.innerText = "Còn: " + count + " phần";
     }
@@ -1159,11 +1226,26 @@
       updatePrizeCounters();
     }
 
-    function syncPrizesToStorageAndCloud() {
+    function syncPrizesToStorageAndCloud(isConfigChanged = true) {
+      if (isConfigChanged) {
+        // Cập nhật bản master cấu hình quà của BTC
+        state.configuredPrizes = JSON.parse(JSON.stringify(state.prizes));
+        localStorage.setItem(KEY_MASTER_PRIZES, JSON.stringify(state.configuredPrizes));
+        if (isFirebaseReady && db) {
+          db.ref('room/master_prizes').set(state.configuredPrizes);
+        }
+      }
       if (isFirebaseReady && db) {
         db.ref('room/prizes').set(state.prizes);
       }
       updatePrizeCounters();
+    }
+
+    function syncQuotesToStorageAndCloud() {
+      localStorage.setItem(KEY_CUSTOM_QUOTES, JSON.stringify(state.quotes));
+      if (isFirebaseReady && db) {
+        db.ref('room/quotes').set(state.quotes);
+      }
     }
 
     function adminUpdatePrizeName(idx, newName) {
@@ -1258,6 +1340,7 @@
       state.quotes[currentTag].push(text);
       input.value = '';
       renderAdminQuotes();
+      syncQuotesToStorageAndCloud();
     }
 
     function adminDeleteQuote(tag, idx) {
@@ -1285,22 +1368,95 @@
     }
 
     function adminResetAllCloud() {
-      if (confirm("BẠN CÓ CHẮC MUỐN RESET TOÀN BỘ TIỆC TRÊN CLOUD?\n- Khôi phục 20 phần quà\n- Xóa sạch danh sách người trúng\n- Mở lại lượt quay cho TẤT CẢ các máy điện thoại")) {
+      if (confirm("BẮT ĐẦU VÒNG TIỆC MỚI (RESET LƯỢT CHƠI & MÁY)?\n\n✅ Hồi lại 100% số lượng các món quà BẠN ĐÃ CẤU HÌNH\n✅ Xóa sạch Bảng Vàng vinh danh cũ\n✅ Mở lại quyền quay cho TẤT CẢ 20 máy điện thoại\n🔒 GIỮ NGUYÊN 100% tên giải thưởng, số lượng và câu thoại bạn đã tạo!")) {
         localStorage.removeItem(KEY_DEVICE_OPENED);
         localStorage.removeItem(KEY_DEVICE_PRIZE);
         state.hasOpened = false;
-        
+
+        // Lấy lại danh sách quà mà BTC đã tự cấu hình (hồi phục số lượng ban đầu)
+        const masterPool = state.configuredPrizes && state.configuredPrizes.length 
+          ? JSON.parse(JSON.stringify(state.configuredPrizes)) 
+          : JSON.parse(JSON.stringify(DEFAULT_PRIZES));
+
+        state.prizes = JSON.parse(JSON.stringify(masterPool));
+
         if (isFirebaseReady && db) {
-          db.ref('room').set({
-            status: { isLocked: true, openDuration: state.openDuration, updatedAt: Date.now() },
-            prizes: DEFAULT_PRIZES,
-            winners: null,
-            reset_signal: { timestamp: Date.now() }
-          });
+          // Chỉ reset: trạng thái khóa, hồi lại kho quà theo setup của BTC, xóa winners, bắn reset_signal cho các máy
+          db.ref('room/status').update({ isLocked: true, openDuration: state.openDuration, updatedAt: Date.now() });
+          db.ref('room/prizes').set(masterPool);
+          db.ref('room/winners').remove();
+          db.ref('room/reset_devices').remove();
+          db.ref('room/reset_signal').set({ timestamp: Date.now() });
         }
+
         renderUI();
-        alert("ĐÃ RESET TOÀN BỘ HỆ THỐNG VÀ MỞ LẠI LƯỢT CHO TẤT CẢ CÁC MÁY!");
+        renderAdminPrizes();
+        updatePrizeCounters();
+        alert("ĐÃ RESET XONG!\n- Bảng vinh danh đã xóa sạch.\n- Toàn bộ điện thoại đã được mở lại lượt quay.\n- Cấu hình quà và câu thoại của bạn vẫn được giữ nguyên vẹn 100%!");
       }
+    }
+
+    /* ================= MODAL HIỂN THỊ CƠ CẤU GIẢI THƯỞNG RA NGOÀI ================= */
+    function openPrizeListModal() {
+      renderPublicPrizeList();
+      document.getElementById('modal-prize-list').classList.remove('hidden');
+    }
+
+    function closePrizeListModal() {
+      document.getElementById('modal-prize-list').classList.add('hidden');
+    }
+
+    function renderPublicPrizeList() {
+      const container = document.getElementById('public-prize-list-container');
+      const remBadge = document.getElementById('public-prize-remaining');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let totalRemaining = 0;
+      if (!state.prizes || state.prizes.length === 0) {
+        container.innerHTML = '<div class="text-center py-6 text-stone-400 italic text-xs">Kho quà hiện tại đã được bốc hết sạch!</div>';
+        if (remBadge) remBadge.innerText = '0/20';
+        return;
+      }
+
+      state.prizes.forEach(p => {
+        const qty = p.qty !== undefined ? p.qty : 1;
+        totalRemaining += qty;
+
+        let badgeText = "Quà Lưu Niệm";
+        let badgeStyle = "bg-stone-800 border-stone-600 text-stone-300";
+        if (p.tag === 'tag_dacbiet') {
+          badgeText = "ĐẶC BIỆT";
+          badgeStyle = "bg-gradient-to-r from-yellow-500 to-amber-600 text-red-950 font-black border-yellow-300";
+        } else if (p.tag === 'tag_nhat') {
+          badgeText = "GIẢI NHẤT";
+          badgeStyle = "bg-red-800 text-yellow-200 border-red-500";
+        } else if (p.tag === 'tag_nhi_ba') {
+          badgeText = "NHÌ / BA";
+          badgeStyle = "bg-amber-900 text-amber-200 border-amber-600";
+        } else if (p.tag === 'tag_khuyenkhich') {
+          badgeText = "KHUYẾN KHÍCH";
+          badgeStyle = "bg-blue-950 text-blue-200 border-blue-600";
+        }
+
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-2.5 rounded-2xl bg-black/60 border border-amber-900/60 shadow-sm";
+        item.innerHTML = `
+          <div class="flex items-center gap-2 truncate mr-2">
+            <span class="text-sm">🎁</span>
+            <div class="truncate">
+              <div class="font-bold text-yellow-200 text-xs truncate">${p.name}</div>
+              <div class="text-[10px] text-amber-400/80">Số lượng còn trong rương: <b class="text-yellow-300 font-bold">${qty}</b> phần</div>
+            </div>
+          </div>
+          <span class="text-[9px] px-2 py-0.5 rounded-full border uppercase tracking-wider font-bold flex-shrink-0 ${badgeStyle}">
+            ${badgeText}
+          </span>
+        `;
+        container.appendChild(item);
+      });
+
+      if (remBadge) remBadge.innerText = totalRemaining + '/20';
     }
 
     /* ================= BẢNG VINH DANH ================= */
