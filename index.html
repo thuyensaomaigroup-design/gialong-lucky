@@ -89,7 +89,7 @@
       </div>
       <div class="flex items-center gap-2">
         <span id="cloud-indicator" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 border border-amber-700/60 text-amber-300">Đang nối máy chủ...</span>
-        <button onclick="promptUserName()" class="text-xs text-amber-400/80 underline hover:text-yellow-300 flex-shrink-0">Đổi tên</button>
+        <button onclick="promptUserName(false)" class="text-xs text-amber-400/80 underline hover:text-yellow-300 flex-shrink-0">Đổi tên</button>
       </div>
     </div>
 
@@ -538,7 +538,7 @@
     let state = {
       isLocked: true,
       openDuration: 8,
-      userName: localStorage.getItem(KEY_USER) || "Huynh Đệ Vô Danh",
+      userName: localStorage.getItem(KEY_USER) || "Chưa đặt danh xưng",
       hasOpened: localStorage.getItem(KEY_DEVICE_OPENED) === "true",
       prizes: JSON.parse(JSON.stringify(DEFAULT_PRIZES)),
       quotes: JSON.parse(JSON.stringify(DEFAULT_QUOTES)),
@@ -549,8 +549,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       initFirebase();
       renderUI();
-      if (!localStorage.getItem(KEY_USER)) {
-        setTimeout(promptUserName, 600);
+      if (!isNameValid(localStorage.getItem(KEY_USER))) {
+        setTimeout(() => { promptUserName(true); }, 500);
       }
     });
 
@@ -687,21 +687,52 @@
       document.getElementById('admin-current-url').innerText = window.location.href;
     }
 
-    function promptUserName() {
-      const current = state.userName === "Huynh Đệ Vô Danh" ? "" : state.userName;
-      const name = prompt("Nhập Tên hoặc Tên Ingame của Huynh Đệ:", current);
-      if (name && name.trim()) {
-        state.userName = name.trim();
-        localStorage.setItem(KEY_USER, state.userName);
-        document.getElementById('display-user-name').innerText = state.userName;
+    function isNameValid(name) {
+      if (!name) return false;
+      const clean = name.trim();
+      return clean.length > 0 && clean.toLowerCase() !== "huynh đệ vô danh" && clean.toLowerCase() !== "chưa đặt danh xưng";
+    }
 
-        if (isFirebaseReady && db) {
-          db.ref('room/online_users/' + deviceId).update({ name: state.userName });
+    function promptUserName(isRequired = false) {
+      let name = "";
+      while (true) {
+        const current = isNameValid(state.userName) ? state.userName : "";
+        const entered = prompt(
+          isRequired 
+            ? "⚠️ BẮT BUỘC: Đại hiệp vui lòng nhập Tên hoặc Tên Ingame để danh tính được ghi vào Bảng Vinh Danh (không được bỏ trống):" 
+            : "Nhập Tên hoặc Tên Ingame của Huynh Đệ:", 
+          current
+        );
+
+        if (entered !== null && entered.trim().length > 0 && entered.trim().toLowerCase() !== "huynh đệ vô danh") {
+          name = entered.trim();
+          break;
         }
+
+        if (!isRequired) {
+          return false;
+        }
+
+        alert("Đại hiệp chưa đặt tên hoặc để mặc định 'Huynh Đệ Vô Danh'! Xin vui lòng nhập tên chính xác trước khi vào bàn tiệc.");
       }
+
+      state.userName = name;
+      localStorage.setItem(KEY_USER, state.userName);
+      document.getElementById('display-user-name').innerText = state.userName;
+
+      if (isFirebaseReady && db) {
+        db.ref('room/online_users/' + deviceId).update({ name: state.userName });
+      }
+      return true;
     }
 
     function handleChestClick() {
+      if (!isNameValid(state.userName)) {
+        alert("⚠️ ĐẠI HIỆP CHƯA ĐẶT TÊN!\nVui lòng nhập Tên hoặc Ingame để khắc tên vào Bảng Vàng trước khi mở rương.");
+        const ok = promptUserName(true);
+        if (!ok) return;
+      }
+
       if (state.hasOpened) {
         showMyPrizeModal();
         return;
@@ -728,6 +759,12 @@
 
     let openingInterval = null;
     function triggerOpenChest() {
+      if (!isNameValid(state.userName)) {
+        alert("⚠️ ĐẠI HIỆP CHƯA ĐẶT TÊN!\nVui lòng nhập Tên hoặc Ingame để khắc tên vào Bảng Vàng trước khi mở rương.");
+        const ok = promptUserName(true);
+        if (!ok) return;
+      }
+
       if (state.hasOpened) {
         showMyPrizeModal();
         return;
