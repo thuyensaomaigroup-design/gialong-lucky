@@ -51,6 +51,10 @@
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+    .stick-fly { animation: stickFly 0.7s ease-out forwards; }
+    @keyframes stickFly { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(-70px) rotate(-12deg); opacity: 1; } }
+    .loc-card-in { animation: locCardIn 0.6s cubic-bezier(.2,1.4,.4,1) both; }
+    @keyframes locCardIn { 0% { transform: rotateY(90deg) scale(.6); opacity: 0; } 100% { transform: rotateY(0) scale(1); opacity: 1; } }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center p-3 relative overflow-x-hidden select-none">
@@ -98,6 +102,14 @@
       </div>
     </div>
 
+    <!-- TAB: BẢO RƯƠNG | RÚT QUẺ -->
+    <div class="w-full mb-3 p-1 rounded-2xl bg-black/50 border border-amber-900/60 flex gap-1">
+      <button id="tab-chest" onclick="switchTab('chest')" class="flex-1 py-2 rounded-xl text-xs font-bold">🎁 BẢO RƯƠNG</button>
+      <button id="tab-loc" onclick="switchTab('loc')" class="flex-1 py-2 rounded-xl text-xs font-bold relative">🧧 RÚT QUẺ PHÁT LỘC
+        <span id="tab-loc-dot" class="hidden absolute top-1 right-2 w-2.5 h-2.5 rounded-full bg-yellow-300 animate-ping"></span></button>
+    </div>
+
+    <div id="view-chest" class="w-full flex flex-col items-center">
     <!-- LOCK / UNLOCK STATUS NOTICE -->
     <div id="status-lock-banner" class="w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-red-950/90 border border-red-700/80 text-red-200 text-xs font-semibold flex items-center justify-center gap-2 shadow">
       <span class="animate-pulse">🔒</span> <span id="status-lock-text">BẢO RƯƠNG ĐANG PHONG ẤN - CHỜ HIỆU LỆNH TỪ BTC</span>
@@ -183,6 +195,54 @@
 
     <div class="mt-3 text-center text-xs text-amber-300/70 italic px-4">
       "Nhân phẩm tại tâm - Giải lớn thì may - Xui quá chửi lol Bình Bú"
+    </div>
+
+    </div>
+
+    <!-- ================= VIEW: RÚT QUẺ PHÁT LỘC ================= -->
+    <div id="view-loc" class="w-full flex flex-col items-center hidden">
+      <div id="loc-banner" class="w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-stone-900/90 border border-stone-600 text-stone-300 text-xs font-semibold shadow">🧧 QUỸ LỘC CHƯA MỞ - CHỜ BTC</div>
+      <div id="loc-stats" class="w-full text-center text-[11px] text-amber-300/80 mb-1">&nbsp;</div>
+
+      <div id="loc-tube-wrap" class="relative w-full flex items-center justify-center my-4">
+        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-rose-600/20 via-amber-500/30 to-red-600/20 blur-2xl opacity-70"></div>
+        <div id="loc-tube" class="relative z-10 w-48 h-56 cursor-pointer" onclick="handleLocTubeClick()">
+          <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow-[0_8px_20px_rgba(0,0,0,0.8)]">
+            <defs>
+              <linearGradient id="tubeRed" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7f1d1d"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
+              <linearGradient id="stickWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#b45309"/><stop offset="50%" stop-color="#fcd34d"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
+            </defs>
+            <g>
+              <rect x="70" y="30" width="7" height="110" rx="2" fill="url(#stickWood)" transform="rotate(-10 73 140)"/>
+              <rect x="84" y="22" width="7" height="118" rx="2" fill="url(#stickWood)" transform="rotate(-4 87 140)"/>
+              <rect x="110" y="26" width="7" height="114" rx="2" fill="url(#stickWood)" transform="rotate(5 113 140)"/>
+              <rect x="124" y="34" width="7" height="106" rx="2" fill="url(#stickWood)" transform="rotate(11 127 140)"/>
+              <g id="loc-stick-fly"><rect x="96" y="14" width="9" height="126" rx="2" fill="url(#stickWood)" stroke="#7c2d12" stroke-width="1"/>
+                <rect x="96" y="14" width="9" height="16" rx="2" fill="#dc2626"/></g>
+            </g>
+            <path d="M55 95 h90 l-6 135 q-39 10 -78 0 z" fill="url(#tubeRed)" stroke="#fbbf24" stroke-width="3"/>
+            <rect x="58" y="110" width="84" height="7" fill="#fbbf24" opacity=".85"/>
+            <rect x="62" y="205" width="76" height="7" fill="#fbbf24" opacity=".85"/>
+            <circle cx="100" cy="160" r="24" fill="#fef3c7" stroke="#fbbf24" stroke-width="3"/>
+            <text x="100" y="171" text-anchor="middle" font-size="30" font-weight="900" fill="#991b1b">籤</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- THẺ QUẺ -->
+      <div id="loc-card" class="hidden w-full my-3 p-4 rounded-3xl bg-wood border-2 border-yellow-400 text-center shadow-[0_0_30px_rgba(255,215,0,0.25)]">
+        <div id="loc-card-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-1"></div>
+        <div id="loc-card-title" class="text-[11px] font-kiemhiep text-amber-300 tracking-widest mb-1"></div>
+        <div id="loc-card-amount" class="text-4xl font-black font-kiemhiep text-gold-gradient drop-shadow-[0_2px_10px_rgba(255,215,0,0.5)] mb-1"></div>
+        <div id="loc-card-user" class="text-xs text-yellow-200 font-bold mb-2"></div>
+        <div class="p-2.5 rounded-xl bg-black/50 border border-amber-800/70"><div id="loc-card-quote" class="text-xs text-yellow-100 italic leading-relaxed"></div></div>
+      </div>
+
+      <div class="w-full px-2">
+        <button id="btn-loc" onclick="handleLocAction()" disabled class="w-full py-4 rounded-2xl bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-kiemhiep font-extrabold text-lg uppercase cursor-not-allowed flex items-center justify-center gap-2"><span>🔒</span><span>CHỜ BTC MỞ CỔNG</span></button>
+      </div>
+      <button onclick="openLocBoard()" class="mt-3 px-3 py-1.5 rounded-lg bg-red-950/80 border border-amber-600/60 text-amber-300 text-xs font-bold">🏮 Bảng Lộc</button>
+      <div class="mt-2 text-center text-xs text-amber-300/70 italic px-4">"Lộc trời cho - Quẻ tự khai - Đen thì đổ tại AD Bình"</div>
     </div>
 
   </main>
@@ -329,6 +389,12 @@
           </div>
         </div>
 
+        <div class="sticky top-0 z-10 p-1 rounded-xl bg-black/80 border border-amber-800 flex gap-1">
+          <button id="admin-tab-chest" onclick="switchAdminPane('chest')" class="flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-amber-600 text-red-950">🎁 BẢO RƯƠNG</button>
+          <button id="admin-tab-loc" onclick="switchAdminPane('loc')" class="flex-1 py-1.5 rounded-lg text-[11px] font-bold text-amber-400/70">🧧 QUỸ LỘC</button>
+        </div>
+
+        <div id="admin-pane-chest" class="space-y-4">
         <!-- SECTION 1: REMOTE REALTIME CONTROLS -->
         <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
           <h4 class="font-bold text-amber-300 mb-2 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
@@ -383,6 +449,9 @@
           <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">
             "Hoàn & Mở Lại" = trả đúng 1 suất quà của người đó về kho + cho máy đó bốc lại (số lượng luôn khớp):
           </p>
+          <button onclick="adminReleaseAll()" class="w-full mb-2 py-2 rounded-xl bg-gradient-to-r from-amber-700 to-yellow-700 border border-yellow-500 text-yellow-50 font-bold text-[11px] shadow hover:brightness-110">
+            🧪 HOÀN TẤT CẢ LƯỢT TEST (trả hết quà về kho, mở lại mọi máy)
+          </button>
           <div id="admin-winners-manage-list" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1 mb-1">
             <div class="text-[10px] text-stone-400 italic p-1">Chưa có ai mở rương.</div>
           </div>
@@ -478,12 +547,78 @@
           <p class="text-[10px] text-rose-200/80 mb-2 leading-tight">
             Chốt kho = chép CẤU HÌNH thành kho khoá cứng, xoá kết quả cũ, mọi máy được mở lại lượt, rương tự KHOÁ.
           </p>
-          <button onclick="adminResetCurrentDevice()" class="w-full mb-2 py-2 rounded-xl bg-amber-900 hover:bg-amber-800 border border-amber-600 text-yellow-200 font-bold text-[11px]">
-            🔁 Hoàn quà & mở lại lượt cho MÁY NÀY (dùng khi test)
-          </button>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <button onclick="adminResetCurrentDevice()" class="py-2 rounded-xl bg-amber-900 hover:bg-amber-800 border border-amber-600 text-yellow-200 font-bold text-[11px]">
+              🔁 Hoàn & mở lại MÁY NÀY
+            </button>
+            <button onclick="adminReleaseAll()" class="py-2 rounded-xl bg-amber-900 hover:bg-amber-800 border border-yellow-500 text-yellow-100 font-bold text-[11px]">
+              🧪 Hoàn TẤT CẢ lượt test
+            </button>
+          </div>
           <button onclick="adminStartNewRound()" class="w-full py-2.5 rounded-xl bg-rose-900/90 hover:bg-rose-800 border border-rose-500 text-rose-100 font-bold text-xs shadow">
             🔐 CHỐT KHO & BẮT ĐẦU VÒNG MỚI
           </button>
+        </div>
+
+        </div>
+
+        <!-- ================= PANE: QUỸ LỘC ================= -->
+        <div id="admin-pane-loc" class="space-y-4 hidden">
+
+          <div class="p-3 rounded-2xl bg-black/50 border border-rose-600/70">
+            <h4 class="font-bold text-rose-300 uppercase text-[11px] tracking-wider mb-2">🧧 ĐIỀU KHIỂN RÚT QUẺ</h4>
+            <div id="loc-admin-phase" class="p-2 rounded-lg bg-black/60 border border-rose-900/60"></div>
+            <div id="loc-admin-audit" class="hidden"></div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+              <button onclick="adminLocOpen()" class="py-2.5 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 text-white font-bold text-[11px] shadow">🙏 MỞ CỔNG XIN QUẺ<br><span class="font-normal text-[9px]">(vòng mới theo cấu hình)</span></button>
+              <button onclick="adminLocSplit()" class="py-2.5 rounded-xl bg-gradient-to-r from-rose-700 to-red-600 text-white font-bold text-[11px] shadow">⛔ ĐÓNG CỔNG &amp; CHIA LỘC<br><span class="font-normal text-[9px]">(chia đúng số người đã xin)</span></button>
+              <button onclick="adminLocUnsplit()" class="py-2 rounded-xl bg-amber-900 border border-amber-600 text-yellow-200 font-bold text-[10px]">↩️ Huỷ chia (thêm người muộn)</button>
+              <button onclick="adminLocResetAll()" class="py-2 rounded-xl bg-amber-900 border border-yellow-500 text-yellow-100 font-bold text-[10px]">🧪 Hoàn tất cả lượt test</button>
+            </div>
+            <p class="text-[10px] text-rose-200/70 mt-2 leading-tight">Quy trình: Mở cổng → anh em bấm Xin quẻ (bao lâu tuỳ BTC) → Đóng cổng &amp; chia → mỗi người <b>tự khai lúc nào cũng được</b>.</p>
+          </div>
+
+          <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider">📋 NGƯỜI XIN QUẺ &amp; CHI TRẢ</h4>
+              <span id="loc-admin-count" class="text-[10px] text-amber-400 font-bold">0 người</span>
+            </div>
+            <div id="loc-admin-list" class="space-y-1 max-h-64 overflow-y-auto custom-scrollbar pr-1 mb-2"></div>
+            <button onclick="adminLocCopyPayout()" class="w-full py-2 rounded-xl bg-blue-900 border border-blue-500 text-blue-100 font-bold text-[11px]">📋 Copy danh sách chi trả (dán Zalo)</button>
+            <textarea id="loc-payout-text" readonly class="hidden w-full mt-2 h-32 p-2 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-[10px]"></textarea>
+          </div>
+
+          <div id="loc-cfg-form" class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+            <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider mb-1">⚙️ CẤU HÌNH QUỸ LỘC</h4>
+            <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">Tự lưu. Chỉ áp dụng khi bấm <b>Mở cổng xin quẻ</b> (vòng đang chạy không bị đổi).</p>
+            <div class="grid grid-cols-2 gap-2 mb-2 text-[10px] text-amber-300">
+              <label>Tổng quỹ<input id="loc-cfg-fund" type="number" min="0" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"></label>
+              <label>Đơn vị<select id="loc-cfg-unit" onchange="adminLocUnitChange()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"><option value="xu">Xu ingame</option><option value="VNĐ">Tiền mặt (VNĐ)</option></select></label>
+              <label>Làm tròn tới<input id="loc-cfg-step" type="number" min="1" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs"></label>
+              <label>Tối thiểu / người<input id="loc-cfg-floor" type="number" min="0" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs"></label>
+              <label class="col-span-2">Độ chênh trong cùng tầng (%) – cao = bớt "đều đều"<input id="loc-cfg-jitter" type="number" min="0" max="90" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs"></label>
+            </div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-bold text-amber-300 uppercase">Tầng quẻ</span>
+              <button onclick="adminLocResetTiers()" class="text-[10px] text-amber-400 underline">Về mặc định kịch tính</button>
+            </div>
+            <div id="loc-cfg-tiers" class="space-y-1 mb-1"></div>
+            <div id="loc-cfg-pct-warn" class="hidden mb-2 p-1.5 rounded bg-amber-900/70 border border-yellow-500 text-yellow-100 text-[10px] font-bold"></div>
+            <div class="mt-2 p-2 rounded-xl bg-amber-950/40 border border-amber-900/80">
+              <label class="flex items-center gap-2 text-[11px] font-bold text-amber-300"><input id="loc-cfg-guest-on" type="checkbox" onchange="adminLocSaveConfig()" class="w-4 h-4 accent-yellow-500"> Bắt buộc chọn tên từ Danh sách khách mời <span id="loc-cfg-guest-count" class="ml-auto text-[10px] text-yellow-300"></span></label>
+              <p class="text-[10px] text-amber-200/70 my-1">Tắt = anh em tự nhập tên. Bật = chặn tên ảo/1 người 2 máy. Mỗi dòng 1 tên:</p>
+              <textarea id="loc-cfg-guests" onchange="adminLocSaveConfig()" placeholder="Bình Bú&#10;Gia Long Lão Đại&#10;..." class="w-full h-24 p-2 rounded-lg bg-black/70 border border-amber-800 text-yellow-200 text-xs"></textarea>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
+            <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider mb-2">🔮 XEM TRƯỚC PHÂN BỔ</h4>
+            <div class="flex gap-2 mb-2 items-center text-[10px] text-amber-300">
+              <span>Giả sử có</span><input id="loc-preview-n" type="number" min="1" max="200" value="40" onchange="adminLocPreview()" class="w-14 px-1 py-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"><span>người</span>
+              <button onclick="adminLocPreview()" class="ml-auto px-3 py-1 rounded-lg bg-amber-700 text-yellow-50 font-bold text-[10px]">🎲 Chia thử</button>
+            </div>
+            <div id="loc-preview" class="space-y-1"></div>
+          </div>
         </div>
 
       </div>
@@ -494,6 +629,30 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL: CHỌN TÊN KHÁCH MỜI -->
+  <div id="modal-guest" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-sm max-h-[85vh] rounded-3xl bg-wood border-2 border-yellow-500 p-4 flex flex-col shadow-2xl">
+      <h3 class="font-kiemhiep font-bold text-amber-300 text-sm mb-1">🙏 CHỌN TÊN CỦA ĐẠI HIỆP</h3>
+      <p class="text-[10px] text-amber-200/70 mb-2">Mỗi tên chỉ xin quẻ 1 lần. Chọn đúng tên của mình.</p>
+      <input id="guest-search" oninput="renderGuestPicker()" placeholder="Gõ để tìm tên..." class="w-full mb-2 px-3 py-2 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs">
+      <div id="guest-list" class="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar"></div>
+      <button onclick="closeGuestPicker()" class="mt-3 py-2 rounded-xl bg-stone-800 text-stone-300 text-xs font-bold">Đóng</button>
+    </div>
+  </div>
+
+  <!-- MODAL: BẢNG LỘC -->
+  <div id="modal-locboard" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+    <div class="w-full max-w-sm max-h-[85vh] rounded-3xl bg-wood border-2 border-yellow-500 p-4 flex flex-col shadow-2xl">
+      <div class="flex justify-between items-center mb-1">
+        <h3 class="font-kiemhiep font-bold text-amber-300 text-sm">🏮 BẢNG LỘC BANG HỘI</h3>
+        <button onclick="closeLocBoard()" class="w-7 h-7 rounded-full bg-stone-800 text-amber-200 text-xs font-bold">✕</button>
+      </div>
+      <div id="locboard-stats" class="text-[11px] text-amber-300/80 mb-2"></div>
+      <div id="locboard-list" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar text-xs"></div>
+      <p class="mt-2 text-[10px] text-amber-500/70 italic text-center">Chỉ hiện người đã khai quẻ – ai chưa khai vẫn còn bí mật.</p>
     </div>
   </div>
 
@@ -524,12 +683,12 @@
     /* ================= BỘ ÂM THANH GAME (WEB AUDIO API - KHÔNG LO CHẶN LINK) ================= */
     let audioCtx = null;
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        if (!audioCtx) audioCtx = new AC();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+      } catch (e) { audioCtx = null; }
     }
 
     function playSound(type) {
@@ -822,6 +981,21 @@
       return { next: next, result: { code: "OK", record: rec } };
     }
 
+    /* Hoàn TẤT CẢ lượt đã mở (dùng sau khi test nhiều máy): mỗi người trả đúng 1 suất về kho */
+    function applyReleaseAll(cur) {
+      if (!cur || !cur.claims || !Object.keys(cur.claims).length) return { next: undefined, result: { code: "NOT_FOUND", count: 0 } };
+      const next = clone(cur);
+      const ids = Object.keys(next.claims);
+      ids.forEach(dev => {
+        const rec = next.claims[dev];
+        const item = next.pool && next.pool[rec.prizeId];
+        if (item) item.qty = Math.min(toInt(item.total, Infinity), toInt(item.qty) + 1);
+      });
+      delete next.claims;
+      delete next.byName;
+      return { next: next, result: { code: "OK", count: ids.length } };
+    }
+
     /* Đối soát: với mỗi giải, CÒN + ĐÃ TRÚNG phải = SỐ CHỐT. Sai là báo đỏ. */
     function auditDraw(draw) {
       const pool = (draw && draw.pool) || {};
@@ -898,6 +1072,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       fillTagSelects();
+      try { switchTab(localStorage.getItem(KEY_TAB) === 'loc' ? 'loc' : 'chest'); } catch (e) { switchTab('chest'); }
       initFirebase();
       renderUI();
       updatePrizeCounters();
@@ -946,6 +1121,7 @@
         setIndicator();
         if (state.connected) registerPresence();
         renderUI();
+        if (typeof renderLoc === 'function') renderLoc();
       });
 
       db.ref(PATH.online).on('value', snap => { state.onlineUsers = snap.val() || {}; renderOnlineUsers(); });
@@ -977,6 +1153,7 @@
       });
 
       db.ref(PATH.draw).on('value', snap => onDrawUpdate(snap.val()));
+      if (typeof initLocListeners === 'function') initLocListeners();
     }
 
     function registerPresence() {
@@ -1319,6 +1496,7 @@
     async function openAdminModal() {
       document.getElementById('modal-admin').classList.remove('hidden');
       renderAdminConfig(); renderAdminAudit(); renderAdminQuotes(); renderOnlineUsers(); renderAdminWinnersManage();
+      renderLocConfigForm(true); renderLocAdmin(); adminLocPreview();
       await ensureSeeded();
     }
     function closeAdminModal() { document.getElementById('modal-admin').classList.add('hidden'); renderUI(); }
@@ -1434,6 +1612,23 @@
         if (err) alert("Lỗi: " + err.message);
         else if (committed && result && result.code === "OK") alert(`Đã hoàn "${result.record.prize}" về kho. ${userName} được mở lại.`);
         else alert("Không tìm thấy lượt mở này (có thể đã được hoàn trước đó).");
+      }, false);
+    }
+
+    function adminReleaseAll() {
+      if (!requireCloud()) return;
+      const n = state.winners.length;
+      if (!n) { alert("Chưa có ai mở rương trong vòng này — không có gì để hoàn."); return; }
+      if (!confirm(`HOÀN TẤT CẢ ${n} lượt đã mở?\n\n- Mọi phần quà đã trúng trả về kho (số lượng về lại như lúc chốt)\n- Bảng Vàng xoá sạch\n- Tất cả máy được mở lại lượt\n- Cấu hình quà & kho đã chốt GIỮ NGUYÊN`)) return;
+      let result = null;
+      db.ref(PATH.draw).transaction(cur => {
+        const r = applyReleaseAll(cur);
+        result = r.result;
+        return r.next;
+      }, (err, committed) => {
+        if (err) alert("Lỗi: " + err.message);
+        else if (committed && result && result.code === "OK") alert(`Đã hoàn ${result.count} lượt về kho. Tất cả máy được mở lại.`);
+        else alert("Không còn lượt nào để hoàn.");
       }, false);
     }
 
@@ -1639,6 +1834,782 @@
       if (canvas) link.href = canvas.toDataURL();
       else if (img) link.href = img.src;
       link.click();
+    }
+
+    /* =====================================================================
+       🧧 RÚT QUẺ PHÁT LỘC — CẤU HÌNH TẬP TRUNG (sửa mặc định tại đây)
+       BTC sửa trực tiếp trên trang quản trị; các giá trị dưới đây chỉ là mặc định ban đầu.
+       ===================================================================== */
+    APP_CONFIG.LOC = {
+      REVEAL_SECONDS: 3,                     // thời gian lắc ống xăm trước khi lật quẻ
+      TOP_PREMIUM: 1.3,                      // Thần Tài luôn >= 1,3 lần người thứ 2
+      UNIT_PRESETS: {                         // chọn đơn vị => tự gợi ý bước làm tròn & mức sàn
+        "xu":  { step: 100,  floor: 200 },
+        "VNĐ": { step: 1000, floor: 5000 }
+      },
+      DEFAULT: {
+        fund: 50000,          // tổng quỹ
+        unit: "xu",           // "xu" | "VNĐ"
+        step: 100,            // làm tròn tới
+        floor: 200,           // tối thiểu mỗi người
+        jitter: 40,           // độ chênh ngẫu nhiên trong cùng 1 tầng (%), càng cao càng bớt "đều đều"
+        useGuestList: false,  // bật = người chơi phải chọn tên trong danh sách khách mời
+        guests: [],
+        /* TẦNG QUẺ — "kịch tính+": Thượng Thượng ôm 25% quỹ.
+           fixed = số người cố định; peoplePct = % số người; tầng CUỐI nhận phần người còn lại.
+           fundPct cộng lại phải = 100. */
+        tiers: [
+          { key: "tt",    icon: "🐉", label: "Thượng Thượng Quẻ", title: "THẦN TÀI GIÁNG THẾ", fixed: 1, peoplePct: 0,  fundPct: 25,
+            quotes: ["Rồng bay phượng múa, lộc đổ đầy tay – Đêm nay Thần Tài ngồi chung bàn với đại hiệp!",
+                     "Quẻ này trăm năm có một: AD Bình nhìn ví mình mà rơi nước mắt!",
+                     "Thượng thượng đại cát! Lộc to thế này không bao cả bàn tăng 2 thì trời không dung!"] },
+          { key: "t",     icon: "🌟", label: "Thượng Quẻ",        title: "ĐẠI CÁT",            fixed: 0, peoplePct: 8,  fundPct: 25,
+            quotes: ["Mây tan trăng sáng, lộc vào như nước – Đập đồ đêm nay chắc chắn lên +12!",
+                     "Quẻ tốt hiếm có, nhưng đừng khoe to kẻo AD Bình đòi chia đôi!",
+                     "Thượng quẻ đã tới, mời đại hiệp nâng ly cảm tạ trời đất!"] },
+          { key: "trung", icon: "🍀", label: "Trung Quẻ",         title: "BÌNH AN",            fixed: 0, peoplePct: 25, fundPct: 25,
+            quotes: ["Không quá giàu cũng chẳng quá nghèo, đủ tiền mua bình máu đánh Tống Kim!",
+                     "Trung bình là đỉnh cao của sự ổn định. Cạn ly cho bình yên!",
+                     "Lộc vừa đủ xài, đừng tham kẻo mất cả chì lẫn chài!"] },
+          { key: "ha",    icon: "🌧", label: "Hạ Quẻ",            title: "MÂY MÙ",             fixed: 0, peoplePct: 35, fundPct: 17,
+            quotes: ["Gió thổi mây mù, lộc rơi vài hạt – Coi như tiền gửi xe nhé đại hiệp!",
+                     "Hạ quẻ nhắc nhở: nhân phẩm cần nạp thêm, mời 1 ly giải hạn!",
+                     "Lộc ít nhưng tình nhiều, AD Bình gửi lời hỏi thăm sâu sắc!"] },
+          { key: "hh",    icon: "🖤", label: "Hạ Hạ Quẻ",         title: "THẦN ĐEN GÕ CỬA",    fixed: 0, peoplePct: 0,  fundPct: 8,
+            quotes: ["Hạ hạ quẻ! Thần Tài đi vắng, chỉ có Thần Đen ở nhà tiếp khách!",
+                     "Quẻ này đen hơn mặt AD Bình lúc đập đồ xịt. Phạt 2 ly giải xui!",
+                     "Lộc bé như con kiến, nhưng kiến tha lâu cũng đầy tổ. Cố lên đại hiệp!"] }
+        ]
+      },
+      TIER_STYLE: {
+        tt:    "bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 text-red-950 font-black",
+        t:     "bg-gradient-to-r from-orange-600 to-amber-500 text-yellow-50 font-extrabold",
+        trung: "bg-gradient-to-r from-emerald-700 to-teal-600 text-emerald-50 font-bold",
+        ha:    "bg-gradient-to-r from-slate-600 to-slate-500 text-slate-100 font-bold",
+        hh:    "bg-stone-900 border border-stone-600 text-stone-300 font-bold"
+      }
+    };
+    PATH.locConfig = APP_CONFIG.ROOT + "/loc/config";
+    PATH.locRound  = APP_CONFIG.ROOT + "/loc/round";
+
+    /* ===================================================================
+       LÕI THUẦN RÚT QUẺ — đã kiểm thử tự động
+       =================================================================== */
+    /* @@LOC_CORE_START */
+    function normalizeLocConfig(c) {
+      const D = APP_CONFIG.LOC.DEFAULT;
+      c = c || {};
+      const num = (v, d, min) => { const n = toInt(v, d); return Math.max(min, isNaN(n) ? d : n); };
+      const srcTiers = Array.isArray(c.tiers) ? c.tiers : Object.values(c.tiers || {});
+      const tiers = D.tiers.map(def => {
+        const t = srcTiers.find(x => x && x.key === def.key) || {};
+        const q = Array.isArray(t.quotes) ? t.quotes.filter(Boolean) : Object.values(t.quotes || {}).filter(Boolean);
+        return {
+          key: def.key, icon: def.icon,
+          label: t.label || def.label, title: t.title || def.title,
+          fixed: num(t.fixed, def.fixed, 0),
+          peoplePct: num(t.peoplePct, def.peoplePct, 0),
+          fundPct: num(t.fundPct, def.fundPct, 0),
+          quotes: q.length ? q : def.quotes.slice()
+        };
+      });
+      const seen = {};
+      const guests = (Array.isArray(c.guests) ? c.guests : Object.values(c.guests || {}))
+        .map(g => String(g || "").trim().substring(0, 40)).filter(g => {
+          if (!g) return false; const s = slugName(g); if (seen[s]) return false; seen[s] = true; return true;
+        });
+      return {
+        fund: num(c.fund, D.fund, 0),
+        unit: c.unit === "VNĐ" ? "VNĐ" : "xu",
+        step: num(c.step, D.step, 1),
+        floor: num(c.floor, D.floor, 0),
+        jitter: Math.min(90, num(c.jitter, D.jitter, 0)),
+        useGuestList: !!c.useGuestList,
+        guests: guests,
+        tiers: tiers
+      };
+    }
+
+    /* Đếm số người mỗi tầng theo N (tầng cuối nhận phần còn lại) */
+    function locTierCounts(N, tiers) {
+      let left = N;
+      const counts = tiers.map(() => 0);
+      for (let i = 0; i < tiers.length - 1; i++) {
+        const t = tiers[i];
+        const c = t.fixed > 0 ? Math.min(t.fixed, left) : Math.min(left, Math.floor(t.peoplePct * N / 100));
+        counts[i] = c; left -= c;
+      }
+      counts[tiers.length - 1] = left;
+      // Đủ người thì tầng nào cũng có ít nhất 1 người (nhóm nhỏ vẫn đủ 5 cung bậc cảm xúc)
+      if (N >= tiers.length) {
+        const last = tiers.length - 1;
+        for (let i = 0; i < last; i++) {
+          if (counts[i] > 0) continue;
+          let donor = counts[last] > 1 ? last : -1;
+          if (donor < 0) { let best = -1; counts.forEach((c, j) => { if (j !== i && c > 1 && (best < 0 || c > counts[best])) best = j; }); donor = best; }
+          if (donor >= 0) { counts[donor]--; counts[i]++; }
+        }
+      }
+      return counts;
+    }
+
+    /* CHIA QUỸ: tổng LUÔN đúng bằng quỹ, không ai dưới mức sàn, tầng trên luôn >= tầng dưới. */
+    function allocateFund(N, cfgIn, rand) {
+      const cfg = normalizeLocConfig(cfgIn);
+      if (N < 1) return { ok: false, error: "Chưa có ai xin quẻ." };
+      const step = cfg.step, fund = cfg.fund;
+      const U = Math.floor(fund / step), extraV = fund - U * step;
+      const floorU = Math.ceil(cfg.floor / step);
+      if (N * floorU > U) return { ok: false, error: `Quỹ không đủ chia: ${N} người × sàn ${cfg.floor} > quỹ ${fund}.` };
+
+      const tiers = cfg.tiers;
+      const counts = locTierCounts(N, tiers);
+      const active = tiers.map((t, i) => i).filter(i => counts[i] > 0);
+      let pctSum = active.reduce((s, i) => s + tiers[i].fundPct, 0);
+      const weightOf = i => pctSum > 0 ? tiers[i].fundPct : counts[i];
+      if (pctSum <= 0) pctSum = N;
+
+      // Ngân sách từng tầng (đơn vị = bước làm tròn)
+      const budgets = tiers.map(() => 0);
+      active.forEach(i => { budgets[i] = Math.floor(U * weightOf(i) / pctSum); });
+      budgets[active[0]] += U - budgets.reduce((a, b) => a + b, 0);
+
+      // Bảo đảm mức sàn: tầng thiếu thì lấy từ tầng dư (ưu tiên lấy từ tầng trên)
+      active.forEach(i => {
+        let need = counts[i] * floorU - budgets[i];
+        for (let k = 0; need > 0 && k < active.length; k++) {
+          const j = active[k];
+          if (j === i) continue;
+          const surplus = budgets[j] - counts[j] * floorU;
+          const take = Math.min(surplus, need);
+          if (take > 0) { budgets[j] -= take; budgets[i] += take; need -= take; }
+        }
+      });
+
+      // Thần Tài không cố định 1 con số: dao động ±(jitter/2), đổi qua lại với tầng kế tiếp
+      const J = cfg.jitter / 100;
+      if (active.length > 1 && active[0] === 0) {
+        const j = active[1];
+        let delta = Math.round(budgets[0] * (J / 2) * (2 * rand() - 1));
+        delta = Math.min(delta, budgets[j] - counts[j] * floorU);
+        delta = Math.max(delta, counts[0] * floorU - budgets[0]);
+        budgets[0] += delta; budgets[j] -= delta;
+      }
+
+      // Trong mỗi tầng: sàn + phần dư chia theo trọng số ngẫu nhiên (độ chênh = jitter)
+      let units = [];
+      active.forEach(i => {
+        const c = counts[i];
+        const extra = budgets[i] - c * floorU;
+        const w = [];
+        for (let k = 0; k < c; k++) w.push(Math.max(0.05, 1 + J * (2 * rand() - 1)));
+        const ws = w.reduce((a, b) => a + b, 0);
+        const share = w.map(x => Math.floor(extra * x / ws));
+        let left = extra - share.reduce((a, b) => a + b, 0);
+        while (left > 0) { share[Math.floor(rand() * c)]++; left--; }
+        share.forEach(s => units.push(floorU + s));
+      });
+
+      // Thần Tài phải to hơn hẳn người thứ 2 (ít nhất TOP_PREMIUM lần), kể cả nhóm nhỏ
+      units.sort((a, b) => b - a);
+      const P = APP_CONFIG.LOC.TOP_PREMIUM || 1;
+      while (units.length > 1) {
+        if (units[0] >= Math.ceil(units[1] * P) || units[1] <= floorU) break;
+        units[0]++; units[1]--;
+        for (let k = 1; k + 1 < units.length && units[k] < units[k + 1]; k++) { const tmp = units[k]; units[k] = units[k + 1]; units[k + 1] = tmp; }
+      }
+
+      // Xếp hạng lại: tiền lớn nhất -> tầng cao nhất (đảm bảo Thượng Thượng luôn là to nhất)
+      const values = units.map(u => u * step).sort((a, b) => b - a);
+      values[0] += extraV;
+      const items = [];
+      let p = 0;
+      tiers.forEach((t, i) => { for (let k = 0; k < counts[i]; k++) items.push({ amount: values[p++], tier: t.key }); });
+
+      const total = items.reduce((s, x) => s + x.amount, 0);
+      if (total !== fund || items.length !== N || items.some(x => x.amount < cfg.floor))
+        return { ok: false, error: "Kiểm tra chia quỹ thất bại (tổng " + total + " ≠ " + fund + ")." };
+      return { ok: true, items: items, counts: counts, cfg: cfg };
+    }
+
+    function pickLocQuote(cfg, tierKey, rand) {
+      const t = normalizeLocConfig(cfg).tiers.find(x => x.key === tierKey);
+      const q = (t && t.quotes) || [""];
+      return q[Math.floor(rand() * q.length)] || "";
+    }
+
+    function newLocRound(cfgIn, now) {
+      return { id: now, phase: "gathering", cfg: normalizeLocConfig(cfgIn), openedAt: now };
+    }
+
+    /* Xin quẻ: 1 máy = 1 lần, 1 tên = 1 lần, (tuỳ chọn) tên phải nằm trong danh sách khách */
+    function applyLocJoin(cur, ctx) {
+      if (cur === null || cur === undefined) return { next: null, result: { code: "NO_ROUND" } };
+      const joins = cur.joins || {};
+      if (joins[ctx.deviceId]) return { next: undefined, result: { code: "ALREADY", join: joins[ctx.deviceId] } };
+      if (cur.phase !== "gathering") return { next: undefined, result: { code: "CLOSED" } };
+      const byName = cur.byName || {};
+      if (byName[ctx.nameSlug] && byName[ctx.nameSlug] !== ctx.deviceId) return { next: undefined, result: { code: "NAME_TAKEN" } };
+      const cfg = cur.cfg || {};
+      if (cfg.useGuestList) {
+        const ok = (Array.isArray(cfg.guests) ? cfg.guests : Object.values(cfg.guests || {})).some(g => slugName(g) === ctx.nameSlug);
+        if (!ok) return { next: undefined, result: { code: "NOT_GUEST" } };
+      }
+      const next = clone(cur);
+      next.joins = Object.assign({}, joins, { [ctx.deviceId]: { user: ctx.user, nameSlug: ctx.nameSlug, ts: ctx.now } });
+      next.byName = Object.assign({}, byName, { [ctx.nameSlug]: ctx.deviceId });
+      return { next: next, result: { code: "OK" } };
+    }
+
+    function applyLocKick(cur, dev) {
+      if (!cur || cur.phase !== "gathering" || !cur.joins || !cur.joins[dev]) return { next: undefined, result: { code: "NOT_FOUND" } };
+      const next = clone(cur);
+      const slug = next.joins[dev].nameSlug;
+      delete next.joins[dev];
+      if (next.byName && next.byName[slug] === dev) delete next.byName[slug];
+      return { next: next, result: { code: "OK" } };
+    }
+
+    /* Đóng cổng & chia lộc: chia cho ĐÚNG số người đã xin, gán ngẫu nhiên, ghi 1 lần */
+    function applyLocSplit(cur, ctx) {
+      if (cur === null || cur === undefined) return { next: null, result: { code: "NO_ROUND" } };
+      if (cur.phase !== "gathering") return { next: undefined, result: { code: "ALREADY_SPLIT" } };
+      const devs = Object.keys(cur.joins || {});
+      const r = allocateFund(devs.length, cur.cfg, ctx.rand);
+      if (!r.ok) return { next: undefined, result: { code: "ALLOC_FAIL", error: r.error } };
+      for (let i = devs.length - 1; i > 0; i--) { const j = Math.floor(ctx.rand() * (i + 1)); [devs[i], devs[j]] = [devs[j], devs[i]]; }
+      const next = clone(cur);
+      next.alloc = {};
+      devs.forEach((d, i) => {
+        const it = r.items[i];
+        next.alloc[d] = { amount: it.amount, tier: it.tier, quote: pickLocQuote(cur.cfg, it.tier, ctx.rand) };
+      });
+      next.phase = "split";
+      next.splitAt = ctx.now;
+      return { next: next, result: { code: "OK", n: devs.length } };
+    }
+
+    /* Huỷ chia (chỉ khi CHƯA ai khai) — để thêm người đến muộn rồi chia lại */
+    function applyLocUnsplit(cur) {
+      if (!cur || cur.phase !== "split") return { next: undefined, result: { code: "NOT_SPLIT" } };
+      if (cur.revealed && Object.keys(cur.revealed).length) return { next: undefined, result: { code: "HAS_REVEALED", n: Object.keys(cur.revealed).length } };
+      const next = clone(cur);
+      delete next.alloc; delete next.splitAt; delete next.paid; delete next.revealed;
+      next.phase = "gathering";
+      return { next: next, result: { code: "OK" } };
+    }
+
+    /* Khai quẻ: mỗi người tự khai lúc nào cũng được sau khi đã chia */
+    function applyLocReveal(cur, dev, now) {
+      if (cur === null || cur === undefined) return { next: null, result: { code: "NO_ROUND" } };
+      if (cur.phase !== "split") return { next: undefined, result: { code: "NOT_SPLIT" } };
+      const a = cur.alloc && cur.alloc[dev];
+      if (!a) return { next: undefined, result: { code: "NOT_IN" } };
+      const record = Object.assign({ user: (cur.joins && cur.joins[dev] && cur.joins[dev].user) || "" }, a);
+      if (cur.revealed && cur.revealed[dev]) return { next: undefined, result: { code: "ALREADY", record: record } };
+      const next = clone(cur);
+      next.revealed = Object.assign({}, cur.revealed || {}, { [dev]: now });
+      return { next: next, result: { code: "OK", record: record } };
+    }
+
+    /* Hoàn tất cả lượt test: về lại trạng thái mở cổng, giữ nguyên cấu hình vòng */
+    function applyLocResetAll(cur) {
+      if (cur === null || cur === undefined) return { next: null, result: { code: "NO_ROUND" } };
+      const next = { id: cur.id, phase: "gathering", cfg: cur.cfg, openedAt: cur.openedAt };
+      const n = Object.keys(cur.joins || {}).length;
+      return { next: next, result: { code: "OK", n: n } };
+    }
+
+    /* Đối soát: Tổng đã chia = Quỹ, số phần = số người, không ai dưới sàn */
+    function auditLoc(round) {
+      const out = { phase: round ? round.phase : "none", n: 0, revealed: 0, sumAlloc: 0, sumRevealed: 0, fund: 0, problems: [] };
+      if (!round) return out;
+      const cfg = normalizeLocConfig(round.cfg);
+      const joins = round.joins || {}, alloc = round.alloc || {}, rev = round.revealed || {};
+      out.fund = cfg.fund;
+      out.n = Object.keys(joins).length;
+      out.revealed = Object.keys(rev).length;
+      Object.keys(alloc).forEach(d => {
+        out.sumAlloc += toInt(alloc[d].amount);
+        if (rev[d]) out.sumRevealed += toInt(alloc[d].amount);
+        if (!joins[d]) out.problems.push("Có phần lộc của máy không xin quẻ");
+        if (toInt(alloc[d].amount) < cfg.floor) out.problems.push("Có phần dưới mức sàn");
+      });
+      if (round.phase === "split") {
+        if (Object.keys(alloc).length !== out.n) out.problems.push(`Số phần (${Object.keys(alloc).length}) ≠ số người (${out.n})`);
+        if (out.sumAlloc !== cfg.fund) out.problems.push(`Tổng đã chia ${out.sumAlloc} ≠ quỹ ${cfg.fund}`);
+      }
+      out.ok = out.problems.length === 0;
+      return out;
+    }
+    /* @@LOC_CORE_END */
+
+    /* ===================================================================
+       RÚT QUẺ — TRẠNG THÁI & ĐỒNG BỘ
+       =================================================================== */
+    const KEY_TAB = "gialong_tab_v2";
+    const locState = { config: normalizeLocConfig(null), round: null, revealing: false, lastCard: null };
+
+    function fmtMoney(n, unit) { return Number(toInt(n)).toLocaleString('vi-VN') + " " + (unit || "xu"); }
+    function locCfg() { return normalizeLocConfig(locState.round ? locState.round.cfg : locState.config); }
+    function locTier(key) { return locCfg().tiers.find(t => t.key === key) || { icon: "🧧", label: "Quẻ", title: "" }; }
+
+    function initLocListeners() {
+      db.ref(PATH.locConfig).on('value', snap => {
+        locState.config = normalizeLocConfig(snap.val());
+        renderLocConfigForm(false);
+      });
+      db.ref(PATH.locRound).on('value', snap => {
+        locState.round = snap.val();
+        renderLoc();
+        renderLocAdmin();
+        if (!document.getElementById('modal-locboard').classList.contains('hidden')) renderLocBoard();
+      });
+    }
+
+    /* Giao dịch chung có thử lại khi mạng nghẽn (KHÔNG bao giờ tự tính offline) */
+    function runLocTx(applyFn) {
+      const once = () => new Promise(resolve => {
+        let result = null;
+        db.ref(PATH.locRound).transaction(cur => {
+          const r = applyFn(cur);
+          result = r.result;
+          return r.next;
+        }, (error, committed) => {
+          if (error) return resolve({ code: "ERROR", error: String((error && error.message) || error) });
+          resolve(Object.assign({ committed: committed }, result || { code: "ERROR" }));
+        }, false);
+      });
+      return (async () => {
+        let last = { code: "ERROR" };
+        for (let i = 1; i <= APP_CONFIG.CLAIM_MAX_RETRY; i++) {
+          last = await once();
+          if (last.code !== "ERROR") return last;
+          await sleep(APP_CONFIG.CLAIM_RETRY_BASE_MS * i);
+        }
+        return last;
+      })();
+    }
+
+    /* ===================================================================
+       RÚT QUẺ — GIAO DIỆN NGƯỜI CHƠI
+       =================================================================== */
+    function switchTab(tab) {
+      const isLoc = tab === "loc";
+      document.getElementById('view-chest').classList.toggle('hidden', isLoc);
+      document.getElementById('view-loc').classList.toggle('hidden', !isLoc);
+      document.getElementById('tab-chest').className = "flex-1 py-2 rounded-xl text-xs font-bold transition " + (isLoc ? "text-amber-400/70" : "bg-gradient-to-r from-amber-600 to-yellow-500 text-red-950 shadow");
+      document.getElementById('tab-loc').className = "flex-1 py-2 rounded-xl text-xs font-bold transition relative " + (isLoc ? "bg-gradient-to-r from-rose-700 to-red-600 text-yellow-100 shadow" : "text-amber-400/70");
+      try { localStorage.setItem(KEY_TAB, isLoc ? "loc" : "chest"); } catch (e) {}
+    }
+
+    function myLoc() {
+      const r = locState.round;
+      if (!r) return {};
+      return {
+        join: r.joins && r.joins[deviceId],
+        alloc: r.alloc && r.alloc[deviceId],
+        revealed: !!(r.revealed && r.revealed[deviceId])
+      };
+    }
+
+    function renderLoc() {
+      if (!document.getElementById('view-loc')) return;
+      const r = locState.round, me = myLoc(), cfg = locCfg(), au = auditLoc(r);
+      const banner = document.getElementById('loc-banner');
+      const btn = document.getElementById('btn-loc');
+      const stats = document.getElementById('loc-stats');
+      const dot = document.getElementById('tab-loc-dot');
+      const BASE_BTN = "w-full rounded-2xl font-kiemhiep uppercase tracking-wider transition-all duration-300 shadow-lg flex items-center justify-center gap-2 ";
+      const DIM = "py-4 bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-extrabold text-lg cursor-not-allowed";
+      const HOT = "py-4 bg-gradient-to-r from-rose-600 via-red-500 to-rose-700 border-2 border-yellow-300 text-yellow-50 font-black text-xl shadow-2xl pulse-btn hover:brightness-110 active:scale-95 cursor-pointer";
+      const SOFT = "py-3.5 bg-gradient-to-r from-stone-800 to-rose-950 border border-rose-500/70 text-rose-200 font-bold text-base cursor-pointer";
+      const set = (bCls, bHtml, enabled, btnCls, btnHtml) => {
+        banner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg text-xs font-semibold shadow " + bCls;
+        banner.innerHTML = bHtml;
+        btn.disabled = !enabled;
+        btn.className = BASE_BTN + btnCls;
+        btn.innerHTML = btnHtml;
+      };
+      let needAction = false;
+
+      if (locState.revealing) {
+        set("bg-amber-950/90 border border-yellow-600/80 text-yellow-200", "🎋 ĐANG LẮC ỐNG XĂM... ĐỪNG TẮT TRANG", false, DIM, "<span>🎋</span><span>ĐANG KHAI QUẺ</span>");
+      } else if (!isFirebaseReady || !state.connected) {
+        set("bg-red-950/90 border border-red-700/80 text-red-200", "📡 MẤT KẾT NỐI MÁY CHỦ - KIỂM TRA WIFI/4G", false, DIM, "<span>📡</span><span>CHỜ KẾT NỐI</span>");
+      } else if (!r) {
+        set("bg-stone-900/90 border border-stone-600 text-stone-300", "🧧 QUỸ LỘC CHƯA MỞ - CHỜ BTC", false, DIM, "<span>🔒</span><span>CHỜ BTC MỞ CỔNG</span>");
+      } else if (r.phase === "gathering" && !me.join) {
+        needAction = true;
+        set("bg-emerald-950/90 border border-emerald-600/80 text-emerald-200", "🙏 CỔNG XIN QUẺ ĐANG MỞ - GHI DANH ĐỂ NHẬN LỘC", true, HOT, "<span>🙏</span><span>XIN QUẺ</span><span>🙏</span>");
+      } else if (r.phase === "gathering" && me.join) {
+        set("bg-amber-950/90 border border-amber-600/70 text-amber-200", "✅ ĐÃ XIN QUẺ (" + escapeHtml(me.join.user) + ") - CHỜ BTC CHIA LỘC", false, DIM, "<span>⏳</span><span>CHỜ CHIA LỘC</span>");
+      } else if (r.phase === "split" && me.alloc && !me.revealed) {
+        needAction = true;
+        set("bg-rose-950/90 border border-rose-500/80 text-rose-100", "🎋 LỘC ĐÃ CHIA - KHAI QUẺ LÚC NÀO TUỲ ĐẠI HIỆP", true, HOT, "<span>🎋</span><span>LẮC ỐNG XĂM</span><span>🎋</span>");
+      } else if (r.phase === "split" && me.alloc && me.revealed) {
+        set("bg-stone-900/90 border border-amber-600/50 text-amber-300", "🧧 QUẺ CỦA ĐẠI HIỆP ĐÃ KHAI", true, SOFT, "<span>🏮</span><span>XEM BẢNG LỘC</span>");
+      } else {
+        set("bg-stone-900/90 border border-stone-600 text-stone-300", "⛔ VÒNG NÀY ĐÃ CHỐT DANH SÁCH - HẸN VÒNG SAU", false, DIM, "<span>⛔</span><span>ĐÃ CHỐT</span>");
+      }
+
+      if (stats) {
+        if (!r) stats.innerHTML = "&nbsp;";
+        else if (r.phase === "gathering") stats.innerHTML = `Quỹ lộc: <b class="text-yellow-300">${fmtMoney(cfg.fund, cfg.unit)}</b> · <b class="text-emerald-300">${au.n}</b> người đã xin quẻ`;
+        else stats.innerHTML = `Đã khai <b class="text-yellow-300">${au.revealed}/${au.n}</b> quẻ · Lộc đã lộ <b class="text-yellow-300">${fmtMoney(au.sumRevealed, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}`;
+      }
+      if (dot) dot.classList.toggle('hidden', !needAction);
+
+      // Thẻ quẻ: hiện khi đã khai
+      const card = document.getElementById('loc-card');
+      if (me.alloc && me.revealed && !locState.revealing) {
+        fillLocCard(Object.assign({ user: me.join ? me.join.user : state.userName }, me.alloc));
+        card.classList.remove('hidden');
+      } else if (!locState.revealing) {
+        card.classList.add('hidden');
+      }
+      document.getElementById('loc-tube-wrap').classList.toggle('hidden', !!(me.alloc && me.revealed) && !locState.revealing);
+    }
+
+    function fillLocCard(rec) {
+      const cfg = locCfg(), t = locTier(rec.tier);
+      document.getElementById('loc-card-badge').className = "inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-1 " + (APP_CONFIG.LOC.TIER_STYLE[rec.tier] || "");
+      document.getElementById('loc-card-badge').innerText = t.icon + " " + t.label;
+      document.getElementById('loc-card-title').innerText = t.title || "";
+      document.getElementById('loc-card-amount').innerText = "+" + fmtMoney(rec.amount, cfg.unit);
+      document.getElementById('loc-card-user').innerText = "Đại hiệp: " + (rec.user || "");
+      document.getElementById('loc-card-quote').innerText = '"' + (rec.quote || "") + '"';
+    }
+
+    async function handleLocAction() {
+      if (locState.revealing) return;
+      const r = locState.round, me = myLoc();
+      if (!isFirebaseReady || !state.connected) { alert("📡 Mất kết nối máy chủ. Kiểm tra WiFi/4G rồi thử lại."); return; }
+      if (!r) { alert("Quỹ lộc chưa mở. Chờ BTC!"); return; }
+      if (r.phase === "gathering" && !me.join) return locJoinFlow();
+      if (r.phase === "split" && me.alloc && !me.revealed) return locRevealFlow();
+      if (r.phase === "split" && me.alloc && me.revealed) return openLocBoard();
+    }
+
+    function handleLocTubeClick() {
+      const r = locState.round, me = myLoc();
+      if (r && r.phase === "split" && me.alloc && !me.revealed) handleLocAction();
+      else if (r && r.phase === "gathering" && !me.join) handleLocAction();
+    }
+
+    function locJoinFlow() {
+      const cfg = locCfg();
+      if (cfg.useGuestList) { openGuestPicker(); return; }
+      if (!isNameValid(state.userName) && !promptUserName(true)) return;
+      doLocJoin(state.userName);
+    }
+
+    async function doLocJoin(name) {
+      const res = await runLocTx(cur => applyLocJoin(cur, { deviceId: deviceId, user: name, nameSlug: slugName(name), now: Date.now() }));
+      const msg = {
+        OK: null,
+        ALREADY: null,
+        NAME_TAKEN: `Tên "${name}" đã được máy khác dùng để xin quẻ. Mỗi tên chỉ 1 lượt.`,
+        NOT_GUEST: `Tên "${name}" không có trong danh sách khách mời. Báo BTC nếu bị thiếu.`,
+        CLOSED: "BTC đã đóng cổng xin quẻ vòng này.",
+        NO_ROUND: "Quỹ lộc chưa mở.",
+        ERROR: "📡 Máy chủ chưa xác nhận. Kiểm tra mạng rồi bấm lại."
+      }[res.code];
+      if (res.code === "OK") {
+        if (name !== state.userName && !state.hasOpened) {
+          state.userName = name;
+          localStorage.setItem(KEY_USER, name);
+          if (db) db.ref(PATH.online + '/' + deviceId).update({ name: name });
+          renderUI();
+        }
+        playSound('tick');
+      }
+      if (msg) alert(msg);
+      closeGuestPicker();
+      renderLoc();
+    }
+
+    /* Khai quẻ: ghi lên máy chủ ngay, hoạt ảnh chỉ để hồi hộp */
+    async function locRevealFlow() {
+      locState.revealing = true;
+      renderLoc();
+      initAudio();
+      const tube = document.getElementById('loc-tube');
+      const stick = document.getElementById('loc-stick-fly');
+      tube.classList.add('chest-shaking');
+      stick.classList.remove('stick-fly');
+      const txPromise = runLocTx(cur => applyLocReveal(cur, deviceId, Date.now()));
+      const secs = APP_CONFIG.LOC.REVEAL_SECONDS;
+      for (let i = 0; i < secs * 4; i++) { if (i % 4 === 0) playSound('tick'); await sleep(250); }
+      tube.classList.remove('chest-shaking');
+      void stick.offsetWidth; stick.classList.add('stick-fly');
+      await sleep(700);
+      const res = await txPromise;
+      locState.revealing = false;
+      stick.classList.remove('stick-fly');
+      if (res.code === "OK" || res.code === "ALREADY") {
+        const card = document.getElementById('loc-card');
+        card.classList.remove('loc-card-in'); void card.offsetWidth; card.classList.add('loc-card-in');
+        renderLoc();
+        playSound('open');
+        if (res.code === "OK" && (res.record.tier === "tt" || res.record.tier === "t")) { playSound('win'); fireConfetti(); }
+      } else {
+        renderLoc();
+        alert(res.code === "ERROR" ? "📡 Máy chủ chưa xác nhận. Quẻ CHƯA mở, bấm lại sau." : "Không khai được quẻ (" + res.code + ").");
+      }
+    }
+
+    /* Chọn tên trong danh sách khách mời */
+    function openGuestPicker() {
+      document.getElementById('guest-search').value = "";
+      renderGuestPicker();
+      document.getElementById('modal-guest').classList.remove('hidden');
+    }
+    function closeGuestPicker() { const m = document.getElementById('modal-guest'); if (m) m.classList.add('hidden'); }
+    function renderGuestPicker() {
+      const box = document.getElementById('guest-list');
+      const q = slugName(document.getElementById('guest-search').value || "");
+      const taken = (locState.round && locState.round.byName) || {};
+      const list = locCfg().guests.filter(g => !q || q === "vo_danh" || slugName(g).indexOf(q) >= 0);
+      if (!list.length) { box.innerHTML = '<div class="text-center text-stone-400 italic text-xs py-4">Không tìm thấy tên. Báo BTC thêm vào danh sách.</div>'; return; }
+      box.innerHTML = list.map(g => {
+        const t = taken[slugName(g)];
+        const mine = t === deviceId;
+        return t && !mine
+          ? `<div class="px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-stone-500 text-xs flex justify-between"><span>${escapeHtml(g)}</span><span>đã xin</span></div>`
+          : `<button data-name="${escapeHtml(g)}" onclick="doLocJoin(this.dataset.name)" class="w-full text-left px-3 py-2 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs font-bold hover:bg-amber-900/60">${escapeHtml(g)}</button>`;
+      }).join("");
+    }
+
+    /* Bảng Lộc: chỉ hiện người ĐÃ khai (giữ hồi hộp cho người chưa khai) */
+    function openLocBoard() { renderLocBoard(); document.getElementById('modal-locboard').classList.remove('hidden'); }
+    function closeLocBoard() { document.getElementById('modal-locboard').classList.add('hidden'); }
+    function renderLocBoard() {
+      const r = locState.round, cfg = locCfg(), au = auditLoc(r);
+      const box = document.getElementById('locboard-list');
+      document.getElementById('locboard-stats').innerHTML = r
+        ? `Đã khai <b class="text-yellow-300">${au.revealed}/${au.n}</b> · Lộc đã lộ <b class="text-yellow-300">${fmtMoney(au.sumRevealed, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}`
+        : "Quỹ lộc chưa mở";
+      if (!r || !r.alloc || !r.revealed) { box.innerHTML = '<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa ai khai quẻ.</div>'; return; }
+      const rows = Object.keys(r.revealed).filter(d => r.alloc[d]).map(d => Object.assign({ user: (r.joins[d] || {}).user || "?" }, r.alloc[d]))
+        .sort((a, b) => b.amount - a.amount);
+      const allDone = au.revealed === au.n && au.n > 1;
+      box.innerHTML = rows.map((w, i) => {
+        const t = locTier(w.tier);
+        let badge = "";
+        if (w.tier === "tt") badge = '<span class="ml-1 text-[9px] px-1.5 rounded-full bg-yellow-400 text-red-950 font-black">THẦN TÀI</span>';
+        if (allDone && i === rows.length - 1) badge = '<span class="ml-1 text-[9px] px-1.5 rounded-full bg-stone-700 text-stone-200 font-bold">ĐỆ NHẤT ĐEN ĐỦI</span>';
+        return `
+        <div class="p-2.5 rounded-2xl border ${w.tier === 'tt' ? 'bg-gradient-to-r from-yellow-950 to-amber-900/80 border-yellow-500' : 'bg-stone-900 border-amber-900'} flex items-center justify-between">
+          <div class="flex items-center gap-2 truncate">
+            <span class="text-base w-6 text-center">${t.icon}</span>
+            <div class="truncate"><div class="font-bold text-yellow-200 truncate">${escapeHtml(w.user)}${badge}</div>
+            <div class="text-[10px] text-amber-400/90">${escapeHtml(t.label)}</div></div>
+          </div>
+          <div class="font-black text-yellow-300 text-sm flex-shrink-0 ml-2">${fmtMoney(w.amount, cfg.unit)}</div>
+        </div>`;
+      }).join("");
+    }
+
+    /* ===================================================================
+       RÚT QUẺ — BAN TỔ CHỨC
+       =================================================================== */
+    function switchAdminPane(p) {
+      const isLoc = p === "loc";
+      document.getElementById('admin-pane-chest').classList.toggle('hidden', isLoc);
+      document.getElementById('admin-pane-loc').classList.toggle('hidden', !isLoc);
+      document.getElementById('admin-tab-chest').className = "flex-1 py-1.5 rounded-lg text-[11px] font-bold " + (isLoc ? "text-amber-400/70" : "bg-amber-600 text-red-950");
+      document.getElementById('admin-tab-loc').className = "flex-1 py-1.5 rounded-lg text-[11px] font-bold " + (isLoc ? "bg-rose-700 text-yellow-100" : "text-amber-400/70");
+      if (isLoc) { renderLocConfigForm(true); renderLocAdmin(); }
+    }
+
+    function renderLocAdmin() {
+      const ph = document.getElementById('loc-admin-phase');
+      if (!ph) return;
+      const r = locState.round, cfg = locCfg(), au = auditLoc(r);
+      const phaseTxt = !r ? "⚪ Chưa mở vòng nào" : (r.phase === "gathering" ? "🟢 ĐANG GOM QUẺ" : "🔴 ĐÃ CHIA LỘC");
+      ph.innerHTML = `<div class="flex justify-between items-center"><b class="text-yellow-200 text-xs">${phaseTxt}</b>
+        <span class="text-[10px] text-amber-300">${r ? `${au.n} người · đã khai ${au.revealed} · quỹ ${fmtMoney(cfg.fund, cfg.unit)}` : ""}</span></div>`;
+      const aud = document.getElementById('loc-admin-audit');
+      if (r && r.phase === "split") {
+        aud.className = "mt-2 p-2 rounded-lg text-[11px] font-bold " + (au.ok ? "bg-emerald-950 border border-emerald-600 text-emerald-200" : "bg-rose-900 border border-rose-400 text-rose-100");
+        aud.innerText = au.ok ? `✅ Đối soát khớp: đã chia ${fmtMoney(au.sumAlloc, cfg.unit)} = quỹ, ${au.n} phần cho ${au.n} người.` : "❌ SAI LỆCH: " + au.problems.join("; ");
+      } else { aud.className = "hidden"; }
+
+      // Danh sách người xin quẻ / chi trả
+      const box = document.getElementById('loc-admin-list');
+      const cnt = document.getElementById('loc-admin-count');
+      const joins = (r && r.joins) || {};
+      const devs = Object.keys(joins);
+      if (cnt) cnt.innerText = devs.length + " người";
+      if (!devs.length) { box.innerHTML = '<div class="text-[10px] text-stone-400 italic p-1">Chưa ai xin quẻ.</div>'; return; }
+      if (r.phase === "gathering") {
+        box.innerHTML = devs.sort((a, b) => joins[a].ts - joins[b].ts).map(d => `
+          <div class="flex items-center justify-between p-1.5 rounded-lg bg-black/60 border border-amber-900/60 text-[11px]">
+            <span class="font-bold text-yellow-300 truncate">${escapeHtml(joins[d].user)}</span>
+            <button data-dev="${escapeHtml(d)}" data-user="${escapeHtml(joins[d].user)}" onclick="adminLocKick(this.dataset.dev, this.dataset.user)" class="px-2 py-0.5 rounded bg-rose-950 border border-rose-700 text-rose-300 text-[10px] font-bold">Loại</button>
+          </div>`).join("");
+        return;
+      }
+      const alloc = r.alloc || {}, rev = r.revealed || {}, paid = r.paid || {};
+      const paidSum = devs.filter(d => paid[d] && alloc[d]).reduce((s, d) => s + toInt(alloc[d].amount), 0);
+      box.innerHTML = `<div class="text-[10px] text-amber-300 mb-1">Đã trao: <b class="text-emerald-300">${fmtMoney(paidSum, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}</div>` +
+        devs.filter(d => alloc[d]).sort((a, b) => alloc[b].amount - alloc[a].amount).map(d => {
+          const t = locTier(alloc[d].tier);
+          return `
+          <label class="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-black/60 border ${paid[d] ? 'border-emerald-700' : 'border-amber-900/60'} text-[11px]">
+            <span class="truncate"><span>${t.icon}</span> <b class="text-yellow-300">${escapeHtml(joins[d].user)}</b>
+              <span class="text-[9px] ${rev[d] ? 'text-emerald-400' : 'text-stone-500'}">${rev[d] ? '· đã khai' : '· chưa khai'}</span></span>
+            <span class="flex items-center gap-2 flex-shrink-0"><b class="text-yellow-200">${fmtMoney(alloc[d].amount, cfg.unit)}</b>
+              <input type="checkbox" ${paid[d] ? 'checked' : ''} data-dev="${escapeHtml(d)}" onchange="adminLocTogglePaid(this.dataset.dev, this.checked)" class="w-4 h-4 accent-emerald-500" title="Đã trao"></span>
+          </label>`;
+        }).join("");
+    }
+
+    function renderLocConfigForm(force) {
+      const form = document.getElementById('loc-cfg-form');
+      if (!form) return;
+      if (!force && form.contains(document.activeElement)) return;   // đang gõ thì không ghi đè
+      const c = locState.config;
+      document.getElementById('loc-cfg-fund').value = c.fund;
+      document.getElementById('loc-cfg-unit').value = c.unit;
+      document.getElementById('loc-cfg-step').value = c.step;
+      document.getElementById('loc-cfg-floor').value = c.floor;
+      document.getElementById('loc-cfg-jitter').value = c.jitter;
+      document.getElementById('loc-cfg-guest-on').checked = c.useGuestList;
+      document.getElementById('loc-cfg-guests').value = c.guests.join("\n");
+      document.getElementById('loc-cfg-guest-count').innerText = c.guests.length + " tên";
+      const last = c.tiers.length - 1;
+      document.getElementById('loc-cfg-tiers').innerHTML = `
+        <div class="grid grid-cols-12 gap-1 px-1 text-[9px] uppercase text-amber-500/80 font-bold">
+          <span class="col-span-6">Tầng quẻ</span><span class="col-span-3 text-center">Số người</span><span class="col-span-3 text-center">% Quỹ</span></div>` +
+        c.tiers.map((t, i) => `
+        <div class="grid grid-cols-12 gap-1 items-center p-1 rounded-lg bg-black/50 border border-amber-900/60">
+          <span class="col-span-6 text-[11px] font-bold text-yellow-200 truncate">${t.icon} ${escapeHtml(t.label)}</span>
+          <span class="col-span-3 text-center text-[10px] text-amber-300">${i === 0
+            ? `<input type="number" min="1" max="5" value="${t.fixed}" data-k="fixed" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-10 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300"> ng`
+            : (i === last ? "còn lại" : `<input type="number" min="0" max="100" value="${t.peoplePct}" data-k="peoplePct" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-10 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300">%`)}</span>
+          <span class="col-span-3 text-center"><input type="number" min="0" max="100" value="${t.fundPct}" data-k="fundPct" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-12 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300">%</span>
+        </div>`).join("");
+      const sumPct = c.tiers.reduce((s, t) => s + t.fundPct, 0);
+      const warn = document.getElementById('loc-cfg-pct-warn');
+      warn.classList.toggle('hidden', sumPct === 100);
+      warn.innerText = `⚠️ Tổng % quỹ đang là ${sumPct}% (phải = 100%). Hệ thống sẽ tự chia theo tỉ lệ, nhưng nên sửa cho đúng.`;
+    }
+
+    function adminLocSaveConfig() {
+      const c = normalizeLocConfig(locState.config);
+      c.fund = toInt(document.getElementById('loc-cfg-fund').value, c.fund);
+      c.unit = document.getElementById('loc-cfg-unit').value;
+      c.step = toInt(document.getElementById('loc-cfg-step').value, c.step);
+      c.floor = toInt(document.getElementById('loc-cfg-floor').value, c.floor);
+      c.jitter = toInt(document.getElementById('loc-cfg-jitter').value, c.jitter);
+      c.useGuestList = document.getElementById('loc-cfg-guest-on').checked;
+      c.guests = document.getElementById('loc-cfg-guests').value.split(/\n|,/);
+      document.querySelectorAll('.loc-tier-in').forEach(el => { c.tiers[toInt(el.dataset.i)][el.dataset.k] = toInt(el.value, 0); });
+      locState.config = normalizeLocConfig(c);
+      if (isFirebaseReady && db) db.ref(PATH.locConfig).set(locState.config);
+      renderLocConfigForm(true);
+      adminLocPreview();
+    }
+
+    function adminLocUnitChange() {
+      const u = document.getElementById('loc-cfg-unit').value;
+      const p = APP_CONFIG.LOC.UNIT_PRESETS[u];
+      if (p) { document.getElementById('loc-cfg-step').value = p.step; document.getElementById('loc-cfg-floor').value = p.floor; }
+      adminLocSaveConfig();
+    }
+
+    function adminLocResetTiers() {
+      if (!confirm("Đưa các tầng quẻ về mặc định 'kịch tính' (Thượng Thượng 25% quỹ)?")) return;
+      locState.config = normalizeLocConfig(Object.assign({}, locState.config, { tiers: APP_CONFIG.LOC.DEFAULT.tiers }));
+      if (isFirebaseReady && db) db.ref(PATH.locConfig).set(locState.config);
+      renderLocConfigForm(true);
+      adminLocPreview();
+    }
+
+    function adminLocPreview() {
+      const box = document.getElementById('loc-preview');
+      if (!box) return;
+      const N = toInt(document.getElementById('loc-preview-n').value, 40);
+      const c = locState.config;
+      const r = allocateFund(N, c, Math.random);
+      if (!r.ok) { box.innerHTML = `<div class="text-rose-300 text-[11px] font-bold p-2">❌ ${escapeHtml(r.error)}</div>`; return; }
+      const rows = c.tiers.map(t => {
+        const xs = r.items.filter(x => x.tier === t.key).map(x => x.amount);
+        if (!xs.length) return "";
+        const sum = xs.reduce((a, b) => a + b, 0);
+        return `<div class="grid grid-cols-12 gap-1 p-1 rounded bg-black/50 text-[10px]">
+          <span class="col-span-5 font-bold text-yellow-200 truncate">${t.icon} ${escapeHtml(t.label)}</span>
+          <span class="col-span-2 text-center text-amber-300">${xs.length} ng</span>
+          <span class="col-span-5 text-right text-yellow-300">${xs.length > 1 ? fmtMoney(Math.min(...xs), "") + "–" + fmtMoney(Math.max(...xs), c.unit) : fmtMoney(xs[0], c.unit)}</span>
+          <span class="col-span-12 text-right text-[9px] text-amber-500/80">tổng tầng ${fmtMoney(sum, c.unit)}</span></div>`;
+      }).join("");
+      box.innerHTML = rows + `<div class="text-[10px] text-emerald-300 font-bold mt-1">✅ Tổng = ${fmtMoney(c.fund, c.unit)} · Cao nhất ${fmtMoney(r.items[0].amount, c.unit)} · Thấp nhất ${fmtMoney(r.items[r.items.length - 1].amount, c.unit)}</div>`;
+    }
+
+    async function adminLocOpen() {
+      if (!requireCloud()) return;
+      const c = normalizeLocConfig(locState.config);
+      if (c.useGuestList && !c.guests.length) { alert("Đang bật Danh sách khách mời nhưng danh sách trống. Nhập tên trước."); return; }
+      const r = locState.round;
+      const old = r ? Object.keys(r.joins || {}).length : 0;
+      if (!confirm(`MỞ CỔNG XIN QUẺ - VÒNG MỚI?\n\nQuỹ: ${fmtMoney(c.fund, c.unit)}\nKhách mời: ${c.useGuestList ? c.guests.length + " tên (bắt buộc chọn tên)" : "tắt (tự nhập tên)"}` +
+        (old ? `\n\n⚠️ Vòng hiện tại có ${old} người sẽ bị XOÁ.` : ""))) return;
+      try { await db.ref(PATH.locRound).set(newLocRound(c, Date.now())); alert("Đã mở cổng xin quẻ. Anh em vào tab 🧧 Rút Quẻ để ghi danh."); }
+      catch (e) { alert("Lỗi: " + e.message); }
+    }
+
+    async function adminLocSplit() {
+      if (!requireCloud()) return;
+      const r = locState.round;
+      if (!r || r.phase !== "gathering") { alert("Chưa ở giai đoạn gom quẻ."); return; }
+      const n = Object.keys(r.joins || {}).length, c = normalizeLocConfig(r.cfg);
+      if (!n) { alert("Chưa ai xin quẻ."); return; }
+      if (!confirm(`ĐÓNG CỔNG & CHIA ${fmtMoney(c.fund, c.unit)} CHO ${n} NGƯỜI?\n\nSau khi chia, ai muốn khai quẻ lúc nào cũng được.\nNgười đến muộn: dùng "Huỷ chia" (khi chưa ai khai) để thêm vào.`)) return;
+      const res = await runLocTx(cur => applyLocSplit(cur, { rand: Math.random, now: Date.now() }));
+      if (res.code === "OK") alert(`Đã chia lộc cho ${res.n} người. Anh em có thể khai quẻ!`);
+      else alert(res.error || ("Không chia được: " + res.code));
+    }
+
+    async function adminLocUnsplit() {
+      if (!requireCloud()) return;
+      if (!confirm("HUỶ CHIA để mở lại cổng (thêm người đến muộn)?\nChỉ làm được khi CHƯA ai khai quẻ.")) return;
+      const res = await runLocTx(cur => applyLocUnsplit(cur));
+      if (res.code === "OK") alert("Đã huỷ chia, cổng xin quẻ mở lại. Thêm người xong bấm Đóng cổng & Chia lại.");
+      else if (res.code === "HAS_REVEALED") alert(`Không huỷ được: đã có ${res.n} người khai quẻ. Muốn làm lại thì dùng "Hoàn tất cả lượt test".`);
+      else alert("Không ở trạng thái đã chia.");
+    }
+
+    async function adminLocResetAll() {
+      if (!requireCloud()) return;
+      if (!confirm("HOÀN TẤT CẢ LƯỢT TEST?\n\n- Xoá mọi người xin quẻ, kết quả chia & đã khai\n- Cổng xin quẻ mở lại, giữ nguyên quỹ & cấu hình vòng")) return;
+      const res = await runLocTx(cur => applyLocResetAll(cur));
+      if (res.code === "OK") alert(`Đã hoàn ${res.n} lượt. Cổng xin quẻ mở lại.`);
+      else alert("Chưa có vòng nào để hoàn.");
+    }
+
+    async function adminLocKick(dev, name) {
+      if (!confirm(`Loại "${name}" khỏi danh sách xin quẻ?`)) return;
+      const res = await runLocTx(cur => applyLocKick(cur, dev));
+      if (res.code !== "OK") alert("Không loại được (có thể đã chia lộc).");
+    }
+
+    function adminLocTogglePaid(dev, checked) {
+      if (!requireCloud()) return;
+      db.ref(PATH.locRound + "/paid/" + dev).set(checked ? true : null);
+    }
+
+    function adminLocCopyPayout() {
+      const r = locState.round, cfg = locCfg();
+      if (!r || !r.alloc) { alert("Chưa chia lộc."); return; }
+      const rows = Object.keys(r.alloc).map(d => ({ user: (r.joins[d] || {}).user, a: r.alloc[d], paid: r.paid && r.paid[d] }))
+        .sort((x, y) => y.a.amount - x.a.amount);
+      const text = `🧧 DANH SÁCH CHI TRẢ QUỸ LỘC (${fmtMoney(cfg.fund, cfg.unit)} / ${rows.length} người)\n` +
+        rows.map((x, i) => `${i + 1}. ${x.user} – ${fmtMoney(x.a.amount, cfg.unit)} (${locTier(x.a.tier).label})${x.paid ? " ✅" : ""}`).join("\n");
+      const ta = document.getElementById('loc-payout-text');
+      ta.value = text; ta.classList.remove('hidden'); ta.select();
+      try { navigator.clipboard.writeText(text).then(() => alert("Đã copy. Dán vào Zalo được ngay.")).catch(() => {}); } catch (e) {}
     }
   </script>
 </body>
