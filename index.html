@@ -203,6 +203,7 @@
     <div id="view-loc" class="w-full flex flex-col items-center hidden">
       <div id="loc-banner" class="w-full text-center py-1.5 px-3 mb-2 rounded-lg bg-stone-900/90 border border-stone-600 text-stone-300 text-xs font-semibold shadow">🧧 QUỸ LỘC CHƯA MỞ - CHỜ BTC</div>
       <div id="loc-stats" class="w-full text-center text-[11px] text-amber-300/80 mb-1">&nbsp;</div>
+      <div id="loc-deck-chips" class="hidden w-full flex flex-wrap justify-center gap-1 mb-1"></div>
 
       <div id="loc-tube-wrap" class="relative w-full flex items-center justify-center my-4">
         <div class="absolute inset-0 rounded-full bg-gradient-to-r from-rose-600/20 via-amber-500/30 to-red-600/20 blur-2xl opacity-70"></div>
@@ -229,11 +230,20 @@
         </div>
       </div>
 
+      <!-- THANH LỰC LẮC XĂM -->
+      <div id="loc-shake" class="hidden w-full px-4 mb-3">
+        <div class="flex justify-between text-[11px] text-yellow-200 font-bold mb-1"><span id="loc-shake-text">Lắc mạnh lên!</span><span>📳</span></div>
+        <div class="w-full h-4 rounded-full bg-black/70 border border-yellow-600 overflow-hidden">
+          <div id="loc-shake-bar" class="h-full w-0 bg-gradient-to-r from-red-600 via-amber-400 to-yellow-200 rounded-full transition-all duration-150 shadow-[0_0_12px_#ffd700]"></div>
+        </div>
+      </div>
+
       <!-- THẺ QUẺ -->
       <div id="loc-card" class="hidden w-full my-3 p-4 rounded-3xl bg-wood border-2 border-yellow-400 text-center shadow-[0_0_30px_rgba(255,215,0,0.25)]">
         <div id="loc-card-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-1"></div>
         <div id="loc-card-title" class="text-[11px] font-kiemhiep text-amber-300 tracking-widest mb-1"></div>
         <div id="loc-card-amount" class="text-4xl font-black font-kiemhiep text-gold-gradient drop-shadow-[0_2px_10px_rgba(255,215,0,0.5)] mb-1"></div>
+        <div id="loc-card-bonus" class="hidden text-[11px] text-sky-300 font-bold mb-1"></div>
         <div id="loc-card-user" class="text-xs text-yellow-200 font-bold mb-2"></div>
         <div class="p-2.5 rounded-xl bg-black/50 border border-amber-800/70"><div id="loc-card-quote" class="text-xs text-yellow-100 italic leading-relaxed"></div></div>
       </div>
@@ -569,13 +579,8 @@
             <h4 class="font-bold text-rose-300 uppercase text-[11px] tracking-wider mb-2">🧧 ĐIỀU KHIỂN RÚT QUẺ</h4>
             <div id="loc-admin-phase" class="p-2 rounded-lg bg-black/60 border border-rose-900/60"></div>
             <div id="loc-admin-audit" class="hidden"></div>
-            <div class="grid grid-cols-2 gap-2 mt-2">
-              <button onclick="adminLocOpen()" class="py-2.5 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 text-white font-bold text-[11px] shadow">🙏 MỞ CỔNG XIN QUẺ<br><span class="font-normal text-[9px]">(vòng mới theo cấu hình)</span></button>
-              <button onclick="adminLocSplit()" class="py-2.5 rounded-xl bg-gradient-to-r from-rose-700 to-red-600 text-white font-bold text-[11px] shadow">⛔ ĐÓNG CỔNG &amp; CHIA LỘC<br><span class="font-normal text-[9px]">(chia đúng số người đã xin)</span></button>
-              <button onclick="adminLocUnsplit()" class="py-2 rounded-xl bg-amber-900 border border-amber-600 text-yellow-200 font-bold text-[10px]">↩️ Huỷ chia (thêm người muộn)</button>
-              <button onclick="adminLocResetAll()" class="py-2 rounded-xl bg-amber-900 border border-yellow-500 text-yellow-100 font-bold text-[10px]">🧪 Hoàn tất cả lượt test</button>
-            </div>
-            <p class="text-[10px] text-rose-200/70 mt-2 leading-tight">Quy trình: Mở cổng → anh em bấm Xin quẻ (bao lâu tuỳ BTC) → Đóng cổng &amp; chia → mỗi người <b>tự khai lúc nào cũng được</b>.</p>
+            <div id="loc-admin-buttons" class="grid grid-cols-2 gap-2 mt-2"></div>
+            <p class="text-[10px] text-rose-200/70 mt-2 leading-tight"><b>Rút ngay:</b> Mở vòng → ai vào lắc xăm là nhận lộc liền → Kết thúc vòng (xử lý lộc dư).<br><b>Gom quẻ:</b> Mở cổng → anh em Xin quẻ → Đóng cổng &amp; chia → mỗi người tự khai.</p>
           </div>
 
           <div class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
@@ -591,6 +596,17 @@
           <div id="loc-cfg-form" class="p-3 rounded-2xl bg-black/50 border border-amber-700/60">
             <h4 class="font-bold text-amber-300 uppercase text-[11px] tracking-wider mb-1">⚙️ CẤU HÌNH QUỸ LỘC</h4>
             <p class="text-[10px] text-amber-200/70 mb-2 leading-tight">Tự lưu. Chỉ áp dụng khi bấm <b>Mở cổng xin quẻ</b> (vòng đang chạy không bị đổi).</p>
+            <label class="block text-[10px] text-amber-300 mb-2">Chế độ chơi
+              <select id="loc-cfg-mode" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1.5 rounded bg-black/70 border border-rose-600 text-yellow-200 text-xs font-bold">
+                <option value="instant">🎋 Rút ngay – ai lắc xăm là nhận lộc liền</option>
+                <option value="gather">🙏 Gom quẻ rồi chia – chia đúng số người đã ghi danh</option>
+              </select></label>
+            <div id="loc-cfg-instant-box" class="grid grid-cols-2 gap-2 mb-2 p-2 rounded-xl bg-rose-950/40 border border-rose-800/70 text-[10px] text-amber-300">
+              <label>Số quẻ trong ống<input id="loc-cfg-slots" type="number" min="1" max="500" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"></label>
+              <label>Lộc dư khi kết thúc<select id="loc-cfg-leftover" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"><option value="keep">Giữ lại cho vòng sau</option><option value="rain">Mưa lộc (có giới hạn)</option></select></label>
+              <span id="loc-cfg-avg" class="col-span-2 text-[10px] text-yellow-300"></span>
+              <span class="col-span-2 text-[9px] text-amber-200/70 leading-tight">Số quẻ = số người tối đa dự kiến (+10%). Ít người hơn thì dư quẻ – xử lý khi Kết thúc. Mưa lộc: mỗi người thêm tối đa 1 quẻ trung bình, không dồn cho số ít.</span>
+            </div>
             <div class="grid grid-cols-2 gap-2 mb-2 text-[10px] text-amber-300">
               <label>Tổng quỹ<input id="loc-cfg-fund" type="number" min="0" onchange="adminLocSaveConfig()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"></label>
               <label>Đơn vị<select id="loc-cfg-unit" onchange="adminLocUnitChange()" class="w-full mt-0.5 px-2 py-1 rounded bg-black/70 border border-amber-800 text-yellow-200 text-xs font-bold"><option value="xu">Xu ingame</option><option value="VNĐ">Tiền mặt (VNĐ)</option></select></label>
@@ -1841,13 +1857,19 @@
        BTC sửa trực tiếp trên trang quản trị; các giá trị dưới đây chỉ là mặc định ban đầu.
        ===================================================================== */
     APP_CONFIG.LOC = {
-      REVEAL_SECONDS: 3,                     // thời gian lắc ống xăm trước khi lật quẻ
+      REVEAL_SECONDS: 3,                     // (chế độ Gom quẻ) thời gian lắc ống xăm trước khi lật quẻ
+      TAP_TARGET: 12,                        // (chế độ Rút ngay) số lần chạm/lắc để quẻ văng ra
+      SHAKE_THRESHOLD: 14,                   // độ mạnh khi lắc điện thoại thật được tính là 1 lần lắc
+      COUNTUP_MS: 1600,                      // thời gian số lộc chạy từ 0 lên
       TOP_PREMIUM: 1.3,                      // Thần Tài luôn >= 1,3 lần người thứ 2
       UNIT_PRESETS: {                         // chọn đơn vị => tự gợi ý bước làm tròn & mức sàn
         "xu":  { step: 100,  floor: 200 },
         "VNĐ": { step: 1000, floor: 5000 }
       },
       DEFAULT: {
+        mode: "instant",      // "instant" = Rút ngay nhận liền | "gather" = Gom quẻ rồi chia
+        slots: 40,            // (Rút ngay) số quẻ trong ống = số người tối đa dự kiến
+        leftover: "keep",     // (Rút ngay) lộc dư khi kết thúc: "keep" giữ cho vòng sau | "rain" mưa lộc có giới hạn
         fund: 50000,          // tổng quỹ
         unit: "xu",           // "xu" | "VNĐ"
         step: 100,            // làm tròn tới
@@ -1919,6 +1941,9 @@
           if (!g) return false; const s = slugName(g); if (seen[s]) return false; seen[s] = true; return true;
         });
       return {
+        mode: c.mode === "gather" ? "gather" : "instant",
+        slots: Math.min(500, num(c.slots, D.slots, 1)),
+        leftover: c.leftover === "rain" ? "rain" : "keep",
         fund: num(c.fund, D.fund, 0),
         unit: c.unit === "VNĐ" ? "VNĐ" : "xu",
         step: num(c.step, D.step, 1),
@@ -2038,8 +2063,100 @@
       return q[Math.floor(rand() * q.length)] || "";
     }
 
-    function newLocRound(cfgIn, now) {
-      return { id: now, phase: "gathering", cfg: normalizeLocConfig(cfgIn), openedAt: now };
+    /* Rút ngay: đóng sẵn ống xăm gồm `slots` quẻ, tổng đúng bằng quỹ, xáo trộn ngẫu nhiên */
+    function buildLocDeck(cfgIn, rand) {
+      const cfg = normalizeLocConfig(cfgIn);
+      const r = allocateFund(cfg.slots, cfg, rand);
+      if (!r.ok) return r;
+      const items = r.items.slice();
+      for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
+      const deck = {};
+      items.forEach((it, i) => { deck["s" + String(i).padStart(3, "0")] = { amount: it.amount, tier: it.tier, quote: pickLocQuote(cfg, it.tier, rand) }; });
+      return { ok: true, deck: deck };
+    }
+
+    function newLocRound(cfgIn, now, rand) {
+      const cfg = normalizeLocConfig(cfgIn);
+      if (cfg.mode === "instant") {
+        const d = buildLocDeck(cfg, rand || Math.random);
+        if (!d.ok) return { error: d.error };
+        return { id: now, mode: "instant", phase: "open", cfg: cfg, openedAt: now, deck: d.deck };
+      }
+      return { id: now, mode: "gather", phase: "gathering", cfg: cfg, openedAt: now };
+    }
+
+    function locNameCheck(cur, ctx) {
+      const byName = cur.byName || {};
+      if (byName[ctx.nameSlug] && byName[ctx.nameSlug] !== ctx.deviceId) return "NAME_TAKEN";
+      const cfg = cur.cfg || {};
+      if (cfg.useGuestList) {
+        const ok = (Array.isArray(cfg.guests) ? cfg.guests : Object.values(cfg.guests || {})).some(g => slugName(g) === ctx.nameSlug);
+        if (!ok) return "NOT_GUEST";
+      }
+      return null;
+    }
+
+    /* RÚT NGAY: rút 1 quẻ ngẫu nhiên còn trong ống, nhận lộc liền — 1 lần ghi duy nhất */
+    function applyLocDraw(cur, ctx) {
+      if (cur === null || cur === undefined) return { next: null, result: { code: "NO_ROUND" } };
+      if (cur.mode !== "instant") return { next: undefined, result: { code: "WRONG_MODE" } };
+      const claims = cur.claims || {};
+      if (claims[ctx.deviceId]) return { next: undefined, result: { code: "ALREADY", record: claims[ctx.deviceId] } };
+      if (cur.phase !== "open") return { next: undefined, result: { code: "CLOSED" } };
+      const bad = locNameCheck(cur, ctx);
+      if (bad) return { next: undefined, result: { code: bad } };
+      const free = Object.keys(cur.deck || {}).filter(k => !cur.deck[k].by);
+      if (!free.length) return { next: undefined, result: { code: "EMPTY" } };
+      const slot = free[Math.floor(ctx.rand() * free.length)];
+      const e = cur.deck[slot];
+      const record = { slot: slot, user: ctx.user, nameSlug: ctx.nameSlug, amount: e.amount, tier: e.tier, quote: e.quote || "", ts: ctx.now };
+      const next = clone(cur);
+      next.deck[slot].by = ctx.deviceId;
+      next.claims = Object.assign({}, claims, { [ctx.deviceId]: record });
+      next.byName = Object.assign({}, cur.byName || {}, { [ctx.nameSlug]: ctx.deviceId });
+      return { next: next, result: { code: "OK", record: record } };
+    }
+
+    /* Hoàn 1 quẻ về ống (BTC, khi đang mở) */
+    function applyLocRelease(cur, dev) {
+      if (!cur || cur.mode !== "instant" || cur.phase !== "open" || !cur.claims || !cur.claims[dev]) return { next: undefined, result: { code: "NOT_FOUND" } };
+      const next = clone(cur);
+      const rec = next.claims[dev];
+      if (next.deck[rec.slot]) delete next.deck[rec.slot].by;
+      delete next.claims[dev];
+      if (next.byName && next.byName[rec.nameSlug] === dev) delete next.byName[rec.nameSlug];
+      if (next.paid) delete next.paid[dev];
+      return { next: next, result: { code: "OK", record: rec } };
+    }
+
+    /* KẾT THÚC vòng Rút ngay: tính lộc dư. "rain" = mỗi người thêm tối đa 1 quẻ trung bình, phần còn lại giữ */
+    function applyLocClose(cur, ctx) {
+      if (!cur || cur.mode !== "instant" || cur.phase !== "open") return { next: undefined, result: { code: "NOT_OPEN" } };
+      const cfg = normalizeLocConfig(cur.cfg);
+      const deck = cur.deck || {};
+      const leftover = Object.keys(deck).filter(k => !deck[k].by).reduce((s, k) => s + toInt(deck[k].amount), 0);
+      const next = clone(cur);
+      const devs = Object.keys(next.claims || {});
+      let rained = 0;
+      if (cfg.leftover === "rain" && devs.length && leftover > 0) {
+        const step = cfg.step;
+        const Lu = Math.floor(leftover / step);
+        const capU = Math.max(1, Math.round(cfg.fund / cfg.slots / step));
+        const per = Math.min(Math.floor(Lu / devs.length), capU);
+        const bonus = {};
+        devs.forEach(d => { bonus[d] = per; });
+        if (per < capU) {
+          let r = Lu - per * devs.length;
+          const order = devs.slice();
+          for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(ctx.rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+          for (let i = 0; i < order.length && r > 0; i++) { bonus[order[i]]++; r--; }
+        }
+        devs.forEach(d => { const b = bonus[d] * step; if (b > 0) { next.claims[d].bonus = b; rained += b; } });
+      }
+      next.phase = "closed";
+      next.closedAt = ctx.now;
+      next.leftover = { total: leftover, rained: rained, kept: leftover - rained, policy: cfg.leftover };
+      return { next: next, result: { code: "OK", leftover: next.leftover, n: devs.length } };
     }
 
     /* Xin quẻ: 1 máy = 1 lần, 1 tên = 1 lần, (tuỳ chọn) tên phải nằm trong danh sách khách */
@@ -2113,9 +2230,15 @@
     }
 
     /* Hoàn tất cả lượt test: về lại trạng thái mở cổng, giữ nguyên cấu hình vòng */
-    function applyLocResetAll(cur) {
+    function applyLocResetAll(cur, ctx) {
       if (cur === null || cur === undefined) return { next: null, result: { code: "NO_ROUND" } };
-      const next = { id: cur.id, phase: "gathering", cfg: cur.cfg, openedAt: cur.openedAt };
+      if (cur.mode === "instant") {
+        const d = buildLocDeck(cur.cfg, (ctx && ctx.rand) || Math.random);
+        if (!d.ok) return { next: undefined, result: { code: "ALLOC_FAIL", error: d.error } };
+        const n = Object.keys(cur.claims || {}).length;
+        return { next: { id: cur.id, mode: "instant", phase: "open", cfg: cur.cfg, openedAt: cur.openedAt, deck: d.deck }, result: { code: "OK", n: n } };
+      }
+      const next = { id: cur.id, mode: "gather", phase: "gathering", cfg: cur.cfg, openedAt: cur.openedAt };
       const n = Object.keys(cur.joins || {}).length;
       return { next: next, result: { code: "OK", n: n } };
     }
@@ -2124,6 +2247,7 @@
     function auditLoc(round) {
       const out = { phase: round ? round.phase : "none", n: 0, revealed: 0, sumAlloc: 0, sumRevealed: 0, fund: 0, problems: [] };
       if (!round) return out;
+      if (round.mode === "instant") return auditLocInstant(round);
       const cfg = normalizeLocConfig(round.cfg);
       const joins = round.joins || {}, alloc = round.alloc || {}, rev = round.revealed || {};
       out.fund = cfg.fund;
@@ -2142,17 +2266,44 @@
       out.ok = out.problems.length === 0;
       return out;
     }
+    /* Đối soát Rút ngay: Tổng ống = Quỹ; mỗi quẻ đã rút khớp đúng 1 người; Đã phát + Còn trong ống (+ dư) = Quỹ */
+    function auditLocInstant(round) {
+      const cfg = normalizeLocConfig(round.cfg);
+      const deck = round.deck || {}, claims = round.claims || {};
+      const out = { mode: "instant", phase: round.phase, fund: cfg.fund, slots: Object.keys(deck).length, n: Object.keys(claims).length,
+        sumDeck: 0, drawnSum: 0, bonusSum: 0, remaining: 0, remainingSlots: 0, tierLeft: {}, problems: [] };
+      out.revealed = out.n;
+      Object.keys(deck).forEach(k => {
+        const e = deck[k];
+        out.sumDeck += toInt(e.amount);
+        if (!e.by) { out.remaining += toInt(e.amount); out.remainingSlots++; out.tierLeft[e.tier] = (out.tierLeft[e.tier] || 0) + 1; }
+        else if (!claims[e.by] || claims[e.by].slot !== k) out.problems.push("Quẻ " + k + " đánh dấu đã rút nhưng không khớp người");
+      });
+      Object.keys(claims).forEach(d => {
+        const c = claims[d];
+        out.drawnSum += toInt(c.amount); out.bonusSum += toInt(c.bonus);
+        if (!deck[c.slot] || deck[c.slot].by !== d || toInt(deck[c.slot].amount) !== toInt(c.amount)) out.problems.push("Lộc của " + c.user + " không khớp ống xăm");
+      });
+      out.sumRevealed = out.drawnSum + out.bonusSum;
+      out.sumAlloc = out.sumDeck;
+      if (out.sumDeck !== cfg.fund) out.problems.push(`Tổng ống ${out.sumDeck} ≠ quỹ ${cfg.fund}`);
+      if (out.drawnSum + out.remaining !== out.sumDeck) out.problems.push("Đã phát + Còn trong ống ≠ Tổng ống");
+      if (round.leftover && out.bonusSum !== toInt(round.leftover.rained)) out.problems.push("Mưa lộc không khớp");
+      out.ok = out.problems.length === 0;
+      return out;
+    }
     /* @@LOC_CORE_END */
 
     /* ===================================================================
        RÚT QUẺ — TRẠNG THÁI & ĐỒNG BỘ
        =================================================================== */
     const KEY_TAB = "gialong_tab_v2";
-    const locState = { config: normalizeLocConfig(null), round: null, revealing: false, lastCard: null };
+    const locState = { config: normalizeLocConfig(null), round: null, revealing: false, shaking: false, power: 0, pendingName: "" };
 
-    function fmtMoney(n, unit) { return Number(toInt(n)).toLocaleString('vi-VN') + " " + (unit || "xu"); }
+    function fmtMoney(n, unit) { return Number(toInt(n)).toLocaleString('vi-VN') + (unit ? " " + unit : ""); }
     function locCfg() { return normalizeLocConfig(locState.round ? locState.round.cfg : locState.config); }
     function locTier(key) { return locCfg().tiers.find(t => t.key === key) || { icon: "🧧", label: "Quẻ", title: "" }; }
+    function isInstant() { return !!(locState.round && locState.round.mode === "instant"); }
 
     function initLocListeners() {
       db.ref(PATH.locConfig).on('value', snap => {
@@ -2206,6 +2357,10 @@
     function myLoc() {
       const r = locState.round;
       if (!r) return {};
+      if (r.mode === "instant") {
+        const c = r.claims && r.claims[deviceId];
+        return { claim: c, alloc: c, revealed: !!c, join: c };
+      }
       return {
         join: r.joins && r.joins[deviceId],
         alloc: r.alloc && r.alloc[deviceId],
@@ -2219,10 +2374,12 @@
       const banner = document.getElementById('loc-banner');
       const btn = document.getElementById('btn-loc');
       const stats = document.getElementById('loc-stats');
+      const chips = document.getElementById('loc-deck-chips');
       const dot = document.getElementById('tab-loc-dot');
       const BASE_BTN = "w-full rounded-2xl font-kiemhiep uppercase tracking-wider transition-all duration-300 shadow-lg flex items-center justify-center gap-2 ";
       const DIM = "py-4 bg-gradient-to-r from-stone-800 to-stone-900 border-2 border-stone-600 text-stone-400 font-extrabold text-lg cursor-not-allowed";
       const HOT = "py-4 bg-gradient-to-r from-rose-600 via-red-500 to-rose-700 border-2 border-yellow-300 text-yellow-50 font-black text-xl shadow-2xl pulse-btn hover:brightness-110 active:scale-95 cursor-pointer";
+      const SHAKE = "py-5 bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 border-2 border-red-700 text-red-950 font-black text-xl shadow-2xl active:scale-90 cursor-pointer";
       const SOFT = "py-3.5 bg-gradient-to-r from-stone-800 to-rose-950 border border-rose-500/70 text-rose-200 font-bold text-base cursor-pointer";
       const set = (bCls, bHtml, enabled, btnCls, btnHtml) => {
         banner.className = "w-full text-center py-1.5 px-3 mb-2 rounded-lg text-xs font-semibold shadow " + bCls;
@@ -2232,13 +2389,25 @@
         btn.innerHTML = btnHtml;
       };
       let needAction = false;
+      const instant = isInstant();
 
-      if (locState.revealing) {
-        set("bg-amber-950/90 border border-yellow-600/80 text-yellow-200", "🎋 ĐANG LẮC ỐNG XĂM... ĐỪNG TẮT TRANG", false, DIM, "<span>🎋</span><span>ĐANG KHAI QUẺ</span>");
+      if (locState.shaking) {
+        set("bg-yellow-900/90 border border-yellow-400 text-yellow-100", "📳 LẮC ĐIỆN THOẠI HOẶC CHẠM LIÊN TỤC VÀO ỐNG XĂM!", true, SHAKE, "<span>👋</span><span>CHẠM ĐỂ LẮC</span><span>👋</span>");
+      } else if (locState.revealing) {
+        set("bg-amber-950/90 border border-yellow-600/80 text-yellow-200", "🎋 QUẺ ĐANG VĂNG RA... ĐỪNG TẮT TRANG", false, DIM, "<span>🎋</span><span>ĐANG KHAI QUẺ</span>");
       } else if (!isFirebaseReady || !state.connected) {
         set("bg-red-950/90 border border-red-700/80 text-red-200", "📡 MẤT KẾT NỐI MÁY CHỦ - KIỂM TRA WIFI/4G", false, DIM, "<span>📡</span><span>CHỜ KẾT NỐI</span>");
       } else if (!r) {
-        set("bg-stone-900/90 border border-stone-600 text-stone-300", "🧧 QUỸ LỘC CHƯA MỞ - CHỜ BTC", false, DIM, "<span>🔒</span><span>CHỜ BTC MỞ CỔNG</span>");
+        set("bg-stone-900/90 border border-stone-600 text-stone-300", "🧧 QUỸ LỘC CHƯA MỞ - CHỜ BTC", false, DIM, "<span>🔒</span><span>CHỜ BTC MỞ ỐNG XĂM</span>");
+      } else if (instant && me.claim) {
+        set("bg-stone-900/90 border border-amber-600/50 text-amber-300", "🧧 ĐẠI HIỆP ĐÃ RÚT QUẺ VÒNG NÀY", true, SOFT, "<span>🏮</span><span>XEM BẢNG LỘC</span>");
+      } else if (instant && r.phase === "open" && au.remainingSlots > 0) {
+        needAction = true;
+        set("bg-emerald-950/90 border border-emerald-600/80 text-emerald-200", "🎋 ỐNG XĂM ĐANG MỞ - LẮC LÀ CÓ LỘC NGAY", true, HOT, "<span>🎋</span><span>LẮC XĂM NHẬN LỘC</span><span>🎋</span>");
+      } else if (instant && r.phase === "open") {
+        set("bg-stone-900/90 border border-stone-600 text-stone-300", "🈳 ỐNG XĂM ĐÃ HẾT QUẺ - CHỜ BTC", false, DIM, "<span>🈳</span><span>HẾT QUẺ</span>");
+      } else if (instant) {
+        set("bg-stone-900/90 border border-stone-600 text-stone-300", "🏁 VÒNG LỘC ĐÃ KẾT THÚC - HẸN VÒNG SAU", false, DIM, "<span>🏁</span><span>ĐÃ KẾT THÚC</span>");
       } else if (r.phase === "gathering" && !me.join) {
         needAction = true;
         set("bg-emerald-950/90 border border-emerald-600/80 text-emerald-200", "🙏 CỔNG XIN QUẺ ĐANG MỞ - GHI DANH ĐỂ NHẬN LỘC", true, HOT, "<span>🙏</span><span>XIN QUẺ</span><span>🙏</span>");
@@ -2255,81 +2424,218 @@
 
       if (stats) {
         if (!r) stats.innerHTML = "&nbsp;";
+        else if (instant) stats.innerHTML = `Ống xăm còn <b class="text-yellow-300">${au.remainingSlots}/${au.slots}</b> quẻ · Lộc trong ống <b class="text-yellow-300">${fmtMoney(au.remaining, cfg.unit)}</b>`;
         else if (r.phase === "gathering") stats.innerHTML = `Quỹ lộc: <b class="text-yellow-300">${fmtMoney(cfg.fund, cfg.unit)}</b> · <b class="text-emerald-300">${au.n}</b> người đã xin quẻ`;
         else stats.innerHTML = `Đã khai <b class="text-yellow-300">${au.revealed}/${au.n}</b> quẻ · Lộc đã lộ <b class="text-yellow-300">${fmtMoney(au.sumRevealed, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}`;
       }
+      // Chip đếm quẻ còn lại theo tầng: "Thần Tài vẫn còn trong ống!" => kịch tính
+      if (chips) {
+        if (instant && r.phase === "open") {
+          chips.classList.remove('hidden');
+          chips.innerHTML = cfg.tiers.map(t => {
+            const left = au.tierLeft[t.key] || 0;
+            return `<span class="px-2 py-0.5 rounded-full border text-[10px] font-bold ${left ? (t.key === 'tt' ? 'bg-yellow-400 text-red-950 border-yellow-200 animate-pulse' : 'bg-black/60 text-yellow-200 border-amber-700') : 'bg-stone-900 text-stone-600 border-stone-800 line-through'}">${t.icon} ${left}</span>`;
+          }).join("") + (au.tierLeft.tt ? '<div class="w-full text-center text-[10px] text-yellow-300 font-bold mt-1">🐉 THẦN TÀI VẪN CÒN TRONG ỐNG!</div>' : '<div class="w-full text-center text-[10px] text-stone-400 mt-1">Thần Tài đã có chủ...</div>');
+        } else chips.classList.add('hidden');
+      }
       if (dot) dot.classList.toggle('hidden', !needAction);
 
-      // Thẻ quẻ: hiện khi đã khai
+      // Ống xăm & thẻ quẻ
       const card = document.getElementById('loc-card');
-      if (me.alloc && me.revealed && !locState.revealing) {
-        fillLocCard(Object.assign({ user: me.join ? me.join.user : state.userName }, me.alloc));
-        card.classList.remove('hidden');
-      } else if (!locState.revealing) {
-        card.classList.add('hidden');
-      }
-      document.getElementById('loc-tube-wrap').classList.toggle('hidden', !!(me.alloc && me.revealed) && !locState.revealing);
+      const showCard = me.alloc && me.revealed && !locState.revealing && !locState.shaking;
+      if (showCard) { fillLocCard(Object.assign({ user: me.join ? me.join.user : state.userName }, me.alloc), false); card.classList.remove('hidden'); }
+      else if (!locState.revealing) card.classList.add('hidden');
+      document.getElementById('loc-tube-wrap').classList.toggle('hidden', !!showCard);
+      document.getElementById('loc-shake').classList.toggle('hidden', !locState.shaking);
     }
 
-    function fillLocCard(rec) {
+    function fillLocCard(rec, animate) {
       const cfg = locCfg(), t = locTier(rec.tier);
       document.getElementById('loc-card-badge').className = "inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider mb-1 " + (APP_CONFIG.LOC.TIER_STYLE[rec.tier] || "");
       document.getElementById('loc-card-badge').innerText = t.icon + " " + t.label;
       document.getElementById('loc-card-title').innerText = t.title || "";
-      document.getElementById('loc-card-amount').innerText = "+" + fmtMoney(rec.amount, cfg.unit);
       document.getElementById('loc-card-user').innerText = "Đại hiệp: " + (rec.user || "");
       document.getElementById('loc-card-quote').innerText = '"' + (rec.quote || "") + '"';
+      const bonusEl = document.getElementById('loc-card-bonus');
+      if (bonusEl) { bonusEl.classList.toggle('hidden', !toInt(rec.bonus)); bonusEl.innerText = "🌧 + " + fmtMoney(rec.bonus, cfg.unit) + " mưa lộc cuối vòng"; }
+      const el = document.getElementById('loc-card-amount');
+      const target = toInt(rec.amount);
+      if (!animate) { el.innerText = "+" + fmtMoney(target, cfg.unit); return Promise.resolve(); }
+      // Số lộc chạy từ 0 lên, chậm dần về cuối
+      return new Promise(resolve => {
+        const dur = APP_CONFIG.LOC.COUNTUP_MS, t0 = Date.now();
+        let lastTick = 0;
+        const iv = setInterval(() => {
+          const k = Math.min(1, (Date.now() - t0) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          const v = Math.round(target * eased / cfg.step) * cfg.step;
+          el.innerText = "+" + fmtMoney(k >= 1 ? target : v, cfg.unit);
+          if (Date.now() - lastTick > 90 && k < 1) { lastTick = Date.now(); playSound('tick'); }
+          if (k >= 1) { clearInterval(iv); resolve(); }
+        }, 40);
+      });
     }
 
     async function handleLocAction() {
       if (locState.revealing) return;
+      if (locState.shaking) { pumpShake(); return; }
       const r = locState.round, me = myLoc();
       if (!isFirebaseReady || !state.connected) { alert("📡 Mất kết nối máy chủ. Kiểm tra WiFi/4G rồi thử lại."); return; }
       if (!r) { alert("Quỹ lộc chưa mở. Chờ BTC!"); return; }
-      if (r.phase === "gathering" && !me.join) return locJoinFlow();
+      if (me.alloc && me.revealed) return openLocBoard();
+      if (r.mode === "instant") {
+        if (r.phase !== "open") return;
+        return locPickNameThen(name => startShake(name));
+      }
+      if (r.phase === "gathering" && !me.join) return locPickNameThen(name => doLocJoin(name));
       if (r.phase === "split" && me.alloc && !me.revealed) return locRevealFlow();
-      if (r.phase === "split" && me.alloc && me.revealed) return openLocBoard();
     }
 
     function handleLocTubeClick() {
+      if (locState.shaking) { pumpShake(); return; }
       const r = locState.round, me = myLoc();
-      if (r && r.phase === "split" && me.alloc && !me.revealed) handleLocAction();
-      else if (r && r.phase === "gathering" && !me.join) handleLocAction();
+      if (!r || locState.revealing) return;
+      if (r.mode === "instant" ? (r.phase === "open" && !me.claim) : ((r.phase === "split" && me.alloc && !me.revealed) || (r.phase === "gathering" && !me.join))) handleLocAction();
     }
 
-    function locJoinFlow() {
+    let pendingNameCb = null;
+    function locPickNameThen(cb) {
       const cfg = locCfg();
-      if (cfg.useGuestList) { openGuestPicker(); return; }
+      if (cfg.useGuestList) { pendingNameCb = cb; openGuestPicker(); return; }
       if (!isNameValid(state.userName) && !promptUserName(true)) return;
-      doLocJoin(state.userName);
+      const taken = locState.round && locState.round.byName && locState.round.byName[slugName(state.userName)];
+      if (taken && taken !== deviceId) { alert(`Tên "${state.userName}" đã rút quẻ trên máy khác. Mỗi tên chỉ 1 lượt.`); return; }
+      cb(state.userName);
+    }
+    function guestPicked(name) {
+      closeGuestPicker();
+      const cb = pendingNameCb; pendingNameCb = null;
+      if (cb) cb(name);
     }
 
+    function adoptName(name) {
+      if (name !== state.userName && !state.hasOpened) {
+        state.userName = name;
+        localStorage.setItem(KEY_USER, name);
+        if (db) db.ref(PATH.online + '/' + deviceId).update({ name: name });
+        renderUI();
+      }
+    }
+
+    function locErrMsg(code, name) {
+      return {
+        NAME_TAKEN: `Tên "${name}" đã được máy khác dùng. Mỗi tên chỉ 1 lượt.`,
+        NOT_GUEST: `Tên "${name}" không có trong danh sách khách mời. Báo BTC nếu bị thiếu.`,
+        CLOSED: "Vòng lộc đã kết thúc / cổng đã đóng.",
+        EMPTY: "🈳 Ống xăm đã hết quẻ! Chờ BTC mở vòng mới.",
+        NO_ROUND: "Quỹ lộc chưa mở.",
+        ERROR: "📡 Máy chủ chưa xác nhận. Lộc CHƯA bị trừ, bấm lại."
+      }[code] || ("Không thực hiện được (" + code + ").");
+    }
+
+    /* --- Chế độ Gom quẻ: ghi danh --- */
     async function doLocJoin(name) {
       const res = await runLocTx(cur => applyLocJoin(cur, { deviceId: deviceId, user: name, nameSlug: slugName(name), now: Date.now() }));
-      const msg = {
-        OK: null,
-        ALREADY: null,
-        NAME_TAKEN: `Tên "${name}" đã được máy khác dùng để xin quẻ. Mỗi tên chỉ 1 lượt.`,
-        NOT_GUEST: `Tên "${name}" không có trong danh sách khách mời. Báo BTC nếu bị thiếu.`,
-        CLOSED: "BTC đã đóng cổng xin quẻ vòng này.",
-        NO_ROUND: "Quỹ lộc chưa mở.",
-        ERROR: "📡 Máy chủ chưa xác nhận. Kiểm tra mạng rồi bấm lại."
-      }[res.code];
-      if (res.code === "OK") {
-        if (name !== state.userName && !state.hasOpened) {
-          state.userName = name;
-          localStorage.setItem(KEY_USER, name);
-          if (db) db.ref(PATH.online + '/' + deviceId).update({ name: name });
-          renderUI();
-        }
-        playSound('tick');
-      }
-      if (msg) alert(msg);
-      closeGuestPicker();
+      if (res.code === "OK") { adoptName(name); playSound('tick'); }
+      else if (res.code !== "ALREADY") alert(locErrMsg(res.code, name));
       renderLoc();
     }
 
-    /* Khai quẻ: ghi lên máy chủ ngay, hoạt ảnh chỉ để hồi hộp */
+    /* --- Chế độ Rút ngay: LẮC XĂM --- */
+    let motionOn = false, lastMag = 0, lastPump = 0;
+    function enableMotion() {
+      try {
+        if (typeof DeviceMotionEvent === "undefined") return;
+        const attach = () => {
+          if (motionOn) return;
+          motionOn = true;
+          window.addEventListener('devicemotion', e => {
+            if (!locState.shaking) return;
+            const a = e.accelerationIncludingGravity || e.acceleration;
+            if (!a) return;
+            const m = Math.abs(a.x || 0) + Math.abs(a.y || 0) + Math.abs(a.z || 0);
+            const now = Date.now();
+            if (lastMag && Math.abs(m - lastMag) > APP_CONFIG.LOC.SHAKE_THRESHOLD && now - lastPump > 140) { lastPump = now; pumpShake(); }
+            lastMag = m;
+          });
+        };
+        if (typeof DeviceMotionEvent.requestPermission === "function") {
+          DeviceMotionEvent.requestPermission().then(s => { if (s === "granted") attach(); }).catch(() => {});
+        } else attach();
+      } catch (e) {}
+    }
+
+    function startShake(name) {
+      if (locState.shaking || locState.revealing) return;
+      locState.pendingName = name;
+      locState.shaking = true;
+      locState.power = 0;
+      initAudio();
+      enableMotion();          // iPhone sẽ hỏi quyền "Chuyển động" ở lần đầu
+      updateShakeBar();
+      renderLoc();
+    }
+
+    function updateShakeBar() {
+      const k = Math.min(1, locState.power / APP_CONFIG.LOC.TAP_TARGET);
+      document.getElementById('loc-shake-bar').style.width = Math.round(k * 100) + "%";
+      const msgs = ["Lắc mạnh lên!", "Quẻ đang rung rinh...", "Sắp văng ra rồi!", "Thêm chút nữa!!!"];
+      document.getElementById('loc-shake-text').innerText = k >= 1 ? "🎋 QUẺ ĐÃ VĂNG RA!" : msgs[Math.min(3, Math.floor(k * 4))] + " (" + locState.power + "/" + APP_CONFIG.LOC.TAP_TARGET + ")";
+    }
+
+    function pumpShake() {
+      if (!locState.shaking) return;
+      locState.power++;
+      const tube = document.getElementById('loc-tube');
+      tube.classList.remove('chest-shaking'); void tube.offsetWidth; tube.classList.add('chest-shaking');
+      playSound('tick');
+      try { if (navigator.vibrate) navigator.vibrate(25); } catch (e) {}
+      updateShakeBar();
+      if (locState.power >= APP_CONFIG.LOC.TAP_TARGET) finishShake();
+    }
+
+    async function finishShake() {
+      locState.shaking = false;
+      locState.revealing = true;
+      renderLoc();
+      const name = locState.pendingName;
+      const txPromise = runLocTx(cur => applyLocDraw(cur, { deviceId: deviceId, user: name, nameSlug: slugName(name), now: Date.now(), rand: Math.random }));
+      const stick = document.getElementById('loc-stick-fly');
+      stick.classList.remove('stick-fly'); void stick.offsetWidth; stick.classList.add('stick-fly');
+      try { if (navigator.vibrate) navigator.vibrate([60, 40, 120]); } catch (e) {}
+      await sleep(800);
+      const res = await txPromise;
+      document.getElementById('loc-tube').classList.remove('chest-shaking');
+      stick.classList.remove('stick-fly');
+      if (res.code === "OK" || res.code === "ALREADY") {
+        adoptName(name);
+        await revealCard(Object.assign({ user: name }, res.record), res.code === "OK");
+      } else {
+        locState.revealing = false;
+        renderLoc();
+        alert(locErrMsg(res.code, name));
+      }
+    }
+
+    /* Lật thẻ: hiện tầng quẻ trước, rồi số lộc chạy lên */
+    async function revealCard(rec, celebrate) {
+      const card = document.getElementById('loc-card');
+      document.getElementById('loc-tube-wrap').classList.add('hidden');
+      document.getElementById('loc-card-amount').innerText = "...";
+      fillLocCard(Object.assign({}, rec, { amount: 0 }), false);
+      document.getElementById('loc-card-amount').innerText = "???";
+      card.classList.remove('hidden', 'loc-card-in'); void card.offsetWidth; card.classList.add('loc-card-in');
+      playSound('open');
+      await sleep(700);
+      await fillLocCard(rec, true);
+      if (celebrate) {
+        if (rec.tier === "tt" || rec.tier === "t") { playSound('win'); fireConfetti(); if (rec.tier === "tt") setTimeout(fireConfetti, 500); }
+      }
+      locState.revealing = false;
+      renderLoc();
+    }
+
+    /* --- Chế độ Gom quẻ: khai quẻ --- */
     async function locRevealFlow() {
       locState.revealing = true;
       renderLoc();
@@ -2345,17 +2651,13 @@
       void stick.offsetWidth; stick.classList.add('stick-fly');
       await sleep(700);
       const res = await txPromise;
-      locState.revealing = false;
       stick.classList.remove('stick-fly');
       if (res.code === "OK" || res.code === "ALREADY") {
-        const card = document.getElementById('loc-card');
-        card.classList.remove('loc-card-in'); void card.offsetWidth; card.classList.add('loc-card-in');
-        renderLoc();
-        playSound('open');
-        if (res.code === "OK" && (res.record.tier === "tt" || res.record.tier === "t")) { playSound('win'); fireConfetti(); }
+        await revealCard(res.record, res.code === "OK");
       } else {
+        locState.revealing = false;
         renderLoc();
-        alert(res.code === "ERROR" ? "📡 Máy chủ chưa xác nhận. Quẻ CHƯA mở, bấm lại sau." : "Không khai được quẻ (" + res.code + ").");
+        alert(locErrMsg(res.code, ""));
       }
     }
 
@@ -2374,39 +2676,45 @@
       if (!list.length) { box.innerHTML = '<div class="text-center text-stone-400 italic text-xs py-4">Không tìm thấy tên. Báo BTC thêm vào danh sách.</div>'; return; }
       box.innerHTML = list.map(g => {
         const t = taken[slugName(g)];
-        const mine = t === deviceId;
-        return t && !mine
-          ? `<div class="px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-stone-500 text-xs flex justify-between"><span>${escapeHtml(g)}</span><span>đã xin</span></div>`
-          : `<button data-name="${escapeHtml(g)}" onclick="doLocJoin(this.dataset.name)" class="w-full text-left px-3 py-2 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs font-bold hover:bg-amber-900/60">${escapeHtml(g)}</button>`;
+        return t && t !== deviceId
+          ? `<div class="px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-stone-500 text-xs flex justify-between"><span>${escapeHtml(g)}</span><span>đã rút</span></div>`
+          : `<button data-name="${escapeHtml(g)}" onclick="guestPicked(this.dataset.name)" class="w-full text-left px-3 py-2 rounded-xl bg-black/60 border border-amber-700 text-yellow-200 text-xs font-bold hover:bg-amber-900/60">${escapeHtml(g)}</button>`;
       }).join("");
     }
 
-    /* Bảng Lộc: chỉ hiện người ĐÃ khai (giữ hồi hộp cho người chưa khai) */
+    /* Bảng Lộc */
     function openLocBoard() { renderLocBoard(); document.getElementById('modal-locboard').classList.remove('hidden'); }
     function closeLocBoard() { document.getElementById('modal-locboard').classList.add('hidden'); }
+    function locRows(r) {
+      if (!r) return [];
+      if (r.mode === "instant") return Object.keys(r.claims || {}).map(d => Object.assign({ dev: d }, r.claims[d]));
+      if (!r.alloc || !r.revealed) return [];
+      return Object.keys(r.revealed).filter(d => r.alloc[d]).map(d => Object.assign({ dev: d, user: (r.joins[d] || {}).user || "?" }, r.alloc[d]));
+    }
     function renderLocBoard() {
       const r = locState.round, cfg = locCfg(), au = auditLoc(r);
       const box = document.getElementById('locboard-list');
-      document.getElementById('locboard-stats').innerHTML = r
-        ? `Đã khai <b class="text-yellow-300">${au.revealed}/${au.n}</b> · Lộc đã lộ <b class="text-yellow-300">${fmtMoney(au.sumRevealed, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}`
-        : "Quỹ lộc chưa mở";
-      if (!r || !r.alloc || !r.revealed) { box.innerHTML = '<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa ai khai quẻ.</div>'; return; }
-      const rows = Object.keys(r.revealed).filter(d => r.alloc[d]).map(d => Object.assign({ user: (r.joins[d] || {}).user || "?" }, r.alloc[d]))
-        .sort((a, b) => b.amount - a.amount);
-      const allDone = au.revealed === au.n && au.n > 1;
+      const st = document.getElementById('locboard-stats');
+      if (!r) st.innerHTML = "Quỹ lộc chưa mở";
+      else if (r.mode === "instant") st.innerHTML = `Đã rút <b class="text-yellow-300">${au.n}/${au.slots}</b> quẻ · Đã phát <b class="text-yellow-300">${fmtMoney(au.drawnSum + au.bonusSum, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}`;
+      else st.innerHTML = `Đã khai <b class="text-yellow-300">${au.revealed}/${au.n}</b> · Lộc đã lộ <b class="text-yellow-300">${fmtMoney(au.sumRevealed, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}`;
+      const rows = locRows(r).sort((a, b) => (toInt(b.amount) + toInt(b.bonus)) - (toInt(a.amount) + toInt(a.bonus)));
+      if (!rows.length) { box.innerHTML = '<div class="text-center py-6 text-amber-500/70 italic text-xs">Chưa ai rút quẻ.</div>'; return; }
+      const finished = r.mode === "instant" ? r.phase === "closed" : (au.revealed === au.n);
       box.innerHTML = rows.map((w, i) => {
         const t = locTier(w.tier);
         let badge = "";
         if (w.tier === "tt") badge = '<span class="ml-1 text-[9px] px-1.5 rounded-full bg-yellow-400 text-red-950 font-black">THẦN TÀI</span>';
-        if (allDone && i === rows.length - 1) badge = '<span class="ml-1 text-[9px] px-1.5 rounded-full bg-stone-700 text-stone-200 font-bold">ĐỆ NHẤT ĐEN ĐỦI</span>';
+        if (finished && rows.length > 1 && i === rows.length - 1) badge = '<span class="ml-1 text-[9px] px-1.5 rounded-full bg-stone-700 text-stone-200 font-bold">ĐỆ NHẤT ĐEN ĐỦI</span>';
+        const b = toInt(w.bonus);
         return `
         <div class="p-2.5 rounded-2xl border ${w.tier === 'tt' ? 'bg-gradient-to-r from-yellow-950 to-amber-900/80 border-yellow-500' : 'bg-stone-900 border-amber-900'} flex items-center justify-between">
           <div class="flex items-center gap-2 truncate">
             <span class="text-base w-6 text-center">${t.icon}</span>
             <div class="truncate"><div class="font-bold text-yellow-200 truncate">${escapeHtml(w.user)}${badge}</div>
-            <div class="text-[10px] text-amber-400/90">${escapeHtml(t.label)}</div></div>
+            <div class="text-[10px] text-amber-400/90">${escapeHtml(t.label)}${b ? ' · 🌧 +' + fmtMoney(b, '') : ''}</div></div>
           </div>
-          <div class="font-black text-yellow-300 text-sm flex-shrink-0 ml-2">${fmtMoney(w.amount, cfg.unit)}</div>
+          <div class="font-black text-yellow-300 text-sm flex-shrink-0 ml-2">${fmtMoney(toInt(w.amount) + b, cfg.unit)}</div>
         </div>`;
       }).join("");
     }
@@ -2420,49 +2728,88 @@
       document.getElementById('admin-pane-loc').classList.toggle('hidden', !isLoc);
       document.getElementById('admin-tab-chest').className = "flex-1 py-1.5 rounded-lg text-[11px] font-bold " + (isLoc ? "text-amber-400/70" : "bg-amber-600 text-red-950");
       document.getElementById('admin-tab-loc').className = "flex-1 py-1.5 rounded-lg text-[11px] font-bold " + (isLoc ? "bg-rose-700 text-yellow-100" : "text-amber-400/70");
-      if (isLoc) { renderLocConfigForm(true); renderLocAdmin(); }
+      if (isLoc) { renderLocConfigForm(true); renderLocAdmin(); adminLocPreview(); }
     }
+
+    function adminBtn(fn, cls, html) { return `<button onclick="${fn}()" class="py-2.5 rounded-xl font-bold text-[11px] shadow ${cls}">${html}</button>`; }
 
     function renderLocAdmin() {
       const ph = document.getElementById('loc-admin-phase');
       if (!ph) return;
       const r = locState.round, cfg = locCfg(), au = auditLoc(r);
-      const phaseTxt = !r ? "⚪ Chưa mở vòng nào" : (r.phase === "gathering" ? "🟢 ĐANG GOM QUẺ" : "🔴 ĐÃ CHIA LỘC");
-      ph.innerHTML = `<div class="flex justify-between items-center"><b class="text-yellow-200 text-xs">${phaseTxt}</b>
-        <span class="text-[10px] text-amber-300">${r ? `${au.n} người · đã khai ${au.revealed} · quỹ ${fmtMoney(cfg.fund, cfg.unit)}` : ""}</span></div>`;
-      const aud = document.getElementById('loc-admin-audit');
-      if (r && r.phase === "split") {
-        aud.className = "mt-2 p-2 rounded-lg text-[11px] font-bold " + (au.ok ? "bg-emerald-950 border border-emerald-600 text-emerald-200" : "bg-rose-900 border border-rose-400 text-rose-100");
-        aud.innerText = au.ok ? `✅ Đối soát khớp: đã chia ${fmtMoney(au.sumAlloc, cfg.unit)} = quỹ, ${au.n} phần cho ${au.n} người.` : "❌ SAI LỆCH: " + au.problems.join("; ");
-      } else { aud.className = "hidden"; }
+      const instant = isInstant();
+      const GREEN = "bg-gradient-to-r from-emerald-700 to-emerald-600 text-white";
+      const RED = "bg-gradient-to-r from-rose-700 to-red-600 text-white";
+      const SOFT = "bg-amber-900 border border-amber-600 text-yellow-200";
+      let phaseTxt, info;
+      if (!r) { phaseTxt = "⚪ Chưa mở vòng nào"; info = ""; }
+      else if (instant) {
+        phaseTxt = r.phase === "open" ? "🟢 ỐNG XĂM ĐANG MỞ (Rút ngay)" : "🏁 ĐÃ KẾT THÚC (Rút ngay)";
+        info = `${au.n}/${au.slots} quẻ đã rút · đã phát ${fmtMoney(au.drawnSum + au.bonusSum, cfg.unit)} · còn trong ống ${fmtMoney(au.remaining, cfg.unit)}`;
+      } else {
+        phaseTxt = r.phase === "gathering" ? "🟢 ĐANG GOM QUẺ" : "🔴 ĐÃ CHIA LỘC";
+        info = `${au.n} người · đã khai ${au.revealed} · quỹ ${fmtMoney(cfg.fund, cfg.unit)}`;
+      }
+      ph.innerHTML = `<b class="text-yellow-200 text-xs">${phaseTxt}</b><div class="text-[10px] text-amber-300 mt-0.5">${info}</div>`;
 
-      // Danh sách người xin quẻ / chi trả
+      // Nút điều khiển theo chế độ
+      const nextMode = locState.config.mode === "instant" ? "Rút ngay" : "Gom quẻ";
+      let btns = adminBtn("adminLocOpen", GREEN, `🎋 MỞ VÒNG MỚI<br><span class="font-normal text-[9px]">(chế độ ${nextMode} theo cấu hình)</span>`);
+      if (r && instant) {
+        btns += adminBtn("adminLocClose", RED, `🏁 KẾT THÚC VÒNG<br><span class="font-normal text-[9px]">(xử lý lộc dư)</span>`);
+        btns += adminBtn("adminLocResetAll", SOFT, "🧪 Hoàn tất cả (xáo ống mới)");
+        if (r.phase === "closed" && r.leftover && r.leftover.kept > 0)
+          btns += adminBtn("adminLocOpenFromLeftover", SOFT, `🔁 Mở vòng 2 bằng lộc dư (${fmtMoney(r.leftover.kept, "")})`);
+      } else if (r) {
+        btns += adminBtn("adminLocSplit", RED, `⛔ ĐÓNG CỔNG &amp; CHIA<br><span class="font-normal text-[9px]">(chia đúng số người đã xin)</span>`);
+        btns += adminBtn("adminLocUnsplit", SOFT, "↩️ Huỷ chia (thêm người muộn)");
+        btns += adminBtn("adminLocResetAll", SOFT, "🧪 Hoàn tất cả lượt test");
+      }
+      document.getElementById('loc-admin-buttons').innerHTML = btns;
+
+      // Đối soát
+      const aud = document.getElementById('loc-admin-audit');
+      if (r && (instant || r.phase === "split")) {
+        aud.className = "mt-2 p-2 rounded-lg text-[11px] font-bold " + (au.ok ? "bg-emerald-950 border border-emerald-600 text-emerald-200" : "bg-rose-900 border border-rose-400 text-rose-100");
+        if (!au.ok) aud.innerText = "❌ SAI LỆCH: " + au.problems.join("; ");
+        else if (instant) {
+          let t = `✅ Khớp: Đã phát ${fmtMoney(au.drawnSum, cfg.unit)} + Còn trong ống ${fmtMoney(au.remaining, cfg.unit)} = Quỹ ${fmtMoney(cfg.fund, cfg.unit)}`;
+          if (r.leftover) t += ` · Lộc dư ${fmtMoney(r.leftover.total, "")}: mưa ${fmtMoney(r.leftover.rained, "")}, giữ lại ${fmtMoney(r.leftover.kept, cfg.unit)}`;
+          aud.innerText = t;
+        } else aud.innerText = `✅ Đối soát khớp: đã chia ${fmtMoney(au.sumAlloc, cfg.unit)} = quỹ, ${au.n} phần cho ${au.n} người.`;
+      } else aud.className = "hidden";
+
+      // Danh sách
       const box = document.getElementById('loc-admin-list');
       const cnt = document.getElementById('loc-admin-count');
-      const joins = (r && r.joins) || {};
-      const devs = Object.keys(joins);
-      if (cnt) cnt.innerText = devs.length + " người";
-      if (!devs.length) { box.innerHTML = '<div class="text-[10px] text-stone-400 italic p-1">Chưa ai xin quẻ.</div>'; return; }
-      if (r.phase === "gathering") {
-        box.innerHTML = devs.sort((a, b) => joins[a].ts - joins[b].ts).map(d => `
+      if (!r) { cnt.innerText = "0 người"; box.innerHTML = '<div class="text-[10px] text-stone-400 italic p-1">Chưa mở vòng.</div>'; return; }
+      const paid = r.paid || {};
+      if (!instant && r.phase === "gathering") {
+        const joins = r.joins || {}, devs = Object.keys(joins);
+        cnt.innerText = devs.length + " người";
+        box.innerHTML = devs.length ? devs.sort((a, b) => joins[a].ts - joins[b].ts).map(d => `
           <div class="flex items-center justify-between p-1.5 rounded-lg bg-black/60 border border-amber-900/60 text-[11px]">
             <span class="font-bold text-yellow-300 truncate">${escapeHtml(joins[d].user)}</span>
             <button data-dev="${escapeHtml(d)}" data-user="${escapeHtml(joins[d].user)}" onclick="adminLocKick(this.dataset.dev, this.dataset.user)" class="px-2 py-0.5 rounded bg-rose-950 border border-rose-700 text-rose-300 text-[10px] font-bold">Loại</button>
-          </div>`).join("");
+          </div>`).join("") : '<div class="text-[10px] text-stone-400 italic p-1">Chưa ai xin quẻ.</div>';
         return;
       }
-      const alloc = r.alloc || {}, rev = r.revealed || {}, paid = r.paid || {};
-      const paidSum = devs.filter(d => paid[d] && alloc[d]).reduce((s, d) => s + toInt(alloc[d].amount), 0);
-      box.innerHTML = `<div class="text-[10px] text-amber-300 mb-1">Đã trao: <b class="text-emerald-300">${fmtMoney(paidSum, cfg.unit)}</b> / ${fmtMoney(cfg.fund, cfg.unit)}</div>` +
-        devs.filter(d => alloc[d]).sort((a, b) => alloc[b].amount - alloc[a].amount).map(d => {
-          const t = locTier(alloc[d].tier);
+      const rows = instant ? locRows(r) : Object.keys(r.alloc || {}).map(d => Object.assign({ dev: d, user: (r.joins[d] || {}).user, shown: !!(r.revealed && r.revealed[d]) }, r.alloc[d]));
+      cnt.innerText = rows.length + " người";
+      const total = x => toInt(x.amount) + toInt(x.bonus);
+      const paidSum = rows.filter(x => paid[x.dev]).reduce((s, x) => s + total(x), 0);
+      if (!rows.length) { box.innerHTML = '<div class="text-[10px] text-stone-400 italic p-1">Chưa ai rút quẻ.</div>'; return; }
+      box.innerHTML = `<div class="text-[10px] text-amber-300 mb-1">Đã trao: <b class="text-emerald-300">${fmtMoney(paidSum, cfg.unit)}</b> / ${fmtMoney(rows.reduce((s, x) => s + total(x), 0), cfg.unit)} cần trao</div>` +
+        rows.sort((a, b) => total(b) - total(a)).map(x => {
+          const t = locTier(x.tier);
+          const status = instant ? (x.bonus ? `· 🌧 +${fmtMoney(x.bonus, "")}` : "") : (x.shown ? "· đã khai" : "· chưa khai");
+          const release = instant && r.phase === "open" ? `<button data-dev="${escapeHtml(x.dev)}" data-user="${escapeHtml(x.user)}" onclick="adminLocRelease(this.dataset.dev, this.dataset.user)" class="px-1.5 py-0.5 rounded bg-amber-800 text-yellow-100 text-[9px] font-bold">Hoàn</button>` : "";
           return `
-          <label class="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-black/60 border ${paid[d] ? 'border-emerald-700' : 'border-amber-900/60'} text-[11px]">
-            <span class="truncate"><span>${t.icon}</span> <b class="text-yellow-300">${escapeHtml(joins[d].user)}</b>
-              <span class="text-[9px] ${rev[d] ? 'text-emerald-400' : 'text-stone-500'}">${rev[d] ? '· đã khai' : '· chưa khai'}</span></span>
-            <span class="flex items-center gap-2 flex-shrink-0"><b class="text-yellow-200">${fmtMoney(alloc[d].amount, cfg.unit)}</b>
-              <input type="checkbox" ${paid[d] ? 'checked' : ''} data-dev="${escapeHtml(d)}" onchange="adminLocTogglePaid(this.dataset.dev, this.checked)" class="w-4 h-4 accent-emerald-500" title="Đã trao"></span>
-          </label>`;
+          <div class="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-black/60 border ${paid[x.dev] ? 'border-emerald-700' : 'border-amber-900/60'} text-[11px]">
+            <span class="truncate"><span>${t.icon}</span> <b class="text-yellow-300">${escapeHtml(x.user)}</b> <span class="text-[9px] text-stone-400">${status}</span></span>
+            <span class="flex items-center gap-1.5 flex-shrink-0"><b class="text-yellow-200">${fmtMoney(total(x), cfg.unit)}</b>${release}
+              <input type="checkbox" ${paid[x.dev] ? 'checked' : ''} data-dev="${escapeHtml(x.dev)}" onchange="adminLocTogglePaid(this.dataset.dev, this.checked)" class="w-4 h-4 accent-emerald-500" title="Đã trao"></span>
+          </div>`;
         }).join("");
     }
 
@@ -2471,6 +2818,10 @@
       if (!form) return;
       if (!force && form.contains(document.activeElement)) return;   // đang gõ thì không ghi đè
       const c = locState.config;
+      document.getElementById('loc-cfg-mode').value = c.mode;
+      document.getElementById('loc-cfg-slots').value = c.slots;
+      document.getElementById('loc-cfg-leftover').value = c.leftover;
+      document.getElementById('loc-cfg-instant-box').classList.toggle('hidden', c.mode !== "instant");
       document.getElementById('loc-cfg-fund').value = c.fund;
       document.getElementById('loc-cfg-unit').value = c.unit;
       document.getElementById('loc-cfg-step').value = c.step;
@@ -2479,15 +2830,17 @@
       document.getElementById('loc-cfg-guest-on').checked = c.useGuestList;
       document.getElementById('loc-cfg-guests').value = c.guests.join("\n");
       document.getElementById('loc-cfg-guest-count').innerText = c.guests.length + " tên";
+      const avg = c.mode === "instant" ? `≈ ${fmtMoney(Math.round(c.fund / c.slots), c.unit)} / quẻ trung bình` : "";
+      document.getElementById('loc-cfg-avg').innerText = avg;
       const last = c.tiers.length - 1;
       document.getElementById('loc-cfg-tiers').innerHTML = `
         <div class="grid grid-cols-12 gap-1 px-1 text-[9px] uppercase text-amber-500/80 font-bold">
-          <span class="col-span-6">Tầng quẻ</span><span class="col-span-3 text-center">Số người</span><span class="col-span-3 text-center">% Quỹ</span></div>` +
+          <span class="col-span-6">Tầng quẻ</span><span class="col-span-3 text-center">Số ${c.mode === "instant" ? "quẻ" : "người"}</span><span class="col-span-3 text-center">% Quỹ</span></div>` +
         c.tiers.map((t, i) => `
         <div class="grid grid-cols-12 gap-1 items-center p-1 rounded-lg bg-black/50 border border-amber-900/60">
           <span class="col-span-6 text-[11px] font-bold text-yellow-200 truncate">${t.icon} ${escapeHtml(t.label)}</span>
           <span class="col-span-3 text-center text-[10px] text-amber-300">${i === 0
-            ? `<input type="number" min="1" max="5" value="${t.fixed}" data-k="fixed" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-10 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300"> ng`
+            ? `<input type="number" min="1" max="5" value="${t.fixed}" data-k="fixed" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-10 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300">`
             : (i === last ? "còn lại" : `<input type="number" min="0" max="100" value="${t.peoplePct}" data-k="peoplePct" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-10 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300">%`)}</span>
           <span class="col-span-3 text-center"><input type="number" min="0" max="100" value="${t.fundPct}" data-k="fundPct" data-i="${i}" onchange="adminLocSaveConfig()" class="loc-tier-in w-12 px-1 text-center rounded bg-black/70 border border-amber-800 text-yellow-300">%</span>
         </div>`).join("");
@@ -2495,10 +2848,15 @@
       const warn = document.getElementById('loc-cfg-pct-warn');
       warn.classList.toggle('hidden', sumPct === 100);
       warn.innerText = `⚠️ Tổng % quỹ đang là ${sumPct}% (phải = 100%). Hệ thống sẽ tự chia theo tỉ lệ, nhưng nên sửa cho đúng.`;
+      const pn = document.getElementById('loc-preview-n');
+      if (pn && c.mode === "instant" && force) pn.value = c.slots;
     }
 
     function adminLocSaveConfig() {
       const c = normalizeLocConfig(locState.config);
+      c.mode = document.getElementById('loc-cfg-mode').value;
+      c.slots = toInt(document.getElementById('loc-cfg-slots').value, c.slots);
+      c.leftover = document.getElementById('loc-cfg-leftover').value;
       c.fund = toInt(document.getElementById('loc-cfg-fund').value, c.fund);
       c.unit = document.getElementById('loc-cfg-unit').value;
       c.step = toInt(document.getElementById('loc-cfg-step').value, c.step);
@@ -2507,10 +2865,13 @@
       c.useGuestList = document.getElementById('loc-cfg-guest-on').checked;
       c.guests = document.getElementById('loc-cfg-guests').value.split(/\n|,/);
       document.querySelectorAll('.loc-tier-in').forEach(el => { c.tiers[toInt(el.dataset.i)][el.dataset.k] = toInt(el.value, 0); });
+      const modeChanged = c.mode !== locState.config.mode;
       locState.config = normalizeLocConfig(c);
       if (isFirebaseReady && db) db.ref(PATH.locConfig).set(locState.config);
       renderLocConfigForm(true);
+      if (modeChanged && c.mode === "instant") document.getElementById('loc-preview-n').value = c.slots;
       adminLocPreview();
+      renderLocAdmin();
     }
 
     function adminLocUnitChange() {
@@ -2531,8 +2892,8 @@
     function adminLocPreview() {
       const box = document.getElementById('loc-preview');
       if (!box) return;
-      const N = toInt(document.getElementById('loc-preview-n').value, 40);
       const c = locState.config;
+      const N = toInt(document.getElementById('loc-preview-n').value, c.slots);
       const r = allocateFund(N, c, Math.random);
       if (!r.ok) { box.innerHTML = `<div class="text-rose-300 text-[11px] font-bold p-2">❌ ${escapeHtml(r.error)}</div>`; return; }
       const rows = c.tiers.map(t => {
@@ -2541,23 +2902,59 @@
         const sum = xs.reduce((a, b) => a + b, 0);
         return `<div class="grid grid-cols-12 gap-1 p-1 rounded bg-black/50 text-[10px]">
           <span class="col-span-5 font-bold text-yellow-200 truncate">${t.icon} ${escapeHtml(t.label)}</span>
-          <span class="col-span-2 text-center text-amber-300">${xs.length} ng</span>
+          <span class="col-span-2 text-center text-amber-300">${xs.length} quẻ</span>
           <span class="col-span-5 text-right text-yellow-300">${xs.length > 1 ? fmtMoney(Math.min(...xs), "") + "–" + fmtMoney(Math.max(...xs), c.unit) : fmtMoney(xs[0], c.unit)}</span>
           <span class="col-span-12 text-right text-[9px] text-amber-500/80">tổng tầng ${fmtMoney(sum, c.unit)}</span></div>`;
       }).join("");
       box.innerHTML = rows + `<div class="text-[10px] text-emerald-300 font-bold mt-1">✅ Tổng = ${fmtMoney(c.fund, c.unit)} · Cao nhất ${fmtMoney(r.items[0].amount, c.unit)} · Thấp nhất ${fmtMoney(r.items[r.items.length - 1].amount, c.unit)}</div>`;
     }
 
-    async function adminLocOpen() {
+    async function adminLocOpen(fundOverride, slotsOverride) {
       if (!requireCloud()) return;
       const c = normalizeLocConfig(locState.config);
+      if (typeof fundOverride === "number") c.fund = fundOverride;
+      if (typeof slotsOverride === "number") { c.slots = slotsOverride; c.mode = "instant"; }
       if (c.useGuestList && !c.guests.length) { alert("Đang bật Danh sách khách mời nhưng danh sách trống. Nhập tên trước."); return; }
       const r = locState.round;
-      const old = r ? Object.keys(r.joins || {}).length : 0;
-      if (!confirm(`MỞ CỔNG XIN QUẺ - VÒNG MỚI?\n\nQuỹ: ${fmtMoney(c.fund, c.unit)}\nKhách mời: ${c.useGuestList ? c.guests.length + " tên (bắt buộc chọn tên)" : "tắt (tự nhập tên)"}` +
-        (old ? `\n\n⚠️ Vòng hiện tại có ${old} người sẽ bị XOÁ.` : ""))) return;
-      try { await db.ref(PATH.locRound).set(newLocRound(c, Date.now())); alert("Đã mở cổng xin quẻ. Anh em vào tab 🧧 Rút Quẻ để ghi danh."); }
+      const old = r ? (r.mode === "instant" ? Object.keys(r.claims || {}).length : Object.keys(r.joins || {}).length) : 0;
+      const modeTxt = c.mode === "instant" ? `RÚT NGAY – ${c.slots} quẻ trong ống, ai lắc là nhận liền` : "GOM QUẺ RỒI CHIA";
+      if (!confirm(`MỞ VÒNG LỘC MỚI?\n\nChế độ: ${modeTxt}\nQuỹ: ${fmtMoney(c.fund, c.unit)}\nKhách mời: ${c.useGuestList ? c.guests.length + " tên (bắt buộc chọn tên)" : "tắt (tự nhập tên)"}` +
+        (old && r.phase !== "closed" ? `\n\n⚠️ Vòng hiện tại còn ${old} người — kết quả vòng cũ sẽ bị XOÁ. Nên bấm KẾT THÚC & copy danh sách chi trả trước.` : ""))) return;
+      const round = newLocRound(c, Date.now(), Math.random);
+      if (round.error) { alert("❌ " + round.error + "\nGiảm số quẻ hoặc mức sàn, hoặc tăng quỹ."); return; }
+      try { await db.ref(PATH.locRound).set(round); alert(c.mode === "instant" ? "Đã mở ống xăm! Anh em vào tab 🧧 để lắc nhận lộc." : "Đã mở cổng xin quẻ."); }
       catch (e) { alert("Lỗi: " + e.message); }
+    }
+
+    function adminLocOpenFromLeftover() {
+      const r = locState.round;
+      if (!r || !r.leftover || r.leftover.kept <= 0) return;
+      // Giữ mức trung bình mỗi quẻ như vòng trước => lộc dư ít thì ít quẻ, không bị chia vụn
+      const rc = normalizeLocConfig(r.cfg);
+      const avg = Math.max(1, rc.fund / rc.slots);
+      let slots = Math.max(1, Math.round(r.leftover.kept / avg));
+      const maxByFloor = Math.max(1, Math.floor(r.leftover.kept / Math.max(rc.step, rc.floor)));
+      slots = Math.min(slots, maxByFloor);
+      adminLocOpen(toInt(r.leftover.kept), slots);
+    }
+
+    async function adminLocClose() {
+      if (!requireCloud()) return;
+      const r = locState.round, au = auditLoc(r), c = locCfg();
+      if (!r || r.mode !== "instant" || r.phase !== "open") { alert("Không có ống xăm đang mở."); return; }
+      const how = c.leftover === "rain"
+        ? `MƯA LỘC: mỗi người đã rút được thêm tối đa ${fmtMoney(Math.round(c.fund / c.slots), c.unit)}, phần còn lại BTC giữ.`
+        : "GIỮ LẠI: lộc dư để dành cho vòng sau.";
+      if (!confirm(`KẾT THÚC VÒNG LỘC?\n\n${au.n} người đã rút · Còn ${au.remainingSlots} quẻ = ${fmtMoney(au.remaining, c.unit)} trong ống.\nXử lý lộc dư: ${how}\n\nSau khi kết thúc không ai rút thêm được.`)) return;
+      const res = await runLocTx(cur => applyLocClose(cur, { rand: Math.random, now: Date.now() }));
+      if (res.code === "OK") alert(`Đã kết thúc. Lộc dư ${fmtMoney(res.leftover.total, c.unit)}: mưa lộc ${fmtMoney(res.leftover.rained, c.unit)}, giữ lại ${fmtMoney(res.leftover.kept, c.unit)}.`);
+      else alert("Không kết thúc được (" + res.code + ").");
+    }
+
+    async function adminLocRelease(dev, name) {
+      if (!confirm(`Hoàn quẻ của "${name}" về ống và cho rút lại?`)) return;
+      const res = await runLocTx(cur => applyLocRelease(cur, dev));
+      if (res.code !== "OK") alert("Không hoàn được (vòng đã kết thúc?).");
     }
 
     async function adminLocSplit() {
@@ -2583,10 +2980,13 @@
 
     async function adminLocResetAll() {
       if (!requireCloud()) return;
-      if (!confirm("HOÀN TẤT CẢ LƯỢT TEST?\n\n- Xoá mọi người xin quẻ, kết quả chia & đã khai\n- Cổng xin quẻ mở lại, giữ nguyên quỹ & cấu hình vòng")) return;
-      const res = await runLocTx(cur => applyLocResetAll(cur));
-      if (res.code === "OK") alert(`Đã hoàn ${res.n} lượt. Cổng xin quẻ mở lại.`);
-      else alert("Chưa có vòng nào để hoàn.");
+      const instant = isInstant();
+      if (!confirm(instant
+        ? "HOÀN TẤT CẢ LƯỢT TEST?\n\n- Xoá mọi người đã rút & kết quả\n- Đóng ống xăm MỚI (xáo lại 100%) theo cấu hình vòng này\n- Ống mở lại, mọi máy rút lại được"
+        : "HOÀN TẤT CẢ LƯỢT TEST?\n\n- Xoá mọi người xin quẻ, kết quả chia & đã khai\n- Cổng xin quẻ mở lại, giữ nguyên quỹ & cấu hình vòng")) return;
+      const res = await runLocTx(cur => applyLocResetAll(cur, { rand: Math.random }));
+      if (res.code === "OK") alert(`Đã hoàn ${res.n} lượt. ${instant ? "Ống xăm mới đã sẵn sàng." : "Cổng xin quẻ mở lại."}`);
+      else alert(res.error || "Chưa có vòng nào để hoàn.");
     }
 
     async function adminLocKick(dev, name) {
@@ -2602,11 +3002,14 @@
 
     function adminLocCopyPayout() {
       const r = locState.round, cfg = locCfg();
-      if (!r || !r.alloc) { alert("Chưa chia lộc."); return; }
-      const rows = Object.keys(r.alloc).map(d => ({ user: (r.joins[d] || {}).user, a: r.alloc[d], paid: r.paid && r.paid[d] }))
-        .sort((x, y) => y.a.amount - x.a.amount);
-      const text = `🧧 DANH SÁCH CHI TRẢ QUỸ LỘC (${fmtMoney(cfg.fund, cfg.unit)} / ${rows.length} người)\n` +
-        rows.map((x, i) => `${i + 1}. ${x.user} – ${fmtMoney(x.a.amount, cfg.unit)} (${locTier(x.a.tier).label})${x.paid ? " ✅" : ""}`).join("\n");
+      const rows = locState.round && r.mode === "instant" ? locRows(r)
+        : (r && r.alloc ? Object.keys(r.alloc).map(d => Object.assign({ dev: d, user: (r.joins[d] || {}).user }, r.alloc[d])) : []);
+      if (!rows.length) { alert("Chưa có ai nhận lộc."); return; }
+      const total = x => toInt(x.amount) + toInt(x.bonus);
+      rows.sort((a, b) => total(b) - total(a));
+      const text = `🧧 DANH SÁCH CHI TRẢ QUỸ LỘC (${fmtMoney(cfg.fund, cfg.unit)} · ${rows.length} người)\n` +
+        rows.map((x, i) => `${i + 1}. ${x.user} – ${fmtMoney(total(x), cfg.unit)} (${locTier(x.tier).label}${x.bonus ? ", gồm " + fmtMoney(x.bonus, "") + " mưa lộc" : ""})${r.paid && r.paid[x.dev] ? " ✅" : ""}`).join("\n") +
+        (r.leftover ? `\nLộc dư BTC giữ lại: ${fmtMoney(r.leftover.kept, cfg.unit)}` : "");
       const ta = document.getElementById('loc-payout-text');
       ta.value = text; ta.classList.remove('hidden'); ta.select();
       try { navigator.clipboard.writeText(text).then(() => alert("Đã copy. Dán vào Zalo được ngay.")).catch(() => {}); } catch (e) {}
